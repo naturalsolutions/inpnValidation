@@ -1,0 +1,31 @@
+<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
+<nav *ngIf="loadHeader" class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
+  <a class="navbar-brand" routerLink="home">
+    <img src="../assets/imgs/logo_inpn.png" width="200px">
+  </a>
+  <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" aria-controls="collapse">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="collapse" [ngbCollapse]="isCollapsed">
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item ">
+        <a class="nav-link " routerLink="home" routerLinkActive="active">Accueil</a>
+      </li>
+      <li *ngIf="userConnected" class="nav-item">
+        <a class="nav-link" [routerLink]=obsRoute routerLinkActive="active">Observations</a>
+      </li>
+      <li *ngIf="!userConnected" class="nav-item">
+        <login-modal class="nav-link" routerLinkActive="active" ></login-modal>
+      </li>
+      <li *ngIf="userConnected" class="nav-item">
+        <div ngbDropdown class="d-inline-block">
+          <a class="nav-link  " id="dropdownBasic1" ngbDropdownToggle><span class="icon-user"></span><p class="userName"> {{currentUser.attributes.NOM}}</p></a>
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+            <button class="dropdown-item" (click)="logout()">Se déconnceter</button>
+           
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+</nav>

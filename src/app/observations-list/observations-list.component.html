@@ -1,0 +1,90 @@
+<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
+<div *ngIf="obsLoaded" class="container-fluid">
+  <div class="row">
+    <div *ngFor="let item of observations.observations" class="col-lg-2 col-md-4 col-xs-6 thumb">
+      <div class="card">
+        <button class="btn btn-success btn-valid">
+          <span class="icon-cheked"></span>
+        </button>
+        <button class="btn btn-secondary btn-modify  btn-valid" (click)="open(content,item)">
+          <span class="icon-pen"></span>
+        </button>
+        <img class="card-img-top" [style.background-image]="'url(' + item.principalPhoto.thumbnailFileUri+ ')'">
+        <div class="card-body">
+          <span class="{{item.gpSipmle.icons}} icon-gp"></span>
+          <h5 class="card-title">{{item.gpSipmle.label}}</h5>
+          <p class="card-text">{{item.nomCommuns}}</p>
+          <div class="especeName" [innerHtml]=item.nomCompletHtml></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row  row-btn justify-content-center">
+    <button type="button" class="btn btn-round next" (click)="getExtraObs()">
+      Charger de nouvelles observations
+    </button>
+  </div>
+</div>
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <img class="card-img-top" src="../assets/imgs/obsImg.jpg" alt="Card image cap">
+    <form class="container" [formGroup]="validationForm" (ngSubmit)="login(validationForm)">
+      <div class="btn-raw">
+        <button class="btn btn-outline-secondary btn-circle">
+          <span class="icon-reptile_amphibien"></span>
+        </button>
+        <button class="btn btn-outline-secondary btn-circle btn-selected">
+          <span class="icon-champignon_lichen"></span>
+        </button>
+        <button class="btn btn-outline-secondary btn-circle">
+          <span class="icon-crabe_crevette_cloporte_millepatte"></span>
+        </button>
+        <button class="btn btn-outline-secondary btn-circle">
+          <span class="icon-escargot_mollusque"></span>
+        </button>
+        <button class="btn btn-outline-secondary btn-circle">
+          <span class="icon-insecte_araignee"></span>
+        </button>
+      </div>
+      <div class="btn-raw">
+        <button class="btn btn-outline-secondary btn-circle">
+          <span class="icon-mammifere"></span>
+        </button>
+        <button class="btn btn-outline-secondary btn-circle">
+          <span class="icon-oiseau"></span>
+        </button>
+        <button class="btn btn-outline-secondary btn-circle">
+          <span class="icon-plante_mousse_fougere"></span>
+        </button>
+        <button class="btn btn-outline-secondary btn-circle">
+          <span class="icon-poisson"></span>
+        </button>
+        <button class="btn btn-outline-secondary btn-circle">
+          <span class="icon-more"></span>
+        </button>
+      </div>
+      <div class="form-input">
+        <div class="form-group ">
+          <input formControlName="groupSimple" class="form-control" [class.is-invalid]="validationForm.controls.groupSimple.touched && validationForm.controls.groupSimple.invalid ">
+        </div>
+        <div class="form-group">
+          <label for="groupOP" class="form-control-label">Groupe taxonomique avancé </label>
+          <input formControlName="groupOP" class="form-control" [class.is-invalid]="validationForm.controls.groupOP.touched && validationForm.controls.groupOP.invalid "
+            id="groupOP">
+        </div>
+        <div class="form-group">
+          <label for="espece" class="form-control-label">Nom de l'espèce</label>
+          <input formControlName="espece" class="form-control" [class.is-invalid]="validationForm.controls.espece.touched && validationForm.controls.espece.invalid "
+            id="espece">
+        </div>
+
+      </div>
+    </form>
+    <div class="btn-raw">
+      <button class="btn btn-success btn-valid">
+        Valider
+      </button>
+    </div>
+  </div>
+
+</ng-template>
