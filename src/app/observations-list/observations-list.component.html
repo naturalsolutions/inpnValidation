@@ -9,7 +9,7 @@
         <button class="btn btn-secondary btn-modify  btn-valid" (click)="open(content,item)">
           <span class="icon-pen"></span>
         </button>
-        <img class="card-img-top" [style.background-image]="'url(' + item.principalPhoto.thumbnailFileUri+ ')'">
+        <img class="card-img-top-list" [style.background-image]="'url(' + item.principalPhoto.thumbnailFileUri+ ')'">
         <div class="card-body">
           <span class="{{item.gpSipmle.icons}} icon-gp"></span>
           <h5 class="card-title">{{item.gpSipmle.label}}</h5>
@@ -27,7 +27,7 @@
 </div>
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-body">
-    <img class="card-img-top" src="../assets/imgs/obsImg.jpg" alt="Card image cap">
+    <img class="card-img-top" src="{{selectedObs.principalPhoto.thumbnailFileUri}}" alt="Card image cap">
     <form class="container" [formGroup]="validationForm" (ngSubmit)="login(validationForm)">
       <div class="btn-raw">
         <button class="btn btn-outline-secondary btn-circle">
@@ -65,23 +65,25 @@
       </div>
       <div class="form-input">
         <div class="form-group ">
-          <input formControlName="groupSimple" class="form-control" [class.is-invalid]="validationForm.controls.groupSimple.touched && validationForm.controls.groupSimple.invalid ">
+          <input formControlName="groupSimple" class="form-control input-tovalidte" [class.is-invalid]="validationForm.controls.groupSimple.touched && validationForm.controls.groupSimple.invalid ">
         </div>
         <div class="form-group">
           <label for="groupOP" class="form-control-label">Groupe taxonomique avancé </label>
-          <input formControlName="groupOP" class="form-control" [class.is-invalid]="validationForm.controls.groupOP.touched && validationForm.controls.groupOP.invalid "
-            id="groupOP">
+          <select  id="groupOP" formControlName="groupOP" class="form-control" >
+            <option *ngFor="let ggOP of listGroupOP" value="{{ggOP.cdGroup}}">{{ggOP.lbGroup}}</option>
+          </select>
         </div>
+        
         <div class="form-group">
           <label for="espece" class="form-control-label">Nom de l'espèce</label>
-          <input formControlName="espece" class="form-control" [class.is-invalid]="validationForm.controls.espece.touched && validationForm.controls.espece.invalid "
-            id="espece">
+          <input formControlName="espece" class="form-control " [(ngModel)]="model" [ngbTypeahead]="search"
+            id="espece" >
         </div>
 
       </div>
     </form>
     <div class="btn-raw">
-      <button class="btn btn-success btn-valid">
+      <button class="btn btn-success btn-valid-modal">
         Valider
       </button>
     </div>

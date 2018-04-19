@@ -3,6 +3,15 @@ import { ObservationService } from '../services/observation.service';
 import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { Observable } from 'rxjs/Observable';
+import { of } from 'rxjs/observable/of';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/debounceTime';
+import 'rxjs/add/operator/distinctUntilChanged';
+import 'rxjs/add/operator/do';
+import 'rxjs/add/operator/map';
+import 'rxjs/add/operator/switchMap';
+import 'rxjs/add/operator/merge';
 import * as _ from "lodash";
 
 @Component({
@@ -26,6 +35,10 @@ export class ObservationsListComponent implements OnInit {
   groupeOP: any;
   groupeSimple: any;
   ListGroupeSimple;
+  model: any;
+  searching = false;
+  searchFailed = false;
+  hideSearchingWhenUnsubscribed = new Observable(() => () => this.searching = false);
 
   constructor(private modalService: NgbModal,
     private formBuilder: FormBuilder,
@@ -105,29 +118,33 @@ export class ObservationsListComponent implements OnInit {
           });
           this.paginStart = this.paginEnd;
           this.paginEnd += this.nbItems;
-          this.observationService.getlistGroupOP()
-            .subscribe(
-              (groupOP) => this.listGroupOP = groupOP,
-              (error) => console.log("getlistGroupOPErr", error),
-              () => {
-                console.log("this.listGroupOP", this.listGroupOP);
-                this.obsLoaded = true;
-                this.spinner.hide()
-              }
-            )
+          this.obsLoaded = true;
+          this.spinner.hide()
         }
       )
   }
   open(content, obs) {
-    console.log("content", obs);
+    this.selectedObs = obs;
+    this.observationService.getlistGroupOP(this.selectedObs.groupSimple)
+      .subscribe(
+        (groupOP) => this.listGroupOP = groupOP,
+        (error) => console.log("getlistGroupOPErr", error),
+        () => {
+          console.log("this.listGroupOP", this.listGroupOP);
 
+        }
+      )
     this.validationForm = this.formBuilder.group({
-      groupSimple: ['', Validators.required],
+      groupSimple: [this.selectedObs.gpSipmle.label, Validators.required],
       groupOP: ['', Validators.required],
       espece: ['', Validators.required]
     })
-    this.selectedObs = obs;
+
+    console.log("this.selectedObs", this.selectedObs);
+
     this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
+
+
   }
 
 
@@ -135,4 +152,22 @@ export class ObservationsListComponent implements OnInit {
     if (this.paginStart <= this.totalItems)
       this.getObs();
   }
+
+
+  search = (text$: Observable<string>) =>
+    text$
+      .debounceTime(300)
+      .distinctUntilChanged()
+      .do(() => this.searching = true)
+      .switchMap(term => 
+        this.observationService.getEspece(term)
+          .do((aa) =>this.searchFailed = false)
+          .catch(() => {
+            this.searchFailed = true;
+            return of([]);
+          }))
+      .do(() => this.searching = false)
+      .merge(this.hideSearchingWhenUnsubscribed);
+
+
 }
