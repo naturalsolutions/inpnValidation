@@ -2,7 +2,7 @@
 <div *ngIf="obsLoaded" class="container-fluid">
   <div class="row">
     <div *ngFor="let item of observations.observations" class="col-lg-2 col-md-4 col-xs-6 thumb">
-      <div class="card">
+      <div class="card card-list ">
         <button class="btn btn-success btn-valid" (click)="validateObs(item.idData)">
           <span class="icon-cheked"></span>
         </button>
@@ -51,7 +51,7 @@
         </div>
         <div class="form-group">
           <label for="espece" class="form-control-label">Nom de l'espèce</label>
-          <input formControlName="espece" class="form-control " [(ngModel)]="model" [ngbTypeahead]="search" id="espece">
+          <input formControlName="espece" class="form-control "  [ngbTypeahead]="search" [inputFormatter]="formatMatches"  [resultFormatter]="formatMatches" id="espece">
         </div>
       </div>
       <div class="btn-raw">

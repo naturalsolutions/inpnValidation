@@ -8,8 +8,8 @@ export class ObservationService {
   constructor(public http: HttpClient) { }
 
   getObservations(pagination?, filtreObs?) {
-
-
+    console.log("filtreObs",filtreObs);
+    
     let token = localStorage.getItem('inpnUser_Access_token');
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
       .set('Authorization', 'Bearer ' + token);
@@ -37,16 +37,14 @@ export class ObservationService {
     return this.http.get<any[]>(Conf.apiBaseUrl2 + 'mobile/biodiv/listgroupop/json', { params: httpParams });
   }
 
-
   getEspece(textSearch) {
-    console.log("ee", textSearch);
-
+    console.log("textSearch", textSearch);
     let httpParams = new HttpParams();
     if (textSearch.length > 1) {
       httpParams = httpParams.append("texte", textSearch);
     }
     return this.http.get<any>(Conf.apiBaseUrl2 + 'autocomplete/especes/recherche', { params: httpParams })
-      .map(res => res = _.values(_.mapValues(res.response.docs, 'nom_complet_valide'))
+      .map(res => res = res.response.docs
 
       )
   }
@@ -55,9 +53,8 @@ export class ObservationService {
   }
 
 
-
-  validateObs(idData: string, idValidateur: string, isValidated: string, idStatus: string, groupSimple?,groupOP?) {
-
+  validateObs(idData: string, idValidateur: string, isValidated: string,
+    idStatus: string, groupSimple?, groupOP?, cdNom?, cdRef?) {
     let httpParams = new HttpParams();
     let validateObj = {
       'idData': idData,
@@ -65,33 +62,28 @@ export class ObservationService {
       'isValidated': isValidated,
       'idStatus': idStatus
     }
-    if (groupSimple) 
-      validateObj['groupSimple']=groupSimple;
-      if (groupOP) 
-      validateObj['groupOP']=groupOP;
-
-
+    if (groupSimple)
+      validateObj['groupSimple'] = groupSimple;
+    if (groupOP)
+      validateObj['groupOP'] = groupOP;
+    if (cdNom)
+      validateObj['cdNom'] = cdNom;
+    if (cdRef)
+      validateObj['cdRef'] = cdRef;
     Object.keys(validateObj).forEach(function (key) {
       httpParams = httpParams.append(key, validateObj[key]);
     });
 
-   
-
-    console.log("body", httpParams);
-
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
     return this.http.post<any>(Conf.apiBaseUrl + 'validation/', httpParams.toString(), { headers, observe: 'response' })
-
   }
 }
-
 
 
 interface pagination {
   paginStart: number,
   paginEnd: number
 }
-
 
 interface filtreObs {
 

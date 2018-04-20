@@ -14,11 +14,16 @@
     </div>
 
   </div>
-  <div class="row   row-btn justify-content-center">
+  <div  *ngIf="!refreshPhotos" class="row   row-btn justify-content-center">
     <button type="button" class="btn next" (click)="getExtraPhotos()">
       Charger de nouvelles photos
     </button>
   </div>
+  <div *ngIf="refreshPhotos" class="row   row-btn justify-content-center">
+      <button type="button" class="btn refresh-btn" (click)="getExtraPhotos()">
+          <span class="icon-enAttenteSynchro"></span> actualiser la liste de photos
+      </button>
+    </div>
 </div>
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-body">

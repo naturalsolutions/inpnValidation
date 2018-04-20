@@ -22,12 +22,13 @@ export class GalleryThumbnailComponent implements OnInit {
   private paginStart: number = 1;
   private paginEnd: number = 18;
   private nbItems: number = 17;
+  refreshPhotos: boolean = false;
 
   constructor(private modalService: NgbModal,
     private spinner: NgxSpinnerService,
     private imagesService: ImagesService) {
 
-     }
+  }
 
   ngOnInit() {
     this.getPhotos();
@@ -35,7 +36,9 @@ export class GalleryThumbnailComponent implements OnInit {
 
   getExtraPhotos() {
     if (this.paginStart <= this.totalItems)
-      this.getPhotos();
+      this.getPhotos()
+    else
+      location.reload();
   }
 
   getPhotos() {
@@ -56,7 +59,10 @@ export class GalleryThumbnailComponent implements OnInit {
           this.paginEnd += this.nbItems;
           this.photosLoaded = true;
           this.spinner.hide();
-          console.log("photos :", this.photos);
+          if (this.paginStart <= this.totalItems)
+            this.refreshPhotos = false;
+          else
+            this.refreshPhotos = true;
         }
       )
   }
@@ -77,7 +83,7 @@ export class GalleryThumbnailComponent implements OnInit {
       return value
     });
     console.log(this.valdidate);
-    this.imagesService.validatePhoto(cdPhoto, idValidateur, isValidated).subscribe(()=> this.modalRef.close())
+    this.imagesService.validatePhoto(cdPhoto, idValidateur, isValidated).subscribe(() => this.modalRef.close())
   }
 
 }
