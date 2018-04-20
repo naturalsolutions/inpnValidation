@@ -21,7 +21,7 @@ label {
   text-align: center;
   font-size: 24px;
   line-height: 1.42857;
-  margin: 5px 8px
+  margin: 5px 10px
 }
 
 .btn-raw {
@@ -110,7 +110,11 @@ label {
 .card:hover {
   .btn-valid {
     display: block
+  };
+  .tag{
+    display: none;
   }
+
 }
 
 .card-img-top-list{
@@ -142,4 +146,30 @@ form{
   box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px #0091ea
   ;
   outline: 0 none;
+}
+
+.tag {
+  position: absolute;
+  z-index: 999;
+  width: 100%;
+  text-align: center;
+  padding: 5px;
+  opacity: 0.6;
+  border-radius: 0;
+}
+
+.valid-tag {
+  background-color: #28a745;
+  color: white
+}
+
+.invalid-tag {
+  background-color: red;
+  color: white
+}
+.gpSimpleLabel{
+  text-align: center;
+  color: #71cb7f;
+  text-transform: uppercase;
+  font-weight: 500
 }

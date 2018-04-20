@@ -18,7 +18,7 @@ export class LoginService {
       .set('username', username)
       .set('password', password)
       .set('grant_type', "password")
-      .set('client_id', "test");
+      .set('client_id', "inpnespeces");
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
     return this.http.post(Conf.casBaseUrl + "accessToken", body.toString(),
       { headers, responseType: "text" })
@@ -26,6 +26,8 @@ export class LoginService {
 
   getUser() {
     let token = localStorage.getItem('inpnUser_Access_token');
+    //let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
+    //.set('Authorization', 'Bearer ' + token);
     let params = new HttpParams()
       .set('access_token', token)
     return this.http.get<User>(Conf.casBaseUrl + "profile", { params: params })
@@ -34,10 +36,10 @@ export class LoginService {
   refreshToken() {
     let refreshToken = localStorage.getItem('refresh_token');
     let body = new HttpParams()
-      .set('client_secret', 'test')
+      .set('client_secret', 'qy9yV3R6')
       .set('refresh_token', refreshToken)
       .set('grant_type', 'refresh_token')
-      .set('client_id', 'test');
+      .set('client_id', 'inpnespeces');
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
     return this.http.post(Conf.casBaseUrl + "accessToken", body.toString(),
       { headers, responseType: "text" })
@@ -53,6 +55,7 @@ export class LoginService {
   }
 
   isconnected(): Promise<boolean> {
+   
     return new Promise((resolve, reject) => {
       if (localStorage.getItem('inpnUser_Access_token')) {
         let token = localStorage.getItem('inpnUser_Access_token');
@@ -66,7 +69,7 @@ export class LoginService {
             (error) => {
               if (error.error.error[0] = 'expired_accessToken') {
                 console.log("getUserHeaderErr :  expired_accessToken")
-                // this.loginService.refreshToken().subscribe((data) => console.log("data", data))
+                 this.refreshToken().subscribe((data) => console.log("data", data))
               }
               return resolve(false);
             },
