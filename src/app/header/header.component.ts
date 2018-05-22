@@ -24,70 +24,34 @@ export class HeaderComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-   
     this.isConnected();
-
   }
 
-
   isConnected() {
-    console.log("Headers");
-    
     this.loginService.getIsConnected()
       .subscribe(
         (isConnected) => {
-          console.log("isConnected",isConnected);
-          if(isConnected==true)
-          this.loginService.getUser().subscribe(
-            (currentUser) => this.currentUser = currentUser,
-            (error) => console.log("getUserErr: ", error),
-            () => {
-              this.loadHeader = true;
-              console.log("userStatus", isConnected);
-              this.userConnected = isConnected;
-              this.role = this.currentUser.attributes.GROUPS;
-              console.log("this.role", this.role);
-              if (this.role == "IE_VALIDATOR_PHOTO")
-                this.obsRoute = "gallery";
-              else
-                this.obsRoute = "observations";
-            }
-          )
-          else
-          {
+          if (isConnected == true)
+            this.loginService.getUser().subscribe(
+              (currentUser) => this.currentUser = currentUser,
+              (error) => console.log("getUserErr: ", error),
+              () => {
+                this.loadHeader = true;
+                this.userConnected = isConnected;
+                this.role = this.currentUser.attributes.GROUPS;
+                if (this.role == "IE_VALIDATOR_PHOTO")
+                  this.obsRoute = "gallery";
+                else
+                  this.obsRoute = "observations";
+              }
+            )
+          else {
             this.loadHeader = true;
             this.userConnected = isConnected;
           }
-
         })
   }
 
-
-
-
-  isconnected() {
-    this.loginService.isconnected()
-      .then(
-        (status) => {
-          console.log("status", status);
-
-          this.userConnected = status;
-          this.loadHeader = true;
-          this.currentUser = this.loginService.userProfile;
-          if (this.userConnected) {
-            this.role = this.currentUser.attributes.GROUPS;
-            console.log("this.role", this.role);
-            if (this.role == "IE_VALIDATOR_PHOTO")
-              this.obsRoute = "gallery";
-            else
-              this.obsRoute = "observations";
-          }
-
-
-        }
-      )
-
-  }
   logout() {
     this.loginService.logout();
     this.router.navigate(['home']);

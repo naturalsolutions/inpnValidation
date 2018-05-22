@@ -54,7 +54,6 @@ export class GalleryThumbnailComponent implements OnInit {
         },
         (error) => console.log("getPhotoErr : ", error),
         () => {
-
           this.paginStart = this.paginEnd;
           this.paginEnd += this.nbItems;
           this.photosLoaded = true;
@@ -68,7 +67,6 @@ export class GalleryThumbnailComponent implements OnInit {
   }
 
   open(content, photo) {
-    console.log("content", photo);
     this.selectedPhoto = photo;
     this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
   }

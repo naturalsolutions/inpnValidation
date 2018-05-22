@@ -22,7 +22,7 @@ import { User } from "../user";
 })
 export class ObservationsListComponent implements OnInit {
 
-  icons = {
+  private icons = {
     506: "icon-reptile_amphibien",
     501: "icon-champignon_lichen",
     502: "icon-crabe_crevette_cloporte_millepatte",
@@ -34,13 +34,11 @@ export class ObservationsListComponent implements OnInit {
     158: "icon-poisson",
     24222202: "icon-more",
   };
-  modalRef: NgbModalRef;
+  private modalRef: NgbModalRef;
   validationForm: FormGroup;
   currentUser: User;
   userRole: string;
   public obsLoaded: boolean = false;
-  disableEspece: boolean;
-  disableGrpOP: boolean;
   loadForm: boolean = false;
   valdidate;
   selectedObs: any;
@@ -50,14 +48,17 @@ export class ObservationsListComponent implements OnInit {
   private nbItems: number = 11;
   totalItems;
   private listGroupOP;
+  refreshObs: boolean = false;
   principalPhoto: any;
   groupeOP: any;
   groupeSimple: any;
   listGroupeSimple;
   listGroupeSimpleArray: any;
   hideSearchingWhenUnsubscribed = new Observable(() => () => this.searching = false);
-  searching = false;
-  searchFailed = false;
+  searching: boolean = false;
+  searchFailed: boolean = false;
+  expertValidator: boolean = false;
+  gropValidator: boolean = false;;
 
   constructor(private modalService: NgbModal,
     private formBuilder: FormBuilder,
@@ -67,24 +68,8 @@ export class ObservationsListComponent implements OnInit {
 
   ngOnInit() {
     this.currentUser = this.authGuard.userProfile;
-    console.log("this.currentUser", this.currentUser);
     this.userRole = this.currentUser.attributes.GROUPS
-    switch (this.userRole) {
-      case 'IE_VALIDATOR_GRSIMPLE':
-        this.disableGrpOP = true
-        this.disableEspece = true
-        break;
-      case 'IE_VALIDATOR_GROPE':
-        this.disableGrpOP = false
-        this.disableEspece = true
-        break;
-      case 'IE_VALIDATOR_EXPERT':
-        this.disableGrpOP = false
-        this.disableEspece = false
-        break;
-      default:
-        break;
-    }
+
     this.getObs();
   }
 
@@ -96,10 +81,12 @@ export class ObservationsListComponent implements OnInit {
         filtreStatutValidation = 2
         break;
       case 'IE_VALIDATOR_GROPE':
-        filtreStatutValidation = 3
+        filtreStatutValidation = 3;
+        this.gropValidator = true
         break;
       case 'IE_VALIDATOR_EXPERT':
-        filtreStatutValidation = 4
+        filtreStatutValidation = 4;
+        this.expertValidator = true
         break;
       default:
         break;
@@ -107,7 +94,7 @@ export class ObservationsListComponent implements OnInit {
     this.observationService.getObservations({
       paginStart: this.paginStart,
       paginEnd: this.paginEnd
-    },{"filtreStatutValidation" :filtreStatutValidation})
+    }, { "filtreStatutValidation": filtreStatutValidation })
       .subscribe(
         (obs) => {
           this.observations = obs;
@@ -139,7 +126,6 @@ export class ObservationsListComponent implements OnInit {
                         value.groupeOP = _.find(this.listGroupOP, { "cdGroup": value.cdGroupOP });
                         return value
                       });
-                      console.log("obsList", this.observations.observations);
                       this.paginStart = this.paginEnd;
                       this.paginEnd += this.nbItems;
                       this.obsLoaded = true;
@@ -153,6 +139,7 @@ export class ObservationsListComponent implements OnInit {
       )
   }
   open(content, obs) {
+
     this.selectedObs = obs;
     _.map(this.listGroupeSimple.GroupGp, (value) => {
       if (this.selectedObs.groupSimple == value.cdGroupGrandPublic)
@@ -164,22 +151,28 @@ export class ObservationsListComponent implements OnInit {
         (groupOP) => this.listGroupOP = groupOP,
         (error) => console.log("getlistGroupOPErr", error),
         () => {
-          this.loadForm = true;
+
           this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": this.selectedObs.cdGroupOP });
           if (this.selectedObs.groupeOP)
             this.validationForm = this.formBuilder.group({
-              groupOP: [{ value: this.selectedObs.groupeOP.cdGroup, disabled: this.disableGrpOP }],
-              espece: [{ value: '', disabled: this.disableEspece }]
+              groupOP: [this.selectedObs.groupeOP.cdGroup, Validators.required],
+              espece: ['', Validators.required]
             });
           else
             this.validationForm = this.formBuilder.group({
-              groupOP: [{ value: '', disabled: this.disableGrpOP }],
-              espece: [{ value: '', disabled: this.disableEspece }]
+              groupOP: ['', Validators.required],
+              espece: ['', Validators.required]
             });
+
+          this.validationForm.controls['groupOP'].statusChanges
+            .subscribe((data) => {
+              this.selectedObs.cdGroupOP = this.validationForm.controls['groupOP'].value
+            })
+          this.loadForm = true;
         }
       )
-    console.log("this.selectedObs", this.selectedObs);
-    this.modalService.open(content, { centered: true, windowClass: 'css-modal' }).result.then((result) => {
+    this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
+    this.modalRef.result.then((result) => {
     }, (reason) => {
       _.map(this.listGroupeSimple.GroupGp, (value) => {
         if (this.selectedObs.groupSimple == value.cdGroupGrandPublic)
@@ -194,11 +187,9 @@ export class ObservationsListComponent implements OnInit {
       this.getObs();
   }
   private validateObs(idData, groupSimple?, groupOP?, cdNom?, cdRef?) {
-
     let idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
     let idStatus = '2';
     let isValidated = 'false';
-
     switch (this.userRole) {
       case 'IE_VALIDATOR_GRSIMPLE':
         idStatus = '3'
@@ -213,7 +204,6 @@ export class ObservationsListComponent implements OnInit {
       default:
         break;
     }
-
     _.map(this.observations.observations, (value) => {
       if (value.idData == idData) {
         value.isTreated = true;
@@ -221,31 +211,52 @@ export class ObservationsListComponent implements OnInit {
       return value
     });
     this.observationService.validateObs(idData, idValidateur, isValidated,
-      idStatus, groupSimple, groupOP, cdNom, cdRef).subscribe()
+      idStatus, groupSimple, groupOP, cdNom, cdRef).subscribe(
+        (data) => {
+          console.log("data", data);
+          this.modalRef.close()
+        },
+        (error) => console.log("error val", error)
+
+      )
   }
 
   submit(obsForm) {
-    console.log("obsForm", obsForm.value);
-    switch (this.userRole) {
-      case 'IE_VALIDATOR_GRSIMPLE':
-        this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple)
-        break;
-      case 'IE_VALIDATOR_GROPE':
-        this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple, obsForm.value.groupOP)
-        this.selectedObs.cdGroupOP = obsForm.value.groupOP;
-        this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
-        break;
-      case 'IE_VALIDATOR_EXPERT':
-        this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
-          obsForm.value.groupOP, obsForm.value.espece.cd_nom[0], obsForm.value.espece.cd_ref)
-        this.selectedObs.cdGroupOP = obsForm.value.groupOP;
-        this.selectedObs.nomCompletHtml = obsForm.value.espece.nom_complet_html_valide;
-        this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
-        console.log("de", this.observations.observations)
-        break;
-      default:
-        break;
+    console.log("obsForm", obsForm);
+    {
+      switch (this.userRole) {
+        case 'IE_VALIDATOR_GRSIMPLE':
+          this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple)
+          break;
+        case 'IE_VALIDATOR_GROPE':
+          if (obsForm.controls.groupOP.valid) {
+            this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple, obsForm.value.groupOP)
+            this.selectedObs.cdGroupOP = obsForm.value.groupOP;
+            this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
+          }
+          else console.log("form error");
+          break;
+        case 'IE_VALIDATOR_EXPERT':
+          if (obsForm.valid) {
+            if (typeof obsForm.value.espece == "object") {
+              this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
+                obsForm.value.groupOP, obsForm.value.espece.cd_nom[0], obsForm.value.espece.cd_ref)
+              this.selectedObs.cdGroupOP = obsForm.value.groupOP;
+              this.selectedObs.nomCompletHtml = obsForm.value.espece.nom_complet_html_valide;
+              this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
+            }
+            else { console.log("form error espece");
+            this.validationForm.controls['espece'].setErrors({"err" : "error espece"})
+           }
+          }
+          else console.log("form error");
+          break;
+        default:
+          break;
+      }
     }
+
+
   }
 
   modifyGrpSimple(grpSimple) {
@@ -272,6 +283,7 @@ export class ObservationsListComponent implements OnInit {
     });
 
   }
+
   formatMatches = (value: any) => value.nom_complet_valide || '';
   search = (text$: Observable<string>) =>
     text$
@@ -279,7 +291,7 @@ export class ObservationsListComponent implements OnInit {
       .distinctUntilChanged()
       .do(() => this.searching = true)
       .switchMap(term =>
-        this.observationService.getEspece(term)
+        this.observationService.getEspece(term, this.selectedObs.cdGroupOP)
           .do((espece) => {
             this.searchFailed = false
           })
@@ -289,6 +301,4 @@ export class ObservationsListComponent implements OnInit {
           }))
       .do(() => this.searching = false)
       .merge(this.hideSearchingWhenUnsubscribed);
-
-
 }

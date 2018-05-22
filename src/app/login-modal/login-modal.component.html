@@ -9,7 +9,7 @@
   <form [formGroup]="loginForm" (ngSubmit)="login(loginForm)" >
     <div class="modal-body">
       <div class="form-group" [class.has-danger]="loginForm.controls.username.touched && loginForm.controls.username.invalid ">
-        <label for="username" class="form-control-label">Adresse email</label>
+        <label for="username" class="form-control-label">Identifiant </label>
         <input  formControlName="username" class="form-control"  ngControl="username"  id="username">
       </div>
       <div class="form-group" [class.has-danger]="loginForm.controls.password.touched && loginForm.controls.password.invalid ">

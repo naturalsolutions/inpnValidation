@@ -8,5 +8,5 @@ export const routing = RouterModule.forRoot([
   { path: 'gallery', component: GalleryThumbnailComponent , canActivate: [AuthGuard]},
   { path: 'home', component: HomeComponent },
   { path: '', component: HomeComponent },
-  //{ path: '**', redirectTo: 'not-found' },
-])
+  { path: '**', redirectTo: 'home' },
+],{ useHash: true })

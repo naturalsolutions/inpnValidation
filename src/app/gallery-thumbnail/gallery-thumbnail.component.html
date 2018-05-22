@@ -9,22 +9,23 @@
         <div *ngIf="photo.isValidated=='false' && photo.isTreated=='true'" class="tag invalid-tag">
           <span class="icon-refuse"></span>
         </div>
-        <img class="thumb-img " [style.background-image]="'url(' + photo.thumbnailFileUri + ')'">
+        <div class="thumb-img " [style.background-image]="'url(' + photo.thumbnailFileUri + ')'"></div>
       </a>
     </div>
 
   </div>
-  <div  *ngIf="!refreshPhotos" class="row   row-btn justify-content-center">
+  <div *ngIf="!refreshPhotos" class="row   row-btn justify-content-center">
     <button type="button" class="btn next" (click)="getExtraPhotos()">
       Charger de nouvelles photos
     </button>
   </div>
   <div *ngIf="refreshPhotos" class="row   row-btn justify-content-center">
-      <button type="button" class="btn refresh-btn" (click)="getExtraPhotos()">
-          <span class="icon-enAttenteSynchro"></span> actualiser la liste de photos
-      </button>
-    </div>
+    <button type="button" class="btn refresh-btn" (click)="getExtraPhotos()">
+      <span class="icon-enAttenteSynchro"></span> actualiser la liste de photos
+    </button>
+  </div>
 </div>
+
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-body">
     <img src="{{selectedPhoto.inpnFileUri}}">
@@ -35,5 +36,4 @@
       <span class="icon-refuse"></span>
     </button>
   </div>
-
 </ng-template>

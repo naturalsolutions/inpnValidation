@@ -14,8 +14,7 @@ import { Router, RouterModule } from '@angular/router';
 export class LoginModalComponent {
 
   @Input() btnClass;
-
-  
+  currentUser;
   user;
   msg_error: string;
   loginForm: FormGroup;
@@ -30,7 +29,7 @@ export class LoginModalComponent {
   }
 
   ngOnInit() {
-    console.log(this.btnClass);
+
   }
 
   private open(content) {
@@ -44,7 +43,6 @@ export class LoginModalComponent {
 
   private login(loginForm) {
     this.user = loginForm.value;
-    console.log("this.user", this.user);
     this.loginService.login(this.user.username, this.user.password)
       .subscribe(
         (res) => {
@@ -57,12 +55,16 @@ export class LoginModalComponent {
 
           this.loginService.getUser().subscribe(
             (user) => {
-              console.log("user", user)
+              this.currentUser = user;
             },
             (error) => console.log("getUserERR", error),
             () => {
-              this.loginService.setIsConnected(true)
-              this.modalRef.close()
+              this.loginService.setIsConnected(true);
+              this.modalRef.close();
+              if (this.currentUser.attributes.GROUPS == "IE_VALIDATOR_PHOTO")
+                this.router.navigate(['gallery'])
+              else
+                this.router.navigate(['observations'])
             }
           )
         }

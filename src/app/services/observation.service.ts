@@ -37,9 +37,10 @@ export class ObservationService {
     return this.http.get<any[]>(Conf.apiBaseUrl2 + 'mobile/biodiv/listgroupop/json', { params: httpParams });
   }
 
-  getEspece(textSearch) {
+  getEspece(textSearch, groupOP) {
     console.log("textSearch", textSearch);
     let httpParams = new HttpParams();
+    httpParams = httpParams.append("cd_group_op", groupOP);
     if (textSearch.length > 1) {
       httpParams = httpParams.append("texte", textSearch);
     }

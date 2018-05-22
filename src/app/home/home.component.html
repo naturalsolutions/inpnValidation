@@ -1,6 +1,6 @@
 <div class="inner">
     <div class="band-text">Pour commencer à valider les observations, connecter vous !</div>     
-    <login-modal [btnClass]=homeStyle class="btn connect" routerLinkActive="active"></login-modal>
+    <login-modal *ngIf="!userConnected" [btnClass]=homeStyle class="btn connect" routerLinkActive="active"></login-modal>
     <img src="../assets/imgs/slider-hp.jpg" class="img-fluid" alt="">
 </div>
 
