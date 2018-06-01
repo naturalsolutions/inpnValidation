@@ -4,6 +4,9 @@ import { ImagesService } from '../services/images.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from 'lodash';
 
+import { User } from '../user';
+import { GalleryGuard } from '../services/gallery-guard.service';
+
 @Component({
   selector: 'app-gallery-thumbnail',
   templateUrl: './gallery-thumbnail.component.html',
@@ -11,41 +14,55 @@ import * as _ from 'lodash';
 })
 export class GalleryThumbnailComponent implements OnInit {
 
+  idValidateur: string;
   valdidate: boolean = false;
   istreated: boolean = false;
   totalItems: number;
   photosLoaded: boolean = false;
   closeResult: string;
+  currentUser: User;
   photos;
   selectedPhoto;
   private modalRef: NgbModalRef;
-  private paginStart: number = 1;
-  private paginEnd: number = 18;
+  private cuurentPage: number = 1;
   private nbItems: number = 17;
-  refreshPhotos: boolean = false;
+  private previousPage: number = 1;
 
   constructor(private modalService: NgbModal,
     private spinner: NgxSpinnerService,
+    private authGuard: GalleryGuard,
     private imagesService: ImagesService) {
 
   }
 
   ngOnInit() {
-    this.getPhotos();
+    this.currentUser = this.authGuard.userProfile;
+    console.log("this.currentUser",this.currentUser);
+    
+    this.idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
+    this.getPhotos(this.cuurentPage, this.nbItems + 1);
   }
 
-  getExtraPhotos() {
-    if (this.paginStart <= this.totalItems)
-      this.getPhotos()
-    else
-      location.reload();
+
+  loadPage(page: number) {
+    let paginStart;
+    let paginEnd;
+    if (page !== this.previousPage) {
+      if (page > 1)
+        paginStart = this.nbItems * (page - 1);
+      else
+        paginStart = 1;
+      this.previousPage = page;
+      paginEnd = paginStart + this.nbItems
+      this.getPhotos(paginStart, paginEnd)
+    }
   }
 
-  getPhotos() {
+  getPhotos(paginStart, paginEnd) {
     this.spinner.show();
     this.imagesService.getPhotos({
-      paginStart: this.paginStart,
-      paginEnd: this.paginEnd
+      paginStart: paginStart,
+      paginEnd: paginEnd
     }, { filtrePhotosTreated: "false" })
       .subscribe(
         (photos) => {
@@ -54,34 +71,29 @@ export class GalleryThumbnailComponent implements OnInit {
         },
         (error) => console.log("getPhotoErr : ", error),
         () => {
-          this.paginStart = this.paginEnd;
-          this.paginEnd += this.nbItems;
           this.photosLoaded = true;
           this.spinner.hide();
-          if (this.paginStart <= this.totalItems)
-            this.refreshPhotos = false;
-          else
-            this.refreshPhotos = true;
         }
       )
   }
 
   open(content, photo) {
     this.selectedPhoto = photo;
-    this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
+    if (this.selectedPhoto.isTreated == "false")
+      this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
   }
 
   private validatePhoto(cdPhoto, idValidateur, isValidated) {
-    this.valdidate = isValidated;
-    _.map(this.photos, (value) => {
-      if (value.cdPhoto == cdPhoto) {
-        value.isTreated = 'true';
-        value.isValidated = isValidated;
-      }
-      return value
-    });
-    console.log(this.valdidate);
-    this.imagesService.validatePhoto(cdPhoto, idValidateur, isValidated).subscribe(() => this.modalRef.close())
+    this.imagesService.validatePhoto(cdPhoto, idValidateur, isValidated).subscribe(() => {
+      _.map(this.photos, (value) => {
+        if (value.cdPhoto == cdPhoto) {
+          value.isTreated = 'true';
+          value.isValidated = isValidated;
+        }
+        return value
+      });
+      this.modalRef.close()
+    })
   }
 
 }

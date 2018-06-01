@@ -8,8 +8,6 @@ export class ObservationService {
   constructor(public http: HttpClient) { }
 
   getObservations(pagination?, filtreObs?) {
-    console.log("filtreObs",filtreObs);
-    
     let token = localStorage.getItem('inpnUser_Access_token');
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
       .set('Authorization', 'Bearer ' + token);

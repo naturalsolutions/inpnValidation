@@ -2,7 +2,6 @@ import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from '../services/login.service';
-import { AuthGuard } from '../services/auth-guard.service';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
@@ -24,8 +23,7 @@ export class LoginModalComponent {
     private modalService: NgbModal,
     private formBuilder: FormBuilder,
     protected router: Router,
-    private loginService: LoginService,
-    private authGuard: AuthGuard) {
+    private loginService: LoginService) {
   }
 
   ngOnInit() {
@@ -56,6 +54,8 @@ export class LoginModalComponent {
           this.loginService.getUser().subscribe(
             (user) => {
               this.currentUser = user;
+              console.log("this.currentUser",this.currentUser);
+              
             },
             (error) => console.log("getUserERR", error),
             () => {

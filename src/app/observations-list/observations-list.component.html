@@ -2,14 +2,28 @@
 <div *ngIf="obsLoaded" class="container-fluid">
   <div class="row">
     <div *ngFor="let item of observations.observations" class="col-lg-2 col-md-4 col-xs-6 thumb">
-      <div class="card card-list" >
-        <button class="btn btn-secondary btn-modify" (click)="open(content,item)">
+      <div class="card card-list ">
+        <button *ngIf="item.isTreated!=true" [ngClass]="item.classValidBtn" (click)="shortcutValidate(item)">
           <span class="icon-cheked"></span>
+        </button>
+        <button *ngIf="item.isTreated!=true" [ngClass]="item.classModifyBtn" (click)="open(content,item)">
+          <span class="icon-pen"></span>
         </button>
         <div *ngIf="item.isTreated==true" class="tag valid-tag">
           <span class="icon-cheked"></span>
         </div>
-        <img class="card-img-top-list" [style.background-image]="'url(' + item.principalPhoto.thumbnailFileUri+ ')'">
+        <img *ngIf="item.photos.length < 2" class="card-img-top-list" [style.background-image]="'url('+item.principalPhoto.thumbnailFileUri+')'">
+        <ngb-carousel interval=0 *ngIf="item.photos.length > 1">
+          <ng-template *ngFor="let photo of item.photos" ngbSlide>
+            <img [ngClass]="{
+              'card-img-top-list':photo.isValidated == 'true',
+              'invalidPhoto':photo.isValidated == 'false'
+            }" [style.background-image]="'url(' + photo.thumbnailFileUri+ ')'">
+            <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
+              <span class="icon-refuse"></span>
+            </div>
+          </ng-template>
+        </ngb-carousel>
         <div class="card-body">
           <span class="{{item.gpSipmle.icons}} icon-gp"></span>
           <h5 class="card-title">{{item.gpSipmle.groupGrandPublic}}</h5>
@@ -19,21 +33,25 @@
       </div>
     </div>
   </div>
-  <div *ngIf="!refreshObs" class="row  row-btn justify-content-center">
-    <button type="button" class="btn btn-round next" (click)="getExtraObs()">
-      Charger de nouvelles observations
-    </button>
-  </div>
-  <div *ngIf="refreshObs" class="row   row-btn justify-content-center">
-    <button type="button" class="btn refresh-btn" (click)="getExtraPhotos()">
-      <span class="icon-enAttenteSynchro"></span> Actualiser la liste de photos
-    </button>
-  </div>
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [pageSize]="nbItems" [(page)]="cuurentPage"
+    (pageChange)="loadPage($event)"></ngb-pagination>
 </div>
 
 <ng-template #content let-c="close" let-d="dismiss">
   <div *ngIf="loadForm" class="modal-body">
-    <img class="card-img-top" src="{{selectedObs.principalPhoto.thumbnailFileUri}}" alt="Card image cap">
+
+    <img *ngIf="selectedObs.photos.length < 2" class="card-img-top" src="{{selectedObs.principalPhoto.thumbnailFileUri}}">
+    <ngb-carousel interval=0 *ngIf="selectedObs.photos.length > 1">
+      <ng-template *ngFor="let photo of selectedObs.photos" ngbSlide>
+        <img [ngClass]="{
+          'card-img-top':photo.isValidated == 'true',
+          'invalidPhoto-modal':photo.isValidated == 'false'
+        }" src="{{photo.thumbnailFileUri}}">
+        <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
+          <span class="icon-refuse"></span>
+        </div>
+      </ng-template>
+    </ngb-carousel>
     <form class="container" [formGroup]="validationForm" (submit)="submit(validationForm)">
       <div *ngFor="let row of listGroupeSimpleArray" class="row justify-content-center">
         <div *ngFor="let grpSimple of row">
@@ -48,7 +66,8 @@
         </div>
         <div *ngIf="expertValidator || gropValidator" class="form-group">
           <label for="groupOP" class="form-control-label">Groupe taxonomique*</label>
-          <select id="groupOP" formControlName="groupOP" class="form-control" [class.is-invalid]="validationForm.controls.groupOP.invalid" [class.is-valid]="validationForm.controls.groupOP.valid" >
+          <select id="groupOP" formControlName="groupOP" class="form-control" [class.is-invalid]="validationForm.controls.groupOP.invalid"
+            [class.is-valid]="validationForm.controls.groupOP.valid">
             <option *ngFor="let ggOP of listGroupOP" value="{{ggOP.cdGroup}}">{{ggOP.lbGroup}}</option>
           </select>
           <div class="invalid-feedback">
@@ -58,10 +77,10 @@
         <div *ngIf="expertValidator" class="form-group">
           <label for="espece" class="form-control-label">Nom de l'espèce*</label>
           <input formControlName="espece" class="form-control " [ngbTypeahead]="search" [inputFormatter]="formatMatches" [resultFormatter]="formatMatches"
-            id="espece" [class.is-invalid]="validationForm.controls.espece.invalid" [class.is-valid]="validationForm.controls.espece.valid" >
-            <div class="invalid-feedback">
-              Champs Obligatoire
-            </div>
+            id="espece" [class.is-invalid]="validationForm.controls.espece.invalid" [class.is-valid]="validationForm.controls.espece.valid">
+          <div class="invalid-feedback">
+            Champs Obligatoire
+          </div>
         </div>
       </div>
       <div class="btn-raw">

@@ -18,7 +18,8 @@ import { LoginModalComponent } from './login-modal/login-modal.component';
 import { ImagesService } from './services/images.service';
 import { ObservationService } from './services/observation.service';
 import { LoginService } from './services/login.service';
-import { AuthGuard } from './services/auth-guard.service'
+import { ObsGuard } from './services/obs-guard.service';
+import { GalleryGuard } from './services/gallery-guard.service';
 import { AuthInterceptor } from './services/authInterceptor';
 
 
@@ -53,7 +54,8 @@ import { AuthInterceptor } from './services/authInterceptor';
     ImagesService,
     ObservationService,
     LoginService,
-    AuthGuard
+    ObsGuard,
+    GalleryGuard
   ],
   bootstrap: [AppComponent]
 })

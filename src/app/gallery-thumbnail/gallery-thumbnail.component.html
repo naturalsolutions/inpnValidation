@@ -1,38 +1,36 @@
 <ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <div *ngIf="photosLoaded" class="container-fluid">
-  <div class="row">
-    <div *ngFor="let photo of photos" class=" col-lg-2 col-md-4 col-xs-6 thumb">
-      <a class="thumbnail" (click)="open(content,photo)">
+  <div class="row ">
+    <div *ngFor="let photo of photos" class=" col-lg-2 col-md-4 col-xs-6 thumb ">
+      <div class="thumbnail" (click)="open(content,photo)">
         <div *ngIf="photo.isValidated=='true' && photo.isTreated=='true'" class="tag valid-tag">
           <span class="icon-cheked"></span>
         </div>
         <div *ngIf="photo.isValidated=='false' && photo.isTreated=='true'" class="tag invalid-tag">
           <span class="icon-refuse"></span>
         </div>
+        <button *ngIf="photo.isTreated=='false'" class="btn btn-success btn-list" (click)="validatePhoto(photo.cdPhoto,idValidateur,'true')">
+          <span class="icon-cheked"></span>
+        </button>
+        <button *ngIf="photo.isTreated=='false'" class="btn btn-danger btn-list btn-right" (click)="validatePhoto(photo.cdPhoto,idValidateur,'false')">
+          <span class="icon-refuse"></span>
+        </button>
         <div class="thumb-img " [style.background-image]="'url(' + photo.thumbnailFileUri + ')'"></div>
-      </a>
+      </div>
     </div>
 
   </div>
-  <div *ngIf="!refreshPhotos" class="row   row-btn justify-content-center">
-    <button type="button" class="btn next" (click)="getExtraPhotos()">
-      Charger de nouvelles photos
-    </button>
-  </div>
-  <div *ngIf="refreshPhotos" class="row   row-btn justify-content-center">
-    <button type="button" class="btn refresh-btn" (click)="getExtraPhotos()">
-      <span class="icon-enAttenteSynchro"></span> actualiser la liste de photos
-    </button>
-  </div>
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [pageSize]="nbItems" [(page)]="cuurentPage"
+    (pageChange)="loadPage($event)"></ngb-pagination>
 </div>
 
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-body">
     <img src="{{selectedPhoto.inpnFileUri}}">
-    <button class="btn btn-success" (click)="validatePhoto(selectedPhoto.cdPhoto,'111','true')">
+    <button class="btn btn-success btn-modal" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'true')">
       <span class="icon-cheked"></span>
     </button>
-    <button class="btn btn-danger" (click)="validatePhoto(selectedPhoto.cdPhoto,'111','false')">
+    <button class="btn btn-danger btn-modal btn-right" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'false')">
       <span class="icon-refuse"></span>
     </button>
   </div>

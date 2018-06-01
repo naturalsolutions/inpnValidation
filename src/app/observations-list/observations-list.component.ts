@@ -13,7 +13,7 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/merge';
 import * as _ from "lodash";
-import { AuthGuard } from '../services/auth-guard.service';
+import { ObsGuard } from '../services/obs-guard.service';
 import { User } from "../user";
 @Component({
   selector: 'app-observations-list',
@@ -43,12 +43,11 @@ export class ObservationsListComponent implements OnInit {
   valdidate;
   selectedObs: any;
   private observations;
-  private paginStart: number = 1;
-  private paginEnd: number = 12;
-  private nbItems: number = 11;
   totalItems;
+  private cuurentPage: number = 1;
+  private nbItems: number = 11;
+  private previousPage: number = 1;
   private listGroupOP;
-  refreshObs: boolean = false;
   principalPhoto: any;
   groupeOP: any;
   groupeSimple: any;
@@ -58,31 +57,48 @@ export class ObservationsListComponent implements OnInit {
   searching: boolean = false;
   searchFailed: boolean = false;
   expertValidator: boolean = false;
-  gropValidator: boolean = false;;
+  gropValidator: boolean = false;
+
 
   constructor(private modalService: NgbModal,
     private formBuilder: FormBuilder,
     private spinner: NgxSpinnerService,
-    private authGuard: AuthGuard,
+    private authGuard: ObsGuard,
     private observationService: ObservationService) { }
 
   ngOnInit() {
     this.currentUser = this.authGuard.userProfile;
     this.userRole = this.currentUser.attributes.GROUPS
 
-    this.getObs();
+    this.getObs(this.cuurentPage, this.nbItems + 1);
   }
 
-  getObs() {
+
+  loadPage(page: number) {
+    let paginStart;
+    let paginEnd;
+    if (page !== this.previousPage) {
+      if (page > 1)
+        paginStart = this.nbItems * (page - 1);
+      else
+        paginStart = 1;
+      this.previousPage = page;
+      paginEnd = paginStart + this.nbItems
+      this.getObs(paginStart, paginEnd)
+    }
+  }
+
+  getObs(paginStart, paginEnd) {
     this.spinner.show();
+    this.obsLoaded = false;
     let filtreStatutValidation
     switch (this.userRole) {
       case 'IE_VALIDATOR_GRSIMPLE':
-        filtreStatutValidation = 2
+        filtreStatutValidation = 2;
         break;
       case 'IE_VALIDATOR_GROPE':
         filtreStatutValidation = 3;
-        this.gropValidator = true
+        this.gropValidator = true;
         break;
       case 'IE_VALIDATOR_EXPERT':
         filtreStatutValidation = 4;
@@ -92,11 +108,16 @@ export class ObservationsListComponent implements OnInit {
         break;
     }
     this.observationService.getObservations({
-      paginStart: this.paginStart,
-      paginEnd: this.paginEnd
-    }, { "filtreStatutValidation": filtreStatutValidation })
+      paginStart: paginStart,
+      paginEnd: paginEnd
+    }, {
+        "filtreStatutValidation": filtreStatutValidation,
+        "filtreAllPhotoTreated": "true",
+        "filtrePhotoValidated": "true"
+      })
       .subscribe(
         (obs) => {
+          console.log("obs :", obs);
           this.observations = obs;
           this.totalItems = obs.totLines;
         },
@@ -113,6 +134,62 @@ export class ObservationsListComponent implements OnInit {
                   return value
                 });
                 _.map(this.observations.observations, (value) => {
+                  switch (this.userRole) {
+                    case 'IE_VALIDATOR_GRSIMPLE':
+                      value.classValidBtn = {
+                        'btn btn-success btn-valid': true,
+                      }
+                      value.classModifyBtn = {
+                        'btn': true,
+                        'btn-secondary': true,
+                        ' btn-valid': true,
+                        'btn-modify ': true,
+                      }
+                      break;
+                    case 'IE_VALIDATOR_GROPE':
+                      if (value.cdGroupOP == 0)
+                        value.canValidate = false;
+                      else
+                        value.canValidate = true;
+                      value.classValidBtn = {
+                        'btn btn-success btn-valid': value.canValidate,
+                        'btn-valid-disabled': !value.canValidate
+                      }
+                      value.classModifyBtn = {
+                        'btn': true,
+                        'btn-secondary': true,
+                        ' btn-valid': true,
+                        'btn-modify ': value.canValidate,
+                        'btn-modify-large': !value.canValidate
+                      }
+                      break;
+                    case 'IE_VALIDATOR_EXPERT':
+                      if (value.cdNom == 0 || value.cdGroupOP == 0)
+                        value.canValidate = false
+                      else
+                        value.canValidate = true
+                      value.classValidBtn = {
+                        'btn btn-success btn-valid': value.canValidate,
+                        'btn-valid-disabled': !value.canValidate
+                      }
+                      value.classModifyBtn = {
+                        'btn': true,
+                        'btn-secondary': true,
+                        ' btn-valid': true,
+                        'btn-modify ': value.canValidate,
+                        'btn-modify-large': !value.canValidate
+                      }
+
+                      break;
+                    default:
+                      break;
+                  }
+
+
+
+
+
+
                   value.principalPhoto = _.find(value.photos, { "cdPhoto": value.cdPhotoPrincipal });
                   value.gpSipmle = _.find(this.listGroupeSimple.GroupGp, { "cdGroupGrandPublic": value.groupSimple })
                   return value
@@ -126,8 +203,7 @@ export class ObservationsListComponent implements OnInit {
                         value.groupeOP = _.find(this.listGroupOP, { "cdGroup": value.cdGroupOP });
                         return value
                       });
-                      this.paginStart = this.paginEnd;
-                      this.paginEnd += this.nbItems;
+
                       this.obsLoaded = true;
                       this.spinner.hide()
                       this.listGroupeSimpleArray = _.chunk(_.values(this.listGroupeSimple.GroupGp), 5);
@@ -138,8 +214,8 @@ export class ObservationsListComponent implements OnInit {
         }
       )
   }
-  open(content, obs) {
 
+  open(content, obs) {
     this.selectedObs = obs;
     _.map(this.listGroupeSimple.GroupGp, (value) => {
       if (this.selectedObs.groupSimple == value.cdGroupGrandPublic)
@@ -151,12 +227,14 @@ export class ObservationsListComponent implements OnInit {
         (groupOP) => this.listGroupOP = groupOP,
         (error) => console.log("getlistGroupOPErr", error),
         () => {
-
-          this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": this.selectedObs.cdGroupOP });
           if (this.selectedObs.groupeOP)
             this.validationForm = this.formBuilder.group({
               groupOP: [this.selectedObs.groupeOP.cdGroup, Validators.required],
-              espece: ['', Validators.required]
+              espece: [{
+                nom_complet_valide: this.selectedObs.nomComplet,
+                cd_ref: this.selectedObs.cdRef,
+                cd_nom: [this.selectedObs.cdRefcdNom]
+              }, Validators.required]
             });
           else
             this.validationForm = this.formBuilder.group({
@@ -166,6 +244,7 @@ export class ObservationsListComponent implements OnInit {
 
           this.validationForm.controls['groupOP'].statusChanges
             .subscribe((data) => {
+              this.selectedObs.previousCdGroupOP = this.selectedObs.cdGroupOP;
               this.selectedObs.cdGroupOP = this.validationForm.controls['groupOP'].value
             })
           this.loadForm = true;
@@ -174,18 +253,22 @@ export class ObservationsListComponent implements OnInit {
     this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
     this.modalRef.result.then((result) => {
     }, (reason) => {
+
       _.map(this.listGroupeSimple.GroupGp, (value) => {
         if (this.selectedObs.groupSimple == value.cdGroupGrandPublic)
           value.selectedObs = ""
         return value
       });
+      if (this.selectedObs.gpSipmlePrevious) {
+        this.selectedObs.gpSipmle = this.selectedObs.gpSipmlePrevious;
+        this.selectedObs.groupSimple = this.selectedObs.groupSimplePrevious;
+      }
+      if (this.selectedObs.previousCdGroupOP != 'undefined') {
+        this.selectedObs.cdGroupOP = this.selectedObs.previousCdGroupOP;
+      }
     });
   }
 
-  private getExtraObs() {
-    if (this.paginStart <= this.totalItems)
-      this.getObs();
-  }
   private validateObs(idData, groupSimple?, groupOP?, cdNom?, cdRef?) {
     let idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
     let idStatus = '2';
@@ -204,21 +287,49 @@ export class ObservationsListComponent implements OnInit {
       default:
         break;
     }
-    _.map(this.observations.observations, (value) => {
-      if (value.idData == idData) {
-        value.isTreated = true;
-      }
-      return value
-    });
+
     this.observationService.validateObs(idData, idValidateur, isValidated,
       idStatus, groupSimple, groupOP, cdNom, cdRef).subscribe(
         (data) => {
-          console.log("data", data);
+          _.map(this.observations.observations, (value) => {
+            if (value.idData == idData) {
+              value.isTreated = true;
+            }
+            return value
+          });
           this.modalRef.close()
         },
-        (error) => console.log("error val", error)
-
+        (error) => console.log("error validateObs", error)
       )
+  }
+
+  private shortcutValidate(obs) {
+
+    switch (this.userRole) {
+      case 'IE_VALIDATOR_GRSIMPLE':
+        this.validateObs(obs.idData, obs.groupSimple)
+        break;
+      case 'IE_VALIDATOR_GROPE':
+        if (obs.groupeOP) {
+          console.log("obs.groupOP", obs.groupeOP.cdGroup);
+
+          this.validateObs(obs.idData, obs.groupSimple, obs.groupOP)
+        }
+        else console.log("shortcut gop error");
+        break;
+      case 'IE_VALIDATOR_EXPERT':
+        if (obs.groupOP && typeof obs.espece == "object") {
+          this.validateObs(obs.idData, obs.groupSimple,
+            obs.groupOP, obs.espece.cd_nom[0], obs.espece.cd_ref)
+        }
+        else {
+          console.log("shortcut  error espece");
+          this.validationForm.controls['espece'].setErrors({ "err": "error espece" })
+        }
+        break;
+      default:
+        break;
+    }
   }
 
   submit(obsForm) {
@@ -245,9 +356,10 @@ export class ObservationsListComponent implements OnInit {
               this.selectedObs.nomCompletHtml = obsForm.value.espece.nom_complet_html_valide;
               this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
             }
-            else { console.log("form error espece");
-            this.validationForm.controls['espece'].setErrors({"err" : "error espece"})
-           }
+            else {
+              console.log("form error espece");
+              this.validationForm.controls['espece'].setErrors({ "err": "error espece" })
+            }
           }
           else console.log("form error");
           break;
@@ -265,6 +377,8 @@ export class ObservationsListComponent implements OnInit {
         value.selectedObs = ""
       return value
     });
+    this.selectedObs.gpSipmlePrevious = this.selectedObs.gpSipmle;
+    this.selectedObs.groupSimplePrevious = this.selectedObs.groupSimple;
     this.selectedObs.gpSipmle = grpSimple;
     this.selectedObs.groupSimple = grpSimple.cdGroupGrandPublic;
 

@@ -9,22 +9,6 @@
   cursor: pointer;
 }
 
-.next {
-  background-color: #49cf76;
-  border-radius: 200px;
-  color: white;
-  text-transform: uppercase;
-  padding: 10px 40px;
-  font-weight: 500
-}
-.refresh-btn {
-  background-color: #ff9100;
-  border-radius: 200px;
-  color: white;
-  text-transform: uppercase;
-  padding: 10px 40px;
-  font-weight: 500
-}
 .tag {
   position: absolute;
   z-index: 999;
@@ -45,13 +29,15 @@
   color: white
 }
 
-
-
 .thumbnail:hover {
   img {
     opacity: 0.7;
   }
+  .btn-list {
+    display: block
+  }
 }
+
 
 .thumb-img {
   background: no-repeat center;
@@ -66,31 +52,30 @@
   padding-top: 2%;
 }
 
-.btn-success {
+.btn-modal{
   position: absolute;
   z-index: 999;
   width: 50%;
   bottom: 0;
   opacity: 0.6;
   border-radius: 0;
-  font-size: 30px;
-  left: 0;
+  font-size: 30px
+}
+.btn-right{
+  left: 50%; 
 }
 
-.btn-danger {
+.btn-list{
   position: absolute;
   z-index: 999;
   width: 50%;
-  bottom: 0;
-  left: 50%;
-  opacity: 0.8;
+  top: 0;
+  opacity: 0.6;
   border-radius: 0;
-  font-size: 30px;
-  .icon-refuse {
-    font-size: 25px
-  }
+  font-size: 16px;
+  display: none
 }
 
-.row-btn{   
-  padding-top: 40px
- }
+ngb-pagination {
+  margin-top: 20px;
+}
