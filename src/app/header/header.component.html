@@ -15,14 +15,16 @@
         <a class="nav-link" [routerLink]=obsRoute routerLinkActive="active">Observations</a>
       </li>
       <li *ngIf="!userConnected" class="nav-item">
-        <login-modal class="nav-link" routerLinkActive="active" ></login-modal>
+        <login-modal class="nav-link" routerLinkActive="active"></login-modal>
       </li>
       <li *ngIf="userConnected" class="nav-item">
         <div ngbDropdown class="d-inline-block">
-          <a class="nav-link  " id="dropdownBasic1" ngbDropdownToggle><span class="icon-user"></span><p class="userName"> {{currentUser.attributes.PRENOM}} {{currentUser.attributes.NOM}}</p></a>
+          <a class="nav-link  " id="dropdownBasic1" ngbDropdownToggle>
+            <span class="icon-user"></span>
+            <p class="userName"> {{currentUser.attributes.PRENOM}} {{currentUser.attributes.NOM}}</p>
+          </a>
           <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
             <button class="dropdown-item" (click)="logout()">Se déconnecter</button>
-           
           </div>
         </div>
       </li>

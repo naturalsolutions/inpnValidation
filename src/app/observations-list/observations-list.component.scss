@@ -199,3 +199,18 @@ ngb-pagination {
 .btn-valid-disabled{
   display: none
 }
+.no-obs{
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  color: gray;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
+.icon-obsPasFaite{
+  font-size: 100px;
+}
+
+

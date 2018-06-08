@@ -21,6 +21,7 @@ import { LoginService } from './services/login.service';
 import { ObsGuard } from './services/obs-guard.service';
 import { GalleryGuard } from './services/gallery-guard.service';
 import { AuthInterceptor } from './services/authInterceptor';
+import { ValidationPageComponent } from './validation-page/validation-page.component';
 
 
 @NgModule({
@@ -32,6 +33,7 @@ import { AuthInterceptor } from './services/authInterceptor';
     HeaderComponent,
     HomeComponent,
     LoginModalComponent,
+    ValidationPageComponent,
  
   ],
   imports: [

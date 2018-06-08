@@ -13,7 +13,6 @@ import { Router, RouterModule } from '@angular/router';
 export class LoginModalComponent {
 
   @Input() btnClass;
-  currentUser;
   user;
   msg_error: string;
   loginForm: FormGroup;
@@ -50,26 +49,13 @@ export class LoginModalComponent {
         },
         error => { this.msg_error = error._body },
         () => {
-
-          this.loginService.getUser().subscribe(
-            (user) => {
-              this.currentUser = user;
-              console.log("this.currentUser",this.currentUser);
-              
-            },
-            (error) => console.log("getUserERR", error),
-            () => {
-              this.loginService.setIsConnected(true);
-              this.modalRef.close();
-              if (this.currentUser.attributes.GROUPS == "IE_VALIDATOR_PHOTO")
-                this.router.navigate(['gallery'])
-              else
-                this.router.navigate(['observations'])
-            }
-          )
+          this.loginService.setIsConnected(true);
+          this.modalRef.close();
+          this.router.navigate(['observations'])
         }
       );
   }
+  
   private splitString(str) {
     return str.trim().split("&").reduce(function (a, b) {
       var i = b.split("=");

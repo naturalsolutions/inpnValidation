@@ -16,7 +16,7 @@ export class HeaderComponent implements OnInit {
   loadHeader: boolean = false;
   public role;
   public obsRoute;
-  aa;
+
   constructor(
     private loginService: LoginService,
     private spinner: NgxSpinnerService,
@@ -56,6 +56,5 @@ export class HeaderComponent implements OnInit {
     this.loginService.logout();
     this.router.navigate(['home']);
   }
-
 
 }

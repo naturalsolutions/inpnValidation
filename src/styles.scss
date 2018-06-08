@@ -7,6 +7,10 @@
 @import "~bootstrap/scss/navbar";
 @import "~bootstrap/scss/forms";
 // import your own custom files, e.g.
+.btn-success {
+  background-color: #79c67a
+}
+
 .css-modal {
   @media (min-width: 576px) {
     .modal-dialog {
@@ -35,10 +39,14 @@ ngb-pagination {
   }
 }
 
-.carousel-indicators li { 
+.carousel-indicators li {
   width: 10px;
   height: 10px;
   border-radius: 50%
+}
+
+.modal-footer {
+  display: block;
 }
 
 @font-face {

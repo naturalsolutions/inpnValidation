@@ -27,11 +27,20 @@
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-body">
     <img src="{{selectedPhoto.inpnFileUri}}">
-    <button class="btn btn-success btn-modal" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'true')">
-      <span class="icon-cheked"></span>
-    </button>
-    <button class="btn btn-danger btn-modal btn-right" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'false')">
-      <span class="icon-refuse"></span>
-    </button>
+  
+  </div>
+
+  <div class="modal-footer">
+      <textarea class="form-control" placeholder="Veuillez laisser un commentaire..." rows="3"></textarea>
+     
+          <button class="btn btn-success  btn-valid" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'true')">
+              <span class="icon-cheked"></span>
+            </button>
+            <button class="btn btn-danger  btn-valid" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'false')">
+              <span class="icon-refuse"></span>
+            </button>
+    
+      
+   
   </div>
 </ng-template>

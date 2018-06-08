@@ -40,6 +40,7 @@ export class ObservationsListComponent implements OnInit {
   userRole: string;
   public obsLoaded: boolean = false;
   loadForm: boolean = false;
+  noObs: boolean =false;
   valdidate;
   selectedObs: any;
   private observations;
@@ -69,6 +70,9 @@ export class ObservationsListComponent implements OnInit {
   ngOnInit() {
     this.currentUser = this.authGuard.userProfile;
     this.userRole = this.currentUser.attributes.GROUPS
+    
+    
+  
 
     this.getObs(this.cuurentPage, this.nbItems + 1);
   }
@@ -118,99 +122,101 @@ export class ObservationsListComponent implements OnInit {
       .subscribe(
         (obs) => {
           console.log("obs :", obs);
-          this.observations = obs;
-          this.totalItems = obs.totLines;
+          if (!obs)
+            console.log("no obs");
+          else {
+            this.observations = obs;
+            this.totalItems = obs.totLines;
+          }
+
         },
         (error) => console.log("getObservationsErr", error),
         () => {
-          this.observationService.getGroupeSimple()
-            .subscribe(
-              (data) => this.listGroupeSimple = data,
-              (error) => console.log("getGroupeSimpleErr", error),
-              () => {
-                _.map(this.listGroupeSimple.GroupGp, (value) => {
-                  value.icons = this.icons[value.cdGroupGrandPublic];
-                  value.selectedObs = ""
-                  return value
-                });
-                _.map(this.observations.observations, (value) => {
-                  switch (this.userRole) {
-                    case 'IE_VALIDATOR_GRSIMPLE':
-                      value.classValidBtn = {
-                        'btn btn-success btn-valid': true,
-                      }
-                      value.classModifyBtn = {
-                        'btn': true,
-                        'btn-secondary': true,
-                        ' btn-valid': true,
-                        'btn-modify ': true,
-                      }
-                      break;
-                    case 'IE_VALIDATOR_GROPE':
-                      if (value.cdGroupOP == 0)
-                        value.canValidate = false;
-                      else
-                        value.canValidate = true;
-                      value.classValidBtn = {
-                        'btn btn-success btn-valid': value.canValidate,
-                        'btn-valid-disabled': !value.canValidate
-                      }
-                      value.classModifyBtn = {
-                        'btn': true,
-                        'btn-secondary': true,
-                        ' btn-valid': true,
-                        'btn-modify ': value.canValidate,
-                        'btn-modify-large': !value.canValidate
-                      }
-                      break;
-                    case 'IE_VALIDATOR_EXPERT':
-                      if (value.cdNom == 0 || value.cdGroupOP == 0)
-                        value.canValidate = false
-                      else
-                        value.canValidate = true
-                      value.classValidBtn = {
-                        'btn btn-success btn-valid': value.canValidate,
-                        'btn-valid-disabled': !value.canValidate
-                      }
-                      value.classModifyBtn = {
-                        'btn': true,
-                        'btn-secondary': true,
-                        ' btn-valid': true,
-                        'btn-modify ': value.canValidate,
-                        'btn-modify-large': !value.canValidate
-                      }
-
-                      break;
-                    default:
-                      break;
-                  }
-
-
-
-
-
-
-                  value.principalPhoto = _.find(value.photos, { "cdPhoto": value.cdPhotoPrincipal });
-                  value.gpSipmle = _.find(this.listGroupeSimple.GroupGp, { "cdGroupGrandPublic": value.groupSimple })
-                  return value
-                });
-                this.observationService.getlistGroupOP()
-                  .subscribe(
-                    (groupOP) => this.listGroupOP = groupOP,
-                    (error) => console.log("getlistGroupOPErr", error),
-                    () => {
-                      _.map(this.observations.observations, (value) => {
-                        value.groupeOP = _.find(this.listGroupOP, { "cdGroup": value.cdGroupOP });
-                        return value
-                      });
-
-                      this.obsLoaded = true;
-                      this.spinner.hide()
-                      this.listGroupeSimpleArray = _.chunk(_.values(this.listGroupeSimple.GroupGp), 5);
+          if (this.observations)
+            this.observationService.getGroupeSimple()
+              .subscribe(
+                (data) => this.listGroupeSimple = data,
+                (error) => console.log("getGroupeSimpleErr", error),
+                () => {
+                  _.map(this.listGroupeSimple.GroupGp, (value) => {
+                    value.icons = this.icons[value.cdGroupGrandPublic];
+                    value.selectedObs = ""
+                    return value
+                  });
+                  _.map(this.observations.observations, (value) => {
+                    switch (this.userRole) {
+                      case 'IE_VALIDATOR_GRSIMPLE':
+                        value.classValidBtn = {
+                          'btn btn-success btn-valid': true,
+                        }
+                        value.classModifyBtn = {
+                          'btn': true,
+                          'btn-secondary': true,
+                          ' btn-valid': true,
+                          'btn-modify ': true,
+                        }
+                        break;
+                      case 'IE_VALIDATOR_GROPE':
+                        if (value.cdGroupOP == 0)
+                          value.canValidate = false;
+                        else
+                          value.canValidate = true;
+                        value.classValidBtn = {
+                          'btn btn-success btn-valid': value.canValidate,
+                          'btn-valid-disabled': !value.canValidate
+                        }
+                        value.classModifyBtn = {
+                          'btn': true,
+                          'btn-secondary': true,
+                          ' btn-valid': true,
+                          'btn-modify ': value.canValidate,
+                          'btn-modify-large': !value.canValidate
+                        }
+                        break;
+                      case 'IE_VALIDATOR_EXPERT':
+                        if (value.cdNom == 0 || value.cdGroupOP == 0)
+                          value.canValidate = false
+                        else
+                          value.canValidate = true
+                        value.classValidBtn = {
+                          'btn btn-success btn-valid': value.canValidate,
+                          'btn-valid-disabled': !value.canValidate
+                        }
+                        value.classModifyBtn = {
+                          'btn': true,
+                          'btn-secondary': true,
+                          ' btn-valid': true,
+                          'btn-modify ': value.canValidate,
+                          'btn-modify-large': !value.canValidate
+                        }
+                        break;
+                      default:
+                        break;
                     }
-                  )
-              }
-            )
+                    value.principalPhoto = _.find(value.photos, { "cdPhoto": value.cdPhotoPrincipal });
+                    value.gpSipmle = _.find(this.listGroupeSimple.GroupGp, { "cdGroupGrandPublic": value.groupSimple })
+                    return value
+                  });
+                  this.observationService.getlistGroupOP()
+                    .subscribe(
+                      (groupOP) => this.listGroupOP = groupOP,
+                      (error) => console.log("getlistGroupOPErr", error),
+                      () => {
+                        _.map(this.observations.observations, (value) => {
+                          value.groupeOP = _.find(this.listGroupOP, { "cdGroup": value.cdGroupOP });
+                          return value
+                        });
+                        this.obsLoaded = true;
+                        this.spinner.hide()
+                        this.listGroupeSimpleArray = _.chunk(_.values(this.listGroupeSimple.GroupGp), 5);
+                      }
+                    )
+                }
+              )
+          else {
+            this.noObs= true;
+            this.spinner.hide()
+          }
         }
       )
   }
@@ -287,7 +293,6 @@ export class ObservationsListComponent implements OnInit {
       default:
         break;
     }
-
     this.observationService.validateObs(idData, idValidateur, isValidated,
       idStatus, groupSimple, groupOP, cdNom, cdRef).subscribe(
         (data) => {
@@ -304,15 +309,12 @@ export class ObservationsListComponent implements OnInit {
   }
 
   private shortcutValidate(obs) {
-
     switch (this.userRole) {
       case 'IE_VALIDATOR_GRSIMPLE':
         this.validateObs(obs.idData, obs.groupSimple)
         break;
       case 'IE_VALIDATOR_GROPE':
         if (obs.groupeOP) {
-          console.log("obs.groupOP", obs.groupeOP.cdGroup);
-
           this.validateObs(obs.idData, obs.groupSimple, obs.groupOP)
         }
         else console.log("shortcut gop error");
@@ -323,7 +325,7 @@ export class ObservationsListComponent implements OnInit {
             obs.groupOP, obs.espece.cd_nom[0], obs.espece.cd_ref)
         }
         else {
-          console.log("shortcut  error espece");
+          console.log("shortcut error espece");
           this.validationForm.controls['espece'].setErrors({ "err": "error espece" })
         }
         break;
@@ -333,7 +335,6 @@ export class ObservationsListComponent implements OnInit {
   }
 
   submit(obsForm) {
-    console.log("obsForm", obsForm);
     {
       switch (this.userRole) {
         case 'IE_VALIDATOR_GRSIMPLE':
@@ -367,8 +368,6 @@ export class ObservationsListComponent implements OnInit {
           break;
       }
     }
-
-
   }
 
   modifyGrpSimple(grpSimple) {
@@ -395,7 +394,6 @@ export class ObservationsListComponent implements OnInit {
         value.selectedObs = "btn-selected"
       return value
     });
-
   }
 
   formatMatches = (value: any) => value.nom_complet_valide || '';
