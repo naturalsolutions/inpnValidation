@@ -25,6 +25,16 @@
   }
 }
 
+#photoValidation,
+#simpleValidation,
+#taxoValidation,
+#especeValidation {
+  color: #495057;
+  &.active {
+    border-top: 2px solid #28a745;
+  }
+}
+
 ngb-pagination {
   a.page-link {
     color: #565758;

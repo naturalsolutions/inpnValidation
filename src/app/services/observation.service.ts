@@ -53,13 +53,13 @@ export class ObservationService {
 
 
   validateObs(idData: string, idValidateur: string, isValidated: string,
-    idStatus: string, groupSimple?, groupOP?, cdNom?, cdRef?) {
+    idStatus: string, groupSimple?, groupOP?, cdNom?, cdRef?, comment?) {
     let httpParams = new HttpParams();
     let validateObj = {
       'idData': idData,
       'idValidateur': idValidateur,
       'isValidated': isValidated,
-      'idStatus': idStatus
+      'idStatus': idStatus,
     }
     if (groupSimple)
       validateObj['groupSimple'] = groupSimple;
@@ -69,6 +69,8 @@ export class ObservationService {
       validateObj['cdNom'] = cdNom;
     if (cdRef)
       validateObj['cdRef'] = cdRef;
+    if (comment)
+      validateObj['commentValidation'] = comment;
     Object.keys(validateObj).forEach(function (key) {
       httpParams = httpParams.append(key, validateObj[key]);
     });

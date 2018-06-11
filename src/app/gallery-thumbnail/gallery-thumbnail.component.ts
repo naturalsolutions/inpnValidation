@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImagesService } from '../services/images.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -20,7 +20,7 @@ export class GalleryThumbnailComponent implements OnInit {
   totalItems: number;
   photosLoaded: boolean = false;
   closeResult: string;
-  currentUser: User;
+  @Input() currentUser: User;
   photos;
   selectedPhoto;
   private modalRef: NgbModalRef;
@@ -36,9 +36,6 @@ export class GalleryThumbnailComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.currentUser = this.authGuard.userProfile;
-    console.log("this.currentUser",this.currentUser);
-    
     this.idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
     this.getPhotos(this.cuurentPage, this.nbItems + 1);
   }
@@ -83,7 +80,7 @@ export class GalleryThumbnailComponent implements OnInit {
       this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
   }
 
-  private validatePhoto(cdPhoto, idValidateur, isValidated) {
+  public validatePhoto(cdPhoto, idValidateur, isValidated) {
     this.imagesService.validatePhoto(cdPhoto, idValidateur, isValidated).subscribe(() => {
       _.map(this.photos, (value) => {
         if (value.cdPhoto == cdPhoto) {
@@ -93,6 +90,19 @@ export class GalleryThumbnailComponent implements OnInit {
         return value
       });
       this.modalRef.close()
+    })
+  }
+
+  public quickValidate(event, cdPhoto, idValidateur, isValidated) {
+    event.stopPropagation()
+    this.imagesService.validatePhoto(cdPhoto, idValidateur, isValidated).subscribe(() => {
+      _.map(this.photos, (value) => {
+        if (value.cdPhoto == cdPhoto) {
+          value.isTreated = 'true';
+          value.isValidated = isValidated;
+        }
+        return value
+      });
     })
   }
 

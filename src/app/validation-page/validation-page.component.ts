@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { User } from "../user";
+import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from "lodash";
 @Component({
   selector: 'app-validation-page',
@@ -8,8 +9,15 @@ import * as _ from "lodash";
   styleUrls: ['./validation-page.component.scss']
 })
 export class ValidationPageComponent implements OnInit {
-
+  grpTaxoValidator: boolean = false;
+  especeValidator: boolean = false;
+  grpSimpleValidator: boolean = false;
+  photoValidator: boolean = false;
   currentUser: User;
+  user;
+  roles;
+  userRole;
+  isValidator: boolean = false;
   constructor(private loginService: LoginService) {
   }
 
@@ -17,18 +25,22 @@ export class ValidationPageComponent implements OnInit {
     this.loginService.getUser().subscribe(
       (user) => {
         this.currentUser = user;
-        console.log("this.currentUser", this.currentUser);
       },
       (error) => console.log("getUserERR", error),
       () => {
-        
-        let roles = this.currentUser.attributes.GROUPS.split(",");
-        console.log("roles", roles);
-        console.log("role22", _.includes(roles, 'INPN_USER'));
-
-        if (_.includes(roles, 'IE_VALIDATOR_PHOTO') || _.includes(roles, 'IE_VALIDATOR_GRSIMPLE') ||
-            _.includes(roles, 'IE_VALIDATOR_GROPE') || _.includes(roles, 'IE_VALIDATOR_EXPERT'))
         this.loginService.setIsConnected(true);
+        this.roles = this.currentUser.attributes.GROUPS.split(",");
+        if (_.includes(this.roles, 'IE_VALIDATOR_PHOTO'))
+          this.photoValidator = true
+        if (_.includes(this.roles, 'IE_VALIDATOR_GRSIMPLE'))
+          this.grpSimpleValidator = true
+        if (_.includes(this.roles, 'IE_VALIDATOR_GROPE'))
+          this.grpTaxoValidator = true
+        if (_.includes(this.roles, 'IE_VALIDATOR_EXPERT'))
+          this.especeValidator = true
+        if (_.includes(this.roles, 'IE_VALIDATOR_PHOTO') || _.includes(this.roles, 'IE_VALIDATOR_GRSIMPLE') ||
+          _.includes(this.roles, 'IE_VALIDATOR_GROPE') || _.includes(this.roles, 'IE_VALIDATOR_EXPERT'))
+          this.isValidator = true;
 
       }
     )

@@ -7,7 +7,7 @@ import { GalleryGuard } from './services/gallery-guard.service'
 import { ValidationPageComponent } from './validation-page/validation-page.component';
 
 export const routing = RouterModule.forRoot([
-  { path: 'observations', component: ObservationsListComponent,  canActivate: [ObsGuard]},
+  { path: 'observations', component: ValidationPageComponent},
   { path: 'gallery', component: GalleryThumbnailComponent , canActivate: [GalleryGuard]},  { path: 'home', component: HomeComponent },
   { path: '', component: HomeComponent },
   { path: '**', redirectTo: 'home' },
