@@ -36,10 +36,13 @@
   <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [pageSize]="nbItems" [(page)]="cuurentPage"
     (pageChange)="loadPage($event)"></ngb-pagination>
 </div>
+<div *ngIf="noObs" class="no-obs">
+  <span *ngIf="!obsLoaded" class="icon-obsPasFaite "></span>
+  <p style="font-size: 20px">Aucune observation n'est disponible</p>
+</div>
 
 <ng-template #content let-c="close" let-d="dismiss">
   <div *ngIf="loadForm" class="modal-body">
-
     <img *ngIf="selectedObs.photos.length < 2" class="card-img-top" src="{{selectedObs.principalPhoto.thumbnailFileUri}}">
     <ngb-carousel interval=0 *ngIf="selectedObs.photos.length > 1">
       <ng-template *ngFor="let photo of selectedObs.photos" ngbSlide>
@@ -82,6 +85,9 @@
             Champs Obligatoire
           </div>
         </div>
+        <div  class="form-group">
+        <textarea class="form-control" formControlName="comment" placeholder="Veuillez laisser un commentaire..." rows="3"></textarea>
+      </div>
       </div>
       <div class="btn-raw">
         <button type="submit" class="btn btn-success btn-valid-modal">

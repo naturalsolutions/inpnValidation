@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Conf } from '../conf';
 import 'rxjs/add/operator/map';
 @Injectable()
@@ -45,7 +45,6 @@ interface photos {
   Photos: [any]
 }
 interface filtrePhoto {
-
   filtrePhotosValided?: string
   filtrePhotosTreated?: string
 }

@@ -1,7 +1,7 @@
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Conf } from '../conf';
-import * as _ from "lodash";
+
 @Injectable()
 export class ObservationService {
 
@@ -11,8 +11,6 @@ export class ObservationService {
     let token = localStorage.getItem('inpnUser_Access_token');
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
       .set('Authorization', 'Bearer ' + token);
-    let params = new HttpParams()
-      .set('access_token', token)
     let httpParams = new HttpParams();
     if (pagination) {
       Object.keys(pagination).forEach(function (key) {
@@ -53,13 +51,13 @@ export class ObservationService {
 
 
   validateObs(idData: string, idValidateur: string, isValidated: string,
-    idStatus: string, groupSimple?, groupOP?, cdNom?, cdRef?) {
+    idStatus: string, groupSimple?, groupOP?, cdNom?, cdRef?, comment?) {
     let httpParams = new HttpParams();
     let validateObj = {
       'idData': idData,
       'idValidateur': idValidateur,
       'isValidated': isValidated,
-      'idStatus': idStatus
+      'idStatus': idStatus,
     }
     if (groupSimple)
       validateObj['groupSimple'] = groupSimple;
@@ -69,6 +67,8 @@ export class ObservationService {
       validateObj['cdNom'] = cdNom;
     if (cdRef)
       validateObj['cdRef'] = cdRef;
+    if (comment)
+      validateObj['commentValidation'] = comment;
     Object.keys(validateObj).forEach(function (key) {
       httpParams = httpParams.append(key, validateObj[key]);
     });
@@ -76,18 +76,6 @@ export class ObservationService {
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
     return this.http.post<any>(Conf.apiBaseUrl + 'validation/', httpParams.toString(), { headers, observe: 'response' })
   }
-}
-
-
-interface pagination {
-  paginStart: number,
-  paginEnd: number
-}
-
-interface filtreObs {
-
-  filtrePhotosValided?: string
-  filtrePhotosTreated?: string
 }
 
 interface obs {

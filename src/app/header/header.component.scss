@@ -4,14 +4,18 @@
   padding-bottom: 4px;
   cursor: pointer;
 }
-.userName{
+
+.userName {
   display: inline;
   text-transform: lowercase;
 }
+
 .nav-link:hover {
   border-bottom: 2px solid #f5991e !important;
   padding-bottom: 2px;
- .icon-user{color:black} 
+  .icon-user {
+    color: black
+  }
 }
 
 li {
@@ -28,9 +32,8 @@ li {
 }
 
 .navbar {
-  border-bottom: 1px solid #c5c5c5;
+
   align-items: flex-end;
-  
 }
 
 #collapse ul {
@@ -48,13 +51,12 @@ li {
 #collapse.show ul li:last-child {
   padding-bottom: 10px;
 }
-.active{
 
+.active {
   font-weight: 500
-
 }
-.icon-user{
+
+.icon-user {
   color: gray;
   font-size: 20px;
- 
 }

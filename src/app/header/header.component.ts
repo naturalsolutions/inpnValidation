@@ -14,9 +14,8 @@ export class HeaderComponent implements OnInit {
   private currentUser: User;
   public isCollapsed = true;
   loadHeader: boolean = false;
-  public role;
-  public obsRoute;
-  aa;
+
+
   constructor(
     private loginService: LoginService,
     private spinner: NgxSpinnerService,
@@ -38,11 +37,6 @@ export class HeaderComponent implements OnInit {
               () => {
                 this.loadHeader = true;
                 this.userConnected = isConnected;
-                this.role = this.currentUser.attributes.GROUPS;
-                if (this.role == "IE_VALIDATOR_PHOTO")
-                  this.obsRoute = "gallery";
-                else
-                  this.obsRoute = "observations";
               }
             )
           else {
@@ -56,6 +50,5 @@ export class HeaderComponent implements OnInit {
     this.loginService.logout();
     this.router.navigate(['home']);
   }
-
 
 }

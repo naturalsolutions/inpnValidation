@@ -68,10 +68,12 @@ label {
 .btn-modify {
   left: 50%;
 }
-.btn-modify-large{
+
+.btn-modify-large {
   left: 0%;
   width: 100%;
 }
+
 .card {
   //cursor: pointer;
   margin-top: 30px;
@@ -196,6 +198,22 @@ ngb-pagination {
     opacity: 0.4
   }
 }
-.btn-valid-disabled{
+
+.btn-valid-disabled {
   display: none
+}
+
+.no-obs {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  color: gray;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
+
+.icon-obsPasFaite {
+  font-size: 100px;
 }

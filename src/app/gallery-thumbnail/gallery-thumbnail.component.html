@@ -9,18 +9,17 @@
         <div *ngIf="photo.isValidated=='false' && photo.isTreated=='true'" class="tag invalid-tag">
           <span class="icon-refuse"></span>
         </div>
-        <button *ngIf="photo.isTreated=='false'" class="btn btn-success btn-list" (click)="validatePhoto(photo.cdPhoto,idValidateur,'true')">
+        <button *ngIf="photo.isTreated=='false'" class="btn btn-success btn-list" (click)="quickValidate($event,photo.cdPhoto,idValidateur,'true')">
           <span class="icon-cheked"></span>
         </button>
-        <button *ngIf="photo.isTreated=='false'" class="btn btn-danger btn-list btn-right" (click)="validatePhoto(photo.cdPhoto,idValidateur,'false')">
+        <button *ngIf="photo.isTreated=='false'" class="btn btn-danger btn-list btn-right" (click)="quickValidate($event,photo.cdPhoto,idValidateur,'false')">
           <span class="icon-refuse"></span>
         </button>
         <div class="thumb-img " [style.background-image]="'url(' + photo.thumbnailFileUri + ')'"></div>
       </div>
     </div>
-
   </div>
-  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [pageSize]="nbItems" [(page)]="cuurentPage"
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [pageSize]="nbItems" [(page)]="currentPage"
     (pageChange)="loadPage($event)"></ngb-pagination>
 </div>
 
