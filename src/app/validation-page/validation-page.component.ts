@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { User } from "../user";
-import { NgbTabChangeEvent } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from "lodash";
+
 @Component({
   selector: 'app-validation-page',
   templateUrl: './validation-page.component.html',
@@ -41,11 +41,8 @@ export class ValidationPageComponent implements OnInit {
         if (_.includes(this.roles, 'IE_VALIDATOR_PHOTO') || _.includes(this.roles, 'IE_VALIDATOR_GRSIMPLE') ||
           _.includes(this.roles, 'IE_VALIDATOR_GROPE') || _.includes(this.roles, 'IE_VALIDATOR_EXPERT'))
           this.isValidator = true;
-
       }
     )
   }
-
-
 
 }

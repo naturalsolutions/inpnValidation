@@ -51,7 +51,7 @@
   padding-top: 2%;
 }
 
-.btn-modal {
+.btn-modal{
   position: absolute;
   z-index: 999;
   width: 50%;
@@ -60,12 +60,11 @@
   border-radius: 0;
   font-size: 30px
 }
-
-.btn-right {
-  left: 50%;
+.btn-right{
+  left: 50%; 
 }
 
-.btn-list {
+.btn-list{
   position: absolute;
   z-index: 999;
   width: 50%;
@@ -74,11 +73,6 @@
   border-radius: 0;
   font-size: 16px;
   display: none
-}
-
-.btn-valid {
-  border-radius: 160px;
-  padding: 10px 80px;
 }
 
 ngb-pagination {

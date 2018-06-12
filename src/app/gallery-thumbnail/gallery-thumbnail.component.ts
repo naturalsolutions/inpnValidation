@@ -1,11 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImagesService } from '../services/images.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from 'lodash';
-
 import { User } from '../user';
-import { GalleryGuard } from '../services/gallery-guard.service';
+
 
 @Component({
   selector: 'app-gallery-thumbnail',
@@ -24,22 +23,19 @@ export class GalleryThumbnailComponent implements OnInit {
   photos;
   selectedPhoto;
   private modalRef: NgbModalRef;
-  private cuurentPage: number = 1;
+  private currentPage: number = 1;
   private nbItems: number = 17;
   private previousPage: number = 1;
 
   constructor(private modalService: NgbModal,
     private spinner: NgxSpinnerService,
-    private authGuard: GalleryGuard,
     private imagesService: ImagesService) {
-
   }
 
   ngOnInit() {
     this.idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
-    this.getPhotos(this.cuurentPage, this.nbItems + 1);
+    this.getPhotos(this.currentPage, this.nbItems + 1);
   }
-
 
   loadPage(page: number) {
     let paginStart;

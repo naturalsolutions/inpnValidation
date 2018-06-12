@@ -68,10 +68,12 @@ label {
 .btn-modify {
   left: 50%;
 }
-.btn-modify-large{
+
+.btn-modify-large {
   left: 0%;
   width: 100%;
 }
+
 .card {
   //cursor: pointer;
   margin-top: 30px;
@@ -196,10 +198,12 @@ ngb-pagination {
     opacity: 0.4
   }
 }
-.btn-valid-disabled{
+
+.btn-valid-disabled {
   display: none
 }
-.no-obs{
+
+.no-obs {
   position: absolute;
   top: 45%;
   left: 50%;
@@ -209,8 +213,7 @@ ngb-pagination {
   flex-direction: column;
   align-items: center
 }
-.icon-obsPasFaite{
+
+.icon-obsPasFaite {
   font-size: 100px;
 }
-
-

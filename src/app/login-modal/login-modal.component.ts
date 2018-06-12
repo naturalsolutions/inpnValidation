@@ -2,7 +2,7 @@ import { Component, ViewEncapsulation, Input } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from '../services/login.service';
-import { Router, RouterModule } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'login-modal',
@@ -14,10 +14,10 @@ export class LoginModalComponent {
 
   @Input() btnClass;
   user;
-  msg_error: string;
   loginForm: FormGroup;
-
   private modalRef: NgbModalRef;
+  errorMsg: string = "Email ou mot de passe incorrect";
+  errorLogin: boolean = false;
   constructor(
     private modalService: NgbModal,
     private formBuilder: FormBuilder,
@@ -29,16 +29,16 @@ export class LoginModalComponent {
 
   }
 
-  private open(content) {
+  public open(content) {
+    this.errorLogin = false;
     this.modalRef = this.modalService.open(content, { centered: true });
-    this.msg_error = null;
     this.loginForm = this.formBuilder.group({
       username: ['', Validators.email],
       password: ['', Validators.required],
     })
   }
 
-  private login(loginForm) {
+  public login(loginForm) {
     this.user = loginForm.value;
     this.loginService.login(this.user.username, this.user.password)
       .subscribe(
@@ -47,7 +47,10 @@ export class LoginModalComponent {
           localStorage.setItem('inpnUser_Access_token', token.access_token);
           localStorage.setItem('inpnUser_refresh_token', token.refresh_token);
         },
-        error => { this.msg_error = error._body },
+        error => {
+          if (error.statusText == "Authorization Required")
+            this.errorLogin = true
+        },
         () => {
           this.loginService.setIsConnected(true);
           this.modalRef.close();
@@ -55,7 +58,7 @@ export class LoginModalComponent {
         }
       );
   }
-  
+
   private splitString(str) {
     return str.trim().split("&").reduce(function (a, b) {
       var i = b.split("=");
@@ -63,6 +66,5 @@ export class LoginModalComponent {
       return a;
     }, {})
   }
-
 
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ObservationService } from '../services/observation.service';
-import { NgbModal, ModalDismissReasons, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { FormValidator } from '../especeValidator'
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -309,7 +309,7 @@ export class ObservationsListComponent implements OnInit {
       )
   }
 
-  private shortcutValidate(obs) {
+  public shortcutValidate(obs) {
     switch (this.userRole) {
       case 'IE_VALIDATOR_GRSIMPLE':
         this.validateObs(obs.idData, obs.groupSimple)
@@ -344,7 +344,7 @@ export class ObservationsListComponent implements OnInit {
           break;
         case 'IE_VALIDATOR_GROPE':
           if (obsForm.controls.groupOP.valid) {
-            this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,obsForm.value.groupOP,null,null,obsForm.value.comment)
+            this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple, obsForm.value.groupOP, null, null, obsForm.value.comment)
             this.selectedObs.cdGroupOP = obsForm.value.groupOP;
             this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
           }
@@ -354,7 +354,7 @@ export class ObservationsListComponent implements OnInit {
           if (obsForm.valid) {
             if (typeof obsForm.value.espece == "object") {
               this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
-                obsForm.value.groupOP, obsForm.value.espece.cd_nom[0], obsForm.value.espece.cd_ref,obsForm.value.comment)
+                obsForm.value.groupOP, obsForm.value.espece.cd_nom[0], obsForm.value.espece.cd_ref, obsForm.value.comment)
               this.selectedObs.cdGroupOP = obsForm.value.groupOP;
               this.selectedObs.nomCompletHtml = obsForm.value.espece.nom_complet_html_valide;
               this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })

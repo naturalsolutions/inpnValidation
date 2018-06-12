@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
-import { Http, Headers, RequestOptions, Response } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { Conf } from '../conf';
 import { User } from "../user";
-import { Observable, BehaviorSubject, Subscription } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class LoginService {
@@ -46,7 +45,7 @@ export class LoginService {
   }
 
 
-  logout() : Observable<any>{
+  logout(): Observable<any> {
     // remove user from local storage to log user out
     localStorage.removeItem('inpnUser_Access_token');
     localStorage.removeItem('inpnUser_refresh_token');
@@ -55,7 +54,7 @@ export class LoginService {
   }
 
   isconnected(): Promise<boolean> {
-   
+
     return new Promise((resolve, reject) => {
       if (localStorage.getItem('inpnUser_Access_token')) {
         let token = localStorage.getItem('inpnUser_Access_token');
@@ -69,7 +68,7 @@ export class LoginService {
             (error) => {
               if (error.error.error[0] = 'expired_accessToken') {
                 console.log("getUserHeaderErr :  expired_accessToken")
-                 this.refreshToken().subscribe((data) => console.log("data", data))
+                this.refreshToken().subscribe((data) => console.log("data", data))
               }
               return resolve(false);
             },
@@ -89,7 +88,7 @@ export class LoginService {
     return this.userStatus.asObservable();
   }
 
-  setIsConnected(status:boolean) {
+  setIsConnected(status: boolean) {
     this.userStatus.next(status);
   }
 

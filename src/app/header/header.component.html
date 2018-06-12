@@ -12,7 +12,7 @@
         <a class="nav-link " routerLink="home" routerLinkActive="active">Accueil</a>
       </li>
       <li *ngIf="userConnected" class="nav-item">
-        <a class="nav-link" [routerLink]=obsRoute routerLinkActive="active">Observations</a>
+        <a class="nav-link" routerLink="observations" routerLinkActive="active">Observations</a>
       </li>
       <li *ngIf="!userConnected" class="nav-item">
         <login-modal class="nav-link" routerLinkActive="active"></login-modal>

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CanActivate, Router } from '@angular/router';
-import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Conf } from '../conf';
 
 @Injectable()
 
 export class ObsGuard implements CanActivate {
-    private apiUrl = Conf.apiBaseUrl;
-    public userProfile;
+
+    private userProfile;
     constructor(protected router: Router, private http: HttpClient) {
     }
     canActivate(): Promise<boolean> {
@@ -20,14 +20,12 @@ export class ObsGuard implements CanActivate {
                 this.http.get(Conf.casBaseUrl + "profile", { params: params })
                     .subscribe(
                         (user) => { this.userProfile = user },
-                        (error) => { return resolve(false) },
+                        (error) => {
+                            this.router.navigate(['home']);
+                            return resolve(false)
+                        },
                         () => {
-                            if (this.userProfile.attributes.GROUPS != "IE_VALIDATOR_PHOTO")
-                                return resolve(true)
-                            else {
-                                this.router.navigate(['home']);
-                                return resolve(false)
-                            }
+                            return resolve(true)
                         }
                     );
             } else {
