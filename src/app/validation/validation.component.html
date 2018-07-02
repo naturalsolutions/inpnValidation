@@ -1,7 +1,7 @@
-<ngx-spinner [bdOpacity]="0.7" size="large" type="ball-grid-beat"></ngx-spinner>
+<ngx-spinner  size="large" type="ball-grid-beat"></ngx-spinner>
 <div *ngIf="obsLoaded" class="container-fluid">
   <div class="row">
-    <div *ngFor="let item of observations.observations" class="col-lg-2 col-md-4 col-xs-6 thumb">
+    <div *ngFor="let item of observations.observations" class="col-xl-2 col-lg-3 col-md-4 col-xs-6 thumb">
       <div class="card card-list ">
         <button *ngIf="item.isTreated!=true" [ngClass]="item.classValidBtn" (click)="shortcutValidate(item)">
           <span class="icon-cheked"></span>
@@ -12,13 +12,13 @@
         <div *ngIf="item.isTreated==true" class="tag valid-tag">
           <span class="icon-cheked"></span>
         </div>
-        <img *ngIf="item.photos.length < 2" class="card-img-top-list" [style.background-image]="'url('+item.principalPhoto.thumbnailFileUri+')'">
+        <img *ngIf="item.photos.length < 2" class="card-img-top-list" src="{{item.principalPhoto.thumbnailFileUri}}">
         <ngb-carousel interval=0 *ngIf="item.photos.length > 1">
           <ng-template *ngFor="let photo of item.photos" ngbSlide>
             <img [ngClass]="{
               'card-img-top-list':photo.isValidated == 'true',
               'invalidPhoto':photo.isValidated == 'false'
-            }" [style.background-image]="'url(' + photo.thumbnailFileUri+ ')'">
+            }" src="{{photo.thumbnailFileUri}}">
             <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
               <span class="icon-refuse"></span>
             </div>
@@ -29,17 +29,26 @@
           <h5 class="card-title">{{item.gpSipmle.groupGrandPublic}}</h5>
           <p *ngIf="item.groupeOP" class="card-text">{{item.groupeOP.lbGroup}}</p>
           <div class="especeName" [innerHtml]=item.nomCompletHtml></div>
+          <div class="meta-data">
+            <div class="location" ><span class="icon-pin"></span> {{item.commune}}</div>
+          <div class="date" ><span class="icon-calendar"></span> {{item.dateCrea}} </div>
+          <div class="user" ><span class="icon-profil"></span> Anonyme {{item.idUtilisateur}} </div>
+          </div>
+          
         </div>
       </div>
     </div>
   </div>
-  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [pageSize]="nbItems" [(page)]="cuurentPage"
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems" [(page)]="cuurentPage"
     (pageChange)="loadPage($event)"></ngb-pagination>
 </div>
 <div *ngIf="noObs" class="no-obs">
   <span *ngIf="!obsLoaded" class="icon-obsPasFaite "></span>
   <p style="font-size: 20px">Aucune observation n'est disponible</p>
 </div>
+<button class="btn btn-secondary btn-help" (click)="openHelp(helpModal)">
+  <span class="icon-flottant2"></span>
+</button>
 
 <ng-template #content let-c="close" let-d="dismiss">
   <div *ngIf="loadForm" class="modal-body">
@@ -95,5 +104,11 @@
         </button>
       </div>
     </form>
+  </div>
+</ng-template>
+
+<ng-template #helpModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+  <div [innerHtml]=helpText.Text></div>
   </div>
 </ng-template>

@@ -2,8 +2,11 @@ import { Component, OnInit, Input } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImagesService } from '../services/images.service';
 import { NgxSpinnerService } from 'ngx-spinner';
+import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import { User } from '../user';
+import { TextService } from '../services/text.service';
+
 
 
 @Component({
@@ -24,17 +27,22 @@ export class GalleryThumbnailComponent implements OnInit {
   selectedPhoto;
   private modalRef: NgbModalRef;
   private currentPage: number = 1;
-  private nbItems: number = 17;
+  private nbItems: number = 23;
   private previousPage: number = 1;
+  helpText;
 
   constructor(private modalService: NgbModal,
     private spinner: NgxSpinnerService,
-    private imagesService: ImagesService) {
+    private textService: TextService,
+    private imagesService: ImagesService, ) {
+
   }
 
   ngOnInit() {
     this.idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
     this.getPhotos(this.currentPage, this.nbItems + 1);
+    this.textService.getText(1).subscribe((text) => { this.helpText = text; console.log("text", text) }
+    )
   }
 
   loadPage(page: number) {
@@ -88,6 +96,11 @@ export class GalleryThumbnailComponent implements OnInit {
       this.modalRef.close()
     })
   }
+
+  openHelp(helpModal) {
+    this.modalService.open(helpModal, { centered: true, windowClass: 'help-modal'})
+  }
+
 
   public quickValidate(event, cdPhoto, idValidateur, isValidated) {
     event.stopPropagation()

@@ -1,21 +1,28 @@
 .nav-link {
+  
   font-size: 18px;
   font-weight: 400;
   padding-bottom: 4px;
   cursor: pointer;
 }
-
+.nav-item{
+padding-bottom: 10px
+}
 .userName {
   display: inline;
   text-transform: lowercase;
 }
 
 .nav-link:hover {
-  border-bottom: 2px solid #f5991e !important;
-  padding-bottom: 2px;
+ 
+  color: black;
   .icon-user {
-    color: black
+    color: black;
   }
+}
+
+.nav-link.active {
+  border-bottom: 2px solid #f5991e 
 }
 
 li {
@@ -32,7 +39,6 @@ li {
 }
 
 .navbar {
-
   align-items: flex-end;
 }
 

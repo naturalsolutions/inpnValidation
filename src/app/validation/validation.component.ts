@@ -14,14 +14,16 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/merge';
 import * as _ from "lodash";
+import * as moment from 'moment';
 import { ObsGuard } from '../services/obs-guard.service';
 import { User } from "../user";
+import { TextService } from '../services/text.service';
 @Component({
-  selector: 'app-observations-list',
-  templateUrl: './observations-list.component.html',
-  styleUrls: ['./observations-list.component.scss']
+  selector: 'app-validation',
+  templateUrl: './validation.component.html',
+  styleUrls: ['./validation.component.scss']
 })
-export class ObservationsListComponent implements OnInit {
+export class ValidationComponent implements OnInit {
 
   private icons = {
     506: "icon-reptile_amphibien",
@@ -60,12 +62,14 @@ export class ObservationsListComponent implements OnInit {
   searchFailed: boolean = false;
   expertValidator: boolean = false;
   gropValidator: boolean = false;
+  helpText;
 
 
   constructor(private modalService: NgbModal,
     private formBuilder: FormBuilder,
     private spinner: NgxSpinnerService,
     private authGuard: ObsGuard,
+    private textService: TextService,
     private observationService: ObservationService) { }
 
   ngOnInit() {
@@ -93,13 +97,16 @@ export class ObservationsListComponent implements OnInit {
     switch (this.userRole) {
       case 'IE_VALIDATOR_GRSIMPLE':
         filtreStatutValidation = 2;
+        this.textService.getText(2).subscribe((text) => { this.helpText = text; console.log("text", text) });
         break;
       case 'IE_VALIDATOR_GROPE':
         filtreStatutValidation = 3;
+        this.textService.getText(3).subscribe((text) => { this.helpText = text; console.log("text", text) });
         this.gropValidator = true;
         break;
       case 'IE_VALIDATOR_EXPERT':
         filtreStatutValidation = 4;
+        this.textService.getText(4).subscribe((text) => { this.helpText = text; console.log("text", text) });
         this.expertValidator = true
         break;
       default:
@@ -138,6 +145,7 @@ export class ObservationsListComponent implements OnInit {
                     return value
                   });
                   _.map(this.observations.observations, (value) => {
+                    value.dateCrea = moment(value.dateCrea).format('DD-MM-YYYY, h:mm');
                     switch (this.userRole) {
                       case 'IE_VALIDATOR_GRSIMPLE':
                         value.classValidBtn = {
@@ -396,6 +404,11 @@ export class ObservationsListComponent implements OnInit {
         value.selectedObs = "btn-selected"
       return value
     });
+  }
+
+
+  openHelp(helpModal) {
+    this.modalService.open(helpModal, { centered: true, windowClass: 'help-modal'})
   }
 
   formatMatches = (value: any) => value.nom_complet_valide || '';

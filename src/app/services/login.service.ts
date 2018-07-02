@@ -13,11 +13,11 @@ export class LoginService {
   constructor(public http: HttpClient) { }
 
   login(username: string, password: string) {
-    let body = new HttpParams()
-      .set('username', username)
-      .set('password', password)
-      .set('grant_type', "password")
-      .set('client_id', "inpnespeces");
+    let body = new URLSearchParams();
+    body.set('grant_type', "password");
+    body.set('client_id', "inpnespeces");
+    body.set('username', username);
+    body.set('password', password);
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
     return this.http.post(Conf.casBaseUrl + "accessToken", body.toString(),
       { headers, responseType: "text" })

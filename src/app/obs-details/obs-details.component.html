@@ -1,0 +1,9 @@
+<div class="container-fluid">
+  <div class="title">{{observation.lbGroupSimple}}</div>
+  <img *ngIf="observation.photos.length < 2" class="card-img-top-list" src="{{observation.photos[0].inpnFileUri}}">
+  <ngb-carousel interval=0 *ngIf="observation.photos.length > 1">
+    <ng-template *ngFor="let photo of observation.photos" ngbSlide>
+      <img class="card-img-top-list" src="{{photo.inpnFileUri}}">
+    </ng-template>
+  </ngb-carousel>
+</div>

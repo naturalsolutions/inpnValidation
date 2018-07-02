@@ -1,0 +1,27 @@
+<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
+<div *ngIf="obsLoaded" class="container-fluid">
+  <div class="row">
+    <div *ngFor="let item of observations.observations" class=" col-xl-2 col-lg-3 col-md-4 col-xs-6 thumb">
+      <div class="card card-list" >
+        <img *ngIf="item.truePhoto.length < 2" class="card-img-top-list" src="{{item.truePhoto[0].thumbnailFileUri}}">
+        <ngb-carousel interval=0 *ngIf="item.truePhoto.length > 1">
+          <ng-template *ngFor="let photo of item.truePhoto" ngbSlide>
+            <img class="card-img-top-list" src="{{photo.thumbnailFileUri}}">
+          </ng-template>
+        </ngb-carousel>
+        <div class="card-body">
+          <span class="{{item.icon}} icon-gp"></span>
+          <h5 class="card-title">{{item.lbGroupSimple}}</h5>
+          <p *ngIf="item.groupeOP" class="card-text">{{item.lbGroupOP}}</p>
+          <div class="especeName" [innerHtml]=item.nomCompletHtml></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems" [(page)]="cuurentPage"
+    (pageChange)="loadPage($event)"></ngb-pagination>
+</div>
+<div *ngIf="noObs" class="no-obs">
+  <span *ngIf="!obsLoaded" class="icon-obsPasFaite "></span>
+  <p style="font-size: 20px">Aucune observation n'est disponible</p>
+</div>

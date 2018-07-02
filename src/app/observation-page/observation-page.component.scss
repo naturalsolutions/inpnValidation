@@ -1,0 +1,52 @@
+.container-fluid {
+  padding-top: 10px;
+  background-color: #e9ecef59;
+}
+
+.nav-pills {
+    font-size: 20px;
+    background-color: #529696;
+  padding: 0px 40px
+}
+
+.nav-link {
+    cursor: pointer;
+  padding: 20px;
+  color: white !important;
+  &:active {
+    background-color: #59c47d
+  }
+  &.active {
+    background-color: #59c47d
+  }
+}
+
+#dropdownBasic1 {
+  color: white;
+  &.nav-link {
+    &.active {
+      background-color: #59c47d 
+    }
+  }
+}
+.show {
+    #dropdownBasic1{
+        background-color: #59c47d85
+    }
+
+}
+
+
+.nav-pills .nav-link.active,
+.nav-pills .show>.nav-link {
+  background-color: #59c47d 
+}
+
+.vline {
+    border-left: 1px solid #dcd5d5;
+    height: initial;
+    margin: 6px 5px
+}
+ul li:last-child {
+    margin-left: auto;
+}

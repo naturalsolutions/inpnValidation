@@ -24,7 +24,12 @@ export class ObservationService {
     }
     return this.http.get<obs>(Conf.apiBaseUrl + 'data', { params: httpParams, headers });
   }
-
+  getObsByID(id) {
+    let token = localStorage.getItem('inpnUser_Access_token');
+    let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
+      .set('Authorization', 'Bearer ' + token);
+    return this.http.get<obs>(Conf.apiBaseUrl + 'data/'+id);
+  }
   getlistGroupOP(groupSimple?) {
     let httpParams = new HttpParams();
     if (groupSimple) {
@@ -42,7 +47,6 @@ export class ObservationService {
     }
     return this.http.get<any>(Conf.apiBaseUrl2 + 'autocomplete/especes/recherche', { params: httpParams })
       .map(res => res = res.response.docs
-
       )
   }
   getGroupeSimple() {
@@ -67,8 +71,8 @@ export class ObservationService {
       validateObj['cdNom'] = cdNom;
     if (cdRef)
       validateObj['cdRef'] = cdRef;
-    if (comment)
-      validateObj['commentValidation'] = comment;
+    //if (comment)
+     // validateObj['commentValidation'] = comment;
     Object.keys(validateObj).forEach(function (key) {
       httpParams = httpParams.append(key, validateObj[key]);
     });

@@ -97,14 +97,12 @@ label {
   .btn-valid {
     display: block
   }
-  opacity: 0.8;
 }
 
 .card-img-top-list {
-  background: no-repeat center;
-  background-size: cover;
+  object-fit: cover;
   width: 100%;
-  height: 20vh;
+  height: 220px;
 }
 
 .especeName {
@@ -161,7 +159,7 @@ form {
 }
 
 .card-list {
-  min-height: 370px
+  min-height: 400px
 }
 
 .icon-pen {
@@ -173,10 +171,9 @@ ngb-pagination {
 }
 
 .invalidPhoto {
-  background: no-repeat center;
-  background-size: cover;
+  object-fit: cover;
   width: 100%;
-  height: 20vh;
+  height: 220px;
   opacity: 0.4
 }
 
@@ -216,4 +213,22 @@ ngb-pagination {
 
 .icon-obsPasFaite {
   font-size: 100px;
+}
+
+.btn-help {
+  position: fixed;
+  bottom: 4%;
+  right: 2%;
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 27px;
+ font-weight:bold;
+ opacity: .8;
+ z-index: 998;
+}
+.meta-data{
+  font-size: 12px;
+  margin-top: 12px;
 }

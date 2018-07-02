@@ -1,0 +1,70 @@
+.container-fluid {
+
+  padding: 1% 4%
+  
+}
+
+.card {
+  //cursor: pointer;
+  margin-top: 30px;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12)
+}
+
+.icon-gp {
+  color: #49cf76;
+  font-size: 34px;
+  font-weight: 500
+}
+
+.card-body {
+  text-align: center;
+  h5 {
+    font-size: 16px
+  }
+}
+
+.card-img-top-list {
+  object-fit: cover;
+  width: 100%;
+  height: 250px;
+}
+
+.card-text {
+  font-size: 14px;
+  margin-bottom: 1px
+}
+
+.card-list {
+  min-height: 450px
+}
+
+ngb-pagination {
+  margin-top: 50px;
+}
+
+.no-obs {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  color: gray;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
+
+.icon-obsPasFaite {
+  font-size: 100px;
+}
+
+.especeName {
+  font-size: 14px;
+  color: #71cb7f;
+}
+.icon-chevron{
+  bottom: 15px;
+  right: 15px;
+  position: absolute;
+  color: #bcbaba;
+  font-size: 12px;
+}

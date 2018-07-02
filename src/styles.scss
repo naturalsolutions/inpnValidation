@@ -25,6 +25,23 @@
   }
 }
 
+.help-modal {
+  @media (min-width: 576px) {
+    .modal-dialog {
+      min-width: 560px
+    }
+  }
+  .modal-body {
+    padding: 20px 30px;
+    
+  }
+}
+
+.help {
+  display: flex;
+  justify-content: flex-end;
+}
+
 #photoValidation,
 #simpleValidation,
 #taxoValidation,
@@ -79,6 +96,21 @@ ngb-pagination {
   /* Better Font Rendering =========== */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-flottant2:before {
+  content: "\e931";
+}
+
+.icon-flottant .path1:before {
+  content: "\e92f";
+  color: rgb(112, 111, 111);
+}
+
+.icon-flottant .path2:before {
+  content: "\e930";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
 }
 
 .icon-pen:before {
@@ -388,4 +420,17 @@ ngb-pagination {
 
 .icon-biodiversity:before {
   content: "\e902";
+}
+
+.icon-help {
+  cursor: pointer;
+  color: #A9A9A9;
+  font-size: 36px;
+  font-weight: bold;
+  padding-top: 24px;
+  padding-right: 35px
+}
+
+.icon-help:hover {
+  color: #6e6e6e;
 }

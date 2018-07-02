@@ -7,33 +7,39 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
 //component
-import { ObservationsListComponent } from './observations-list/observations-list.component';
+import { ValidationComponent } from './validation/validation.component';
 import { GalleryThumbnailComponent } from './gallery-thumbnail/gallery-thumbnail.component';
 import { FooterComponent } from './footer/footer.component';
 import { HeaderComponent } from './header/header.component';
 import { HomeComponent } from './home/home.component';
 import { LoginModalComponent } from './login-modal/login-modal.component';
-import { ValidationPageComponent } from './validation-page/validation-page.component';
+import { ObservationPageComponent } from './observation-page/observation-page.component';
+import { ObsListComponent } from './obs-list/obs-list.component';
+import { ObsDetailsComponent } from './obs-details/obs-details.component';
 //service
 import { ImagesService } from './services/images.service';
 import { ObservationService } from './services/observation.service';
 import { LoginService } from './services/login.service';
 import { ObsGuard } from './services/obs-guard.service';
 import { GalleryGuard } from './services/gallery-guard.service';
+import { TextService } from './services/text.service';
 import { AuthInterceptor } from './services/authInterceptor';
 //routing
 import { routing } from './app.routing';
 
+
 @NgModule({
   declarations: [
     AppComponent,
-    ObservationsListComponent,
+    ValidationComponent,
     GalleryThumbnailComponent,
     FooterComponent,
     HeaderComponent,
     HomeComponent,
     LoginModalComponent,
-    ValidationPageComponent,
+    ObservationPageComponent,
+    ObsListComponent,
+    ObsDetailsComponent,
  
   ],
   imports: [
@@ -56,6 +62,7 @@ import { routing } from './app.routing';
     ImagesService,
     ObservationService,
     LoginService,
+    TextService,
     ObsGuard,
     GalleryGuard
   ],

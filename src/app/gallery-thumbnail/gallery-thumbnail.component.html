@@ -1,4 +1,5 @@
 <ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
+
 <div *ngIf="photosLoaded" class="container-fluid">
   <div class="row ">
     <div *ngFor="let photo of photos" class=" col-lg-2 col-md-4 col-xs-6 thumb ">
@@ -19,9 +20,13 @@
       </div>
     </div>
   </div>
-  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [pageSize]="nbItems" [(page)]="currentPage"
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems" [(page)]="currentPage"
     (pageChange)="loadPage($event)"></ngb-pagination>
 </div>
+<button class="btn btn-secondary btn-help" (click)="openHelp(helpModal)">
+  <span class="icon-flottant2"></span>
+</button>
+
 
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-body">
@@ -32,5 +37,12 @@
     <button class="btn btn-danger btn-modal btn-right" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'false')">
       <span class="icon-refuse"></span>
     </button>
+  </div>
+</ng-template>
+
+
+<ng-template #helpModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+  <div [innerHtml]=helpText.Text></div>
   </div>
 </ng-template>
