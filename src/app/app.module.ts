@@ -26,6 +26,7 @@ import { TextService } from './services/text.service';
 import { AuthInterceptor } from './services/authInterceptor';
 //routing
 import { routing } from './app.routing';
+import { FilterComponent } from './filter/filter.component';
 
 
 @NgModule({
@@ -40,6 +41,7 @@ import { routing } from './app.routing';
     ObservationPageComponent,
     ObsListComponent,
     ObsDetailsComponent,
+    FilterComponent,
  
   ],
   imports: [

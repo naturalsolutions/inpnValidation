@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { ObservationService } from '../services/observation.service';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -23,7 +23,7 @@ import { TextService } from '../services/text.service';
   templateUrl: './validation.component.html',
   styleUrls: ['./validation.component.scss']
 })
-export class ValidationComponent implements OnInit {
+export class ValidationComponent implements OnChanges,OnInit {
 
   private icons = {
     506: "icon-reptile_amphibien",
@@ -63,6 +63,7 @@ export class ValidationComponent implements OnInit {
   expertValidator: boolean = false;
   gropValidator: boolean = false;
   helpText;
+  @Input() filter;
 
 
   constructor(private modalService: NgbModal,
@@ -74,6 +75,11 @@ export class ValidationComponent implements OnInit {
 
   ngOnInit() {
     this.getObs(this.cuurentPage, this.nbItems + 1);
+  }
+
+  ngOnChanges() {
+    if (this.filter)
+      this.reloadObs(this.filter)
   }
 
   loadPage(page: number) {
@@ -89,8 +95,19 @@ export class ValidationComponent implements OnInit {
       this.getObs(paginStart, paginEnd)
     }
   }
-
-  getObs(paginStart, paginEnd) {
+  private reloadObs(filter) {
+    this.getObs(this.cuurentPage, this.nbItems + 1, filter);
+  }
+  getObs(paginStart, paginEnd,filter?) {
+    let obsFilter = {
+      "filtreStatutValidation": "5",
+      "filtreAllPhotoTreated": "true",
+      "filtrePhotoValidated": "true",
+    }
+    if (filter) {
+      obsFilter["filtreName"] = filter.filtreName;
+      obsFilter["filtreValue"] = filter.filtreValue
+    }
     this.spinner.show();
     this.obsLoaded = false;
     let filtreStatutValidation
@@ -115,11 +132,7 @@ export class ValidationComponent implements OnInit {
     this.observationService.getObservations({
       paginStart: paginStart,
       paginEnd: paginEnd
-    }, {
-        "filtreStatutValidation": filtreStatutValidation,
-        "filtreAllPhotoTreated": "true",
-        "filtrePhotoValidated": "true"
-      })
+    }, obsFilter)
       .subscribe(
         (obs) => {
           console.log("obs :", obs);
@@ -405,7 +418,7 @@ export class ValidationComponent implements OnInit {
       return value
     });
   }
-
+ 
 
   openHelp(helpModal) {
     this.modalService.open(helpModal, { centered: true, windowClass: 'help-modal'})

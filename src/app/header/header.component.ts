@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { User } from "../user";
 import { Router, RouterModule } from '@angular/router';
@@ -11,6 +11,7 @@ import 'rxjs/add/operator/first';
 })
 export class HeaderComponent implements OnInit {
   userConnected: boolean = false;
+  @Output() user = new EventEmitter();
   private currentUser: User;
   public isCollapsed = true;
   loadHeader: boolean = false;
@@ -32,7 +33,10 @@ export class HeaderComponent implements OnInit {
         (isConnected) => {
           if (isConnected == true)
             this.loginService.getUser().subscribe(
-              (currentUser) => this.currentUser = currentUser,
+              (currentUser) => {
+              this.currentUser = currentUser;
+                this.user.emit(this.currentUser)
+              },
               (error) => console.log("getUserErr: ", error),
               () => {
                 this.loadHeader = true;

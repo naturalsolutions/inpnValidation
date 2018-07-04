@@ -1,3 +1,4 @@
+<app-header (user)="getUser($event)"></app-header>
 <ul class="nav nav-pills ">
   <li class="nav-item">
     <a class="nav-link " [class.active]="isActive=='grid'" (click)="gridObs()">
@@ -5,8 +6,8 @@
   </li>
   <div class="vline"></div>
   <li class="nav-item">
-    <a class="nav-link" [class.active]="isActive=='maps'"  (click)="mapObs()">
-      <span class="icon-pin" ></span> Carte</a>
+    <a class="nav-link" [class.active]="isActive=='maps'" (click)="mapObs()">
+      <span class="icon-pin"></span> Carte</a>
   </li>
   <div class="vline"></div>
   <li *ngIf="isValidator" class="nav-item dropdown">
@@ -23,20 +24,18 @@
       </div>
     </div>
   </li>
-  <li class="nav-item pull-right">
-    <a class="nav-link" >
-      <span class="icon-filter" ></span> Filtres</a>
+  <li class="nav-item pull-right" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" aria-controls="collapseExample">
+    <a class="nav-link">
+      <span class="icon-filter"></span> Filtres</a>
   </li>
 </ul>
-<div *ngIf="isValidator" class="container-fluid">
-  <app-gallery-thumbnail *ngIf="selectedValidator == 'photo'" [currentUser]="currentUser"></app-gallery-thumbnail>
-  <app-validation *ngIf="selectedValidator == 'simple'" [currentUser]="currentUser" [userRole]="'IE_VALIDATOR_GRSIMPLE'"></app-validation>
-  <app-validation *ngIf="selectedValidator == 'taxo'" [currentUser]="currentUser" [userRole]="'IE_VALIDATOR_GROPE'"></app-validation>
-  <app-validation *ngIf="selectedValidator == 'espece'" [currentUser]="currentUser" [userRole]="'IE_VALIDATOR_EXPERT'"></app-validation>
-</div>
-
-
+<div id="collapseExample" [ngbCollapse]="isCollapsed">
+    <app-filter (filter)="newFilter($event)"></app-filter>
+  </div>
+  <app-gallery-thumbnail *ngIf="selectedValidator == 'photo'"  [currentUser]="currentUser"></app-gallery-thumbnail>
+  <app-validation *ngIf="selectedValidator == 'simple'" [filter]="filter" [currentUser]="currentUser" [userRole]="'IE_VALIDATOR_GRSIMPLE'"></app-validation>
+  <app-validation *ngIf="selectedValidator == 'taxo'" [filter]="filter" [currentUser]="currentUser" [userRole]="'IE_VALIDATOR_GROPE'"></app-validation>
+  <app-validation *ngIf="selectedValidator == 'espece'" [filter]="filter" [currentUser]="currentUser" [userRole]="'IE_VALIDATOR_EXPERT'"></app-validation>
 <div *ngIf="showList" class="container-fluid">
-  <app-obs-list></app-obs-list>
-  
+  <app-obs-list [filter]="filter"></app-obs-list>
 </div>

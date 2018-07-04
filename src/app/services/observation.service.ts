@@ -18,7 +18,10 @@ export class ObservationService {
       });
     }
     if (filtreObs) {
+      console.log("filtreObs",filtreObs);
+      
       Object.keys(filtreObs).forEach(function (key) {
+        if (filtreObs[key])
         httpParams = httpParams.append(key, filtreObs[key]);
       });
     }

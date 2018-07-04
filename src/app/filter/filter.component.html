@@ -1,0 +1,33 @@
+<div class="card filter-card">
+    <div class="card-body">
+      <form *ngIf="showFilter" [formGroup]="filterForm" (submit)="submit(filterForm)">
+        <div class="row">
+          <div class="col-3 ">
+            <label class="label-filtre">catégories</label>
+            <div *ngFor="let row of listGroupeSimpleArray" class="row row-filter">
+              <div *ngFor="let grpSimple of row" [ngbTooltip]="tipContent" triggers="mouseenter:mouseleave" ngbPopover="{{grpSimple.groupGrandPublic}}"
+                popoverClass="popover-class">
+                <button type="button" [ngClass]="grpSimple.selectedObs" class="btn btn-outline-secondary btn-circle" (click)="modifyGrpSimple(grpSimple)">
+                  <span class="{{grpSimple.icons}}"></span>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="col-2">
+            <div>
+              <label for="groupOP" class="label-filtre">Groupe taxonomique</label>
+              <select id="groupOP" class="form-control" formControlName="CD_GROUPE_OP">
+                <option value="">---</option>
+                <option *ngFor="let ggOP of listGroupOP" value="{{ggOP.cdGroup}}">{{ggOP.lbGroup}}</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="form-btn">
+          <button type="submit" class="btn btn-success">Filter</button>
+          <button type="button" class="btn btn-secondary" (click)="resetFilter()">Réinitialiser</button>
+        </div>
+
+      </form>
+    </div>
+  </div>

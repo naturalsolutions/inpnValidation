@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { ObservationService } from '../services/observation.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from "lodash";
@@ -9,8 +9,8 @@ import * as _ from "lodash";
   templateUrl: './obs-list.component.html',
   styleUrls: ['./obs-list.component.scss']
 })
-export class ObsListComponent implements OnInit {
-
+export class ObsListComponent implements OnChanges, OnInit {
+  @Input() filter;
   private icons = {
     506: "icon-reptile_amphibien",
     501: "icon-champignon_lichen",
@@ -36,12 +36,12 @@ export class ObsListComponent implements OnInit {
   groupeOP: any;
   groupeSimple: any;
   listGroupeSimple;
-  listGroupeSimpleArray: any; 
+  listGroupeSimpleArray: any;
   expertValidator: boolean = false;
   gropValidator: boolean = false;
 
 
-  
+
   constructor(
     private spinner: NgxSpinnerService,
     private observationService: ObservationService
@@ -51,7 +51,13 @@ export class ObsListComponent implements OnInit {
     this.getObs(this.cuurentPage, this.nbItems + 1);
   }
 
+  ngOnChanges() {
+    if (this.filter)
+      this.reloadObs(this.filter)
+  }
+
   loadPage(page: number) {
+
     let paginStart;
     let paginEnd;
     if (page !== this.previousPage) {
@@ -61,56 +67,70 @@ export class ObsListComponent implements OnInit {
         paginStart = 1;
       this.previousPage = page;
       paginEnd = paginStart + this.nbItems
-      this.getObs(paginStart, paginEnd)
+      if (this.filter)
+      this.getObs(paginStart, paginEnd,this.filter)
     }
   }
 
-  getObs(paginStart, paginEnd) {
+  getObs(paginStart, paginEnd, filter?) {
     this.spinner.show();
     this.obsLoaded = false;
-   
+    let obsFilter = {
+      "filtreStatutValidation": "5",
+      "filtreAllPhotoTreated": "true",
+      "filtrePhotoValidated": "true",
+    }
+    if (filter) {
+      obsFilter["filtreName"] = filter.filtreName;
+      obsFilter["filtreValue"] = filter.filtreValue
+    }
     this.observationService.getObservations({
       paginStart: paginStart,
-      paginEnd: paginEnd
-    }, {
-        "filtreStatutValidation": "5",
-        "filtreAllPhotoTreated": "true",
-        "filtrePhotoValidated": "true"
-      })
+      paginEnd: paginEnd,
+    }, obsFilter)
       .subscribe(
         (obs) => {
           console.log("obs :", obs);
           if (!obs)
+          {
             console.log("no obs");
+            this.noObs = true;
+          }
+     
           else {
+            this.noObs = false;
             this.observations = obs;
             this.totalItems = obs.totLines;
           }
         },
         (error) => console.log("getObservationsErr", error),
         () => {
-          if (this.observations)
-          {  
+          if (this.observations) {
             _.map(this.observations.observations, (value) => {
-              value.truePhoto=[]
+              value.truePhoto = []
               _.map(value.photos, (photo) => {
                 if (photo.isValidated == "true")
-                  value.truePhoto.push(photo)           
+                  value.truePhoto.push(photo)
                 return photo
               });
               value.principalPhoto = _.find(value.photos, { "cdPhoto": value.cdPhotoPrincipal });
               value.icon = this.icons[value.groupSimple];
               return value
             });
-            console.log("this.observations",this.observations);
-            
+            console.log("this.observations", this.observations);
+
             this.obsLoaded = true;
-            this.spinner.hide()}
+            this.spinner.hide()
+          }
           else {
-            this.noObs = true;
+            
             this.spinner.hide()
           }
         }
       )
+  }
+
+  private reloadObs(filter) {
+    this.getObs(this.cuurentPage, this.nbItems + 1, filter);
   }
 }
