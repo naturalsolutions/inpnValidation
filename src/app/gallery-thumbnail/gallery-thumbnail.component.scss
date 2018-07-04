@@ -80,7 +80,6 @@ ngb-pagination {
   padding: 20px 0;
 }
 
-
 .btn-help {
   position: fixed;
   bottom: 4%;
@@ -93,4 +92,19 @@ ngb-pagination {
  font-weight:bold;
  opacity: .8;
  z-index: 998;
+}
+
+.no-obs {
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  color: gray;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
+
+.icon-obsPasFaite {
+  font-size: 100px;
 }

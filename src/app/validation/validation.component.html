@@ -1,4 +1,4 @@
-<ngx-spinner  size="large" type="ball-grid-beat"></ngx-spinner>
+<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <div *ngIf="obsLoaded" class="container-fluid">
   <div class="row">
     <div *ngFor="let item of observations.observations" class="col-xl-2 col-lg-3 col-md-4 col-xs-6 thumb">
@@ -30,11 +30,13 @@
           <p *ngIf="item.groupeOP" class="card-text">{{item.groupeOP.lbGroup}}</p>
           <div class="especeName" [innerHtml]=item.nomCompletHtml></div>
           <div class="meta-data">
-            <div class="location" ><span class="icon-pin"></span> {{item.commune}}</div>
-          <div class="date" ><span class="icon-calendar"></span> {{item.dateCrea}} </div>
-          <div class="user" ><span class="icon-profil"></span> Anonyme {{item.idUtilisateur}} </div>
+            <div class="location">
+              <span class="icon-pin"></span> {{item.commune}}</div>
+            <div class="date">
+              <span class="icon-calendar"></span> {{item.dateCrea}} </div>
+            <div class="user">
+              <span class="icon-profil"></span> Anonyme {{item.idUtilisateur}} </div>
           </div>
-          
         </div>
       </div>
     </div>
@@ -94,9 +96,15 @@
             Champs Obligatoire
           </div>
         </div>
-        <div  class="form-group">
-        <textarea class="form-control" formControlName="comment" placeholder="Veuillez laisser un commentaire..." rows="3"></textarea>
-      </div>
+        <p class="supra-search" (click)=supraSearch()>+ trouvez l'espèce par niveau supérieur ?</p>
+        <div *ngIf="expertValidator && advencedSearch" class="form-group">
+            <label for="espece2" class="form-control-label">espèce supra</label>
+            <input formControlName="especeSupra" class="form-control " [ngbTypeahead]="searchEspeceSup" [inputFormatter]="especeSup" [resultFormatter]="especeSup"
+              id="espece2"  >
+          </div>
+        <div class="form-group">
+          <textarea class="form-control" formControlName="comment" placeholder="Veuillez laisser un commentaire..." rows="3"></textarea>
+        </div>
       </div>
       <div class="btn-raw">
         <button type="submit" class="btn btn-success btn-valid-modal">
@@ -109,6 +117,6 @@
 
 <ng-template #helpModal let-c="close" let-d="dismiss">
   <div class="modal-body">
-  <div [innerHtml]=helpText.Text></div>
+    <div [innerHtml]=helpText.Text></div>
   </div>
 </ng-template>

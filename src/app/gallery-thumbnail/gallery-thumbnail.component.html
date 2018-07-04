@@ -22,11 +22,10 @@
   </div>
   <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems" [(page)]="currentPage"
     (pageChange)="loadPage($event)"></ngb-pagination>
-</div>
 <button class="btn btn-secondary btn-help" (click)="openHelp(helpModal)">
   <span class="icon-flottant2"></span>
 </button>
-
+</div>
 
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-body">
@@ -40,9 +39,13 @@
   </div>
 </ng-template>
 
-
 <ng-template #helpModal let-c="close" let-d="dismiss">
   <div class="modal-body">
-  <div [innerHtml]=helpText.Text></div>
+    <div [innerHtml]=helpText.Text></div>
   </div>
 </ng-template>
+
+<div *ngIf="noPhotos" class="no-obs">
+  <span class="icon-obsPasFaite"></span>
+  <p style="font-size: 20px">Aucune observation n'est disponible</p>
+</div>

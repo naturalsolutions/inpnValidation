@@ -23,7 +23,7 @@ import { TextService } from '../services/text.service';
   templateUrl: './validation.component.html',
   styleUrls: ['./validation.component.scss']
 })
-export class ValidationComponent implements OnChanges,OnInit {
+export class ValidationComponent implements OnChanges, OnInit {
 
   private icons = {
     506: "icon-reptile_amphibien",
@@ -64,6 +64,7 @@ export class ValidationComponent implements OnChanges,OnInit {
   gropValidator: boolean = false;
   helpText;
   @Input() filter;
+  advencedSearch: boolean = false;
 
 
   constructor(private modalService: NgbModal,
@@ -98,9 +99,9 @@ export class ValidationComponent implements OnChanges,OnInit {
   private reloadObs(filter) {
     this.getObs(this.cuurentPage, this.nbItems + 1, filter);
   }
-  getObs(paginStart, paginEnd,filter?) {
+  getObs(paginStart, paginEnd, filter?) {
     let obsFilter = {
-      "filtreStatutValidation": "5",
+      "filtreStatutValidation": 0,
       "filtreAllPhotoTreated": "true",
       "filtrePhotoValidated": "true",
     }
@@ -110,19 +111,18 @@ export class ValidationComponent implements OnChanges,OnInit {
     }
     this.spinner.show();
     this.obsLoaded = false;
-    let filtreStatutValidation
     switch (this.userRole) {
       case 'IE_VALIDATOR_GRSIMPLE':
-        filtreStatutValidation = 2;
+        obsFilter.filtreStatutValidation = 2;
         this.textService.getText(2).subscribe((text) => { this.helpText = text; console.log("text", text) });
         break;
       case 'IE_VALIDATOR_GROPE':
-        filtreStatutValidation = 3;
+        obsFilter.filtreStatutValidation = 3;
         this.textService.getText(3).subscribe((text) => { this.helpText = text; console.log("text", text) });
         this.gropValidator = true;
         break;
       case 'IE_VALIDATOR_EXPERT':
-        filtreStatutValidation = 4;
+        obsFilter.filtreStatutValidation = 4;
         this.textService.getText(4).subscribe((text) => { this.helpText = text; console.log("text", text) });
         this.expertValidator = true
         break;
@@ -237,7 +237,7 @@ export class ValidationComponent implements OnChanges,OnInit {
   }
 
   open(content, obs) {
-
+    this.advencedSearch = false;
     this.selectedObs = obs;
     this.selectedObs.gpSipmlePrevious = [];
     this.selectedObs.groupSimplePrevious = [];
@@ -258,14 +258,16 @@ export class ValidationComponent implements OnChanges,OnInit {
               espece: [{
                 nom_complet_valide: this.selectedObs.nomComplet,
                 cd_ref: this.selectedObs.cdRef,
-                cd_nom: [this.selectedObs.cdRefcdNom]
+                cd_nom: [this.selectedObs.cdNom]
               }, FormValidator.especeValidator],
-              comment: [this.selectedObs.validation.commentaireValidation]
+              comment: [this.selectedObs.validation.commentaireValidation],
+              especeSupra: ['']
             });
           else
             this.validationForm = this.formBuilder.group({
               groupOP: ['', Validators.required],
               espece: ['', Validators.required],
+              especeSupra: [''],
               comment: [this.selectedObs.validation.commentaireValidation]
             });
 
@@ -357,7 +359,9 @@ export class ValidationComponent implements OnChanges,OnInit {
     }
   }
 
-  submit(obsForm) {
+  submit(obsForm) {   
+    console.log("obsForm",obsForm.value);
+    
     {
       switch (this.userRole) {
         case 'IE_VALIDATOR_GRSIMPLE':
@@ -374,10 +378,22 @@ export class ValidationComponent implements OnChanges,OnInit {
         case 'IE_VALIDATOR_EXPERT':
           if (obsForm.valid) {
             if (typeof obsForm.value.espece == "object") {
+              console.log("obsFormespece",obsForm.value.espece.cd_nom[0]);
+    
               this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
                 obsForm.value.groupOP, obsForm.value.espece.cd_nom[0], obsForm.value.espece.cd_ref, obsForm.value.comment)
               this.selectedObs.cdGroupOP = obsForm.value.groupOP;
               this.selectedObs.nomCompletHtml = obsForm.value.espece.nom_complet_html_valide;
+              this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
+            }
+            else if (typeof obsForm.value.especeSupra == "object") {
+              console.log("obsFormespece2",obsForm.value.especeSupra.cdNom);
+              this.validationForm.controls['espece'].clearValidators()
+    
+              this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
+                obsForm.value.groupOP, obsForm.value.especeSupra.cdNom, obsForm.value.especeSupra.cdRef, obsForm.value.comment)
+              this.selectedObs.cdGroupOP = obsForm.value.groupOP;
+              this.selectedObs.nomCompletHtml = obsForm.value.especeSupra.nomCompletHtml;
               this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
             }
             else {
@@ -418,12 +434,23 @@ export class ValidationComponent implements OnChanges,OnInit {
       return value
     });
   }
- 
 
   openHelp(helpModal) {
-    this.modalService.open(helpModal, { centered: true, windowClass: 'help-modal'})
+    this.modalService.open(helpModal, { centered: true, windowClass: 'help-modal' })
   }
 
+  supraSearch() {
+    this.advencedSearch = !this.advencedSearch
+  }
+
+  strip_html_tags(str) {
+    if ((str === null) || (str === ''))
+      return false;
+    else
+      str = str.toString();
+    return str.replace(/<[^>]*>/g, '');
+  }
+  
   formatMatches = (value: any) => value.nom_complet_valide || '';
   search = (text$: Observable<string>) =>
     text$
@@ -432,6 +459,25 @@ export class ValidationComponent implements OnChanges,OnInit {
       .do(() => this.searching = true)
       .switchMap(term =>
         this.observationService.getEspece(term, this.selectedObs.cdGroupOP)
+          .do((espece) => {
+            this.searchFailed = false
+          })
+          .catch(() => {
+            this.searchFailed = true;
+            return of([]);
+          }))
+      .do(() => this.searching = false)
+      .merge(this.hideSearchingWhenUnsubscribed);
+
+
+  especeSup = (value: any) => value.nomCompletHtml || '';
+  searchEspeceSup = (text$: Observable<string>) =>
+    text$
+      .debounceTime(300)
+      .distinctUntilChanged()
+      .do(() => this.searching = true)
+      .switchMap(term =>
+        this.observationService.getEspeceSupra(term)
           .do((espece) => {
             this.searchFailed = false
           })

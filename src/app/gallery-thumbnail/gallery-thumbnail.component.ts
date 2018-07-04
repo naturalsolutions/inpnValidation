@@ -2,12 +2,9 @@ import { Component, OnInit, Input } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImagesService } from '../services/images.service';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { NgbPopoverConfig } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from 'lodash';
 import { User } from '../user';
 import { TextService } from '../services/text.service';
-
-
 
 @Component({
   selector: 'app-gallery-thumbnail',
@@ -16,6 +13,7 @@ import { TextService } from '../services/text.service';
 })
 export class GalleryThumbnailComponent implements OnInit {
 
+  noPhotos: boolean = false;
   idValidateur: string;
   valdidate: boolean = false;
   istreated: boolean = false;
@@ -34,8 +32,7 @@ export class GalleryThumbnailComponent implements OnInit {
   constructor(private modalService: NgbModal,
     private spinner: NgxSpinnerService,
     private textService: TextService,
-    private imagesService: ImagesService, ) {
-
+    private imagesService: ImagesService) {
   }
 
   ngOnInit() {
@@ -70,8 +67,14 @@ export class GalleryThumbnailComponent implements OnInit {
           this.photos = photos.Photos;
           this.totalItems = photos.totLines
         },
-        (error) => console.log("getPhotoErr : ", error),
+        (error) => {
+          this.noPhotos = true;
+          this.spinner.hide();
+          console.log("getPhotoErr : ", error)
+        },
         () => {
+          if (this.photos)
+            this.noPhotos = false;
           this.photosLoaded = true;
           this.spinner.hide();
         }
@@ -98,9 +101,8 @@ export class GalleryThumbnailComponent implements OnInit {
   }
 
   openHelp(helpModal) {
-    this.modalService.open(helpModal, { centered: true, windowClass: 'help-modal'})
+    this.modalService.open(helpModal, { centered: true, windowClass: 'help-modal' })
   }
-
 
   public quickValidate(event, cdPhoto, idValidateur, isValidated) {
     event.stopPropagation()

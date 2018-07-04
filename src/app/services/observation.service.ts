@@ -18,8 +18,6 @@ export class ObservationService {
       });
     }
     if (filtreObs) {
-      console.log("filtreObs",filtreObs);
-      
       Object.keys(filtreObs).forEach(function (key) {
         if (filtreObs[key])
         httpParams = httpParams.append(key, filtreObs[key]);
@@ -49,9 +47,19 @@ export class ObservationService {
       httpParams = httpParams.append("texte", textSearch);
     }
     return this.http.get<any>(Conf.apiBaseUrl2 + 'autocomplete/especes/recherche', { params: httpParams })
-      .map(res => res = res.response.docs
-      )
+      .map(res => res = res.response.docs)
   }
+  
+  getEspeceSupra(textSearch) {
+    console.log("textSearch", textSearch);
+    let httpParams = new HttpParams();
+    if (textSearch.length > 1) {
+      httpParams = httpParams.append("nomScientifique", textSearch);
+    }
+    return this.http.get<any>(Conf.taxrefUrl + 'rangTaxonomique=KD&rangTaxonomique=PH&rangTaxonomique=CL&rangTaxonomique=OR&rangTaxonomique=FM&rangTaxonomique=SBFM&rangTaxonomique=TR&rangTaxonomique=GN&simpleRecord=true', { params: httpParams })
+      .map(res => res = res.taxons.taxonSimpl)
+  }
+
   getGroupeSimple() {
     return this.http.get<any[]>(Conf.apiBaseUrl2 + 'mobile/biodiv/groupgp/json');
   }

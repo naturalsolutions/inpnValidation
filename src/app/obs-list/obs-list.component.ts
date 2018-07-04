@@ -3,7 +3,6 @@ import { ObservationService } from '../services/observation.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from "lodash";
 
-
 @Component({
   selector: 'app-obs-list',
   templateUrl: './obs-list.component.html',
@@ -40,8 +39,6 @@ export class ObsListComponent implements OnChanges, OnInit {
   expertValidator: boolean = false;
   gropValidator: boolean = false;
 
-
-
   constructor(
     private spinner: NgxSpinnerService,
     private observationService: ObservationService
@@ -57,7 +54,6 @@ export class ObsListComponent implements OnChanges, OnInit {
   }
 
   loadPage(page: number) {
-
     let paginStart;
     let paginEnd;
     if (page !== this.previousPage) {
@@ -66,9 +62,11 @@ export class ObsListComponent implements OnChanges, OnInit {
       else
         paginStart = 1;
       this.previousPage = page;
-      paginEnd = paginStart + this.nbItems
+      paginEnd = paginStart + this.nbItems;
       if (this.filter)
-      this.getObs(paginStart, paginEnd,this.filter)
+        this.getObs(paginStart, paginEnd, this.filter)
+      else
+        this.getObs(paginStart, paginEnd)
     }
   }
 
@@ -90,13 +88,10 @@ export class ObsListComponent implements OnChanges, OnInit {
     }, obsFilter)
       .subscribe(
         (obs) => {
-          console.log("obs :", obs);
-          if (!obs)
-          {
+          if (!obs) {
             console.log("no obs");
             this.noObs = true;
           }
-     
           else {
             this.noObs = false;
             this.observations = obs;
@@ -118,13 +113,11 @@ export class ObsListComponent implements OnChanges, OnInit {
               return value
             });
             console.log("this.observations", this.observations);
-
             this.obsLoaded = true;
-            this.spinner.hide()
+            this.spinner.hide();
           }
           else {
-            
-            this.spinner.hide()
+            this.spinner.hide();
           }
         }
       )
