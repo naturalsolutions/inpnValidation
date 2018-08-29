@@ -37,7 +37,12 @@ export class HeaderComponent implements OnInit {
               this.currentUser = currentUser;
                 this.user.emit(this.currentUser)
               },
-              (error) => console.log("getUserErr: ", error),
+              (error) =>{console.log("getUserErr: ", error);
+              this.loginService.refreshToken().subscribe(
+                (newToken) => console.log("newToken",newToken),
+                err => console.log("refreshTokenErr",err)               
+              )
+            }, 
               () => {
                 this.loadHeader = true;
                 this.userConnected = isConnected;

@@ -12,7 +12,7 @@ import { TextService } from '../services/text.service';
   styleUrls: ['./gallery-thumbnail.component.scss']
 })
 export class GalleryThumbnailComponent implements OnInit {
-
+  qualifications;
   noPhotos: boolean = false;
   idValidateur: string;
   valdidate: boolean = false;
@@ -25,7 +25,7 @@ export class GalleryThumbnailComponent implements OnInit {
   selectedPhoto;
   private modalRef: NgbModalRef;
   private currentPage: number = 1;
-  private nbItems: number = 23;
+  private nbItems: number = 18;
   private previousPage: number = 1;
   helpText;
 
@@ -37,9 +37,18 @@ export class GalleryThumbnailComponent implements OnInit {
 
   ngOnInit() {
     this.idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
-    this.getPhotos(this.currentPage, this.nbItems + 1);
-    this.textService.getText(1).subscribe((text) => { this.helpText = text; console.log("text", text) }
-    )
+    this.getPhotos(this.currentPage, this.nbItems);
+    this.imagesService.getQualifications()
+      .subscribe((data) => {
+        this.qualifications = data.qualifications;
+        console.log("this.qualifications", this.qualifications);
+      });
+    this.textService.getText(1).
+      subscribe(
+        (text) => {
+          this.helpText = text;
+        }
+      )
   }
 
   loadPage(page: number) {
@@ -47,11 +56,11 @@ export class GalleryThumbnailComponent implements OnInit {
     let paginEnd;
     if (page !== this.previousPage) {
       if (page > 1)
-        paginStart = this.nbItems * (page - 1);
+        paginStart = this.nbItems * (page - 1) + 1;
       else
         paginStart = 1;
       this.previousPage = page;
-      paginEnd = paginStart + this.nbItems
+      paginEnd = paginStart + this.nbItems - 1
       this.getPhotos(paginStart, paginEnd)
     }
   }
@@ -87,17 +96,27 @@ export class GalleryThumbnailComponent implements OnInit {
       this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
   }
 
-  public validatePhoto(cdPhoto, idValidateur, isValidated) {
-    this.imagesService.validatePhoto(cdPhoto, idValidateur, isValidated).subscribe(() => {
-      _.map(this.photos, (value) => {
-        if (value.cdPhoto == cdPhoto) {
-          value.isTreated = 'true';
-          value.isValidated = isValidated;
+  public validatePhoto(cdPhoto, idValidateur, isValidated, qualif) {
+    this.imagesService.validatePhoto(cdPhoto, idValidateur, isValidated)
+      .subscribe(
+        () => {
+          _.map(this.photos, (value) => {
+            if (value.cdPhoto == cdPhoto) {
+              value.isTreated = 'true';
+              value.isValidated = isValidated;
+            }
+            return value
+          });
+        },
+        (error) => console.log("validation_error", error),
+        () => {
+          this.imagesService.setQualifications(cdPhoto, qualif)
+            .subscribe(
+              () => this.modalRef.close(),
+              error => console.log("error set qualif", error)
+            )
         }
-        return value
-      });
-      this.modalRef.close()
-    })
+      )
   }
 
   openHelp(helpModal) {

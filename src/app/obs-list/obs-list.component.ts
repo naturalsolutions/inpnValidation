@@ -29,7 +29,7 @@ export class ObsListComponent implements OnChanges, OnInit {
   private observations;
   totalItems;
   private cuurentPage: number = 1;
-  private nbItems: number = 11;
+  private nbItems: number = 12;
   private previousPage: number = 1;
   principalPhoto: any;
   groupeOP: any;
@@ -45,11 +45,14 @@ export class ObsListComponent implements OnChanges, OnInit {
   ) { }
 
   ngOnInit() {
-    this.getObs(this.cuurentPage, this.nbItems + 1);
+    if(!this.filter)
+    this.getObs(this.cuurentPage, this.nbItems);
   }
 
   ngOnChanges() {
-    if (this.filter)
+   
+    
+    if(this.filter)
       this.reloadObs(this.filter)
   }
 
@@ -58,11 +61,11 @@ export class ObsListComponent implements OnChanges, OnInit {
     let paginEnd;
     if (page !== this.previousPage) {
       if (page > 1)
-        paginStart = this.nbItems * (page - 1);
+        paginStart = this.nbItems * (page - 1) + 1;
       else
         paginStart = 1;
       this.previousPage = page;
-      paginEnd = paginStart + this.nbItems;
+      paginEnd = paginStart + this.nbItems - 1;
       if (this.filter)
         this.getObs(paginStart, paginEnd, this.filter)
       else
@@ -75,7 +78,6 @@ export class ObsListComponent implements OnChanges, OnInit {
     this.obsLoaded = false;
     let obsFilter = {
       "filtreStatutValidation": "5",
-      "filtreAllPhotoTreated": "true",
       "filtrePhotoValidated": "true",
     }
     if (filter) {
@@ -122,8 +124,8 @@ export class ObsListComponent implements OnChanges, OnInit {
         }
       )
   }
-
-  private reloadObs(filter) {
-    this.getObs(this.cuurentPage, this.nbItems + 1, filter);
+  private reloadObs(filter?) {
+    this.cuurentPage = 1;
+    this.getObs(this.cuurentPage, this.nbItems, filter);
   }
 }

@@ -6,6 +6,7 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { LeafletModule } from '@asymmetrik/ngx-leaflet';
 //component
 import { ValidationComponent } from './validation/validation.component';
 import { GalleryThumbnailComponent } from './gallery-thumbnail/gallery-thumbnail.component';
@@ -16,6 +17,8 @@ import { LoginModalComponent } from './login-modal/login-modal.component';
 import { ObservationPageComponent } from './observation-page/observation-page.component';
 import { ObsListComponent } from './obs-list/obs-list.component';
 import { ObsDetailsComponent } from './obs-details/obs-details.component';
+import { FilterComponent } from './filter/filter.component';
+import { ObsMapComponent } from './obs-map/obs-map.component';
 //service
 import { ImagesService } from './services/images.service';
 import { ObservationService } from './services/observation.service';
@@ -26,7 +29,22 @@ import { TextService } from './services/text.service';
 import { AuthInterceptor } from './services/authInterceptor';
 //routing
 import { routing } from './app.routing';
-import { FilterComponent } from './filter/filter.component';
+import {icon, Marker} from 'leaflet';
+
+const iconRetinaUrl = 'assets/marker-icon-2x.png';
+const iconUrl = 'assets/imgs/marker-icon.png';
+const shadowUrl = 'assets/imgs/marker-shadow.png';
+const iconDefault = icon({
+  iconRetinaUrl,
+  iconUrl,
+  shadowUrl,
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  tooltipAnchor: [16, -28],
+  shadowSize: [41, 41]
+});
+Marker.prototype.options.icon = iconDefault;
 
 
 @NgModule({
@@ -42,6 +60,7 @@ import { FilterComponent } from './filter/filter.component';
     ObsListComponent,
     ObsDetailsComponent,
     FilterComponent,
+    ObsMapComponent,
  
   ],
   imports: [
@@ -52,6 +71,7 @@ import { FilterComponent } from './filter/filter.component';
     NgbModule.forRoot(),
     RouterModule,
     NgxSpinnerModule,
+    LeafletModule,
     routing
   ],
   providers: [

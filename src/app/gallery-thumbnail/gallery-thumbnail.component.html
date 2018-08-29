@@ -22,20 +22,34 @@
   </div>
   <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems" [(page)]="currentPage"
     (pageChange)="loadPage($event)"></ngb-pagination>
-<button class="btn btn-secondary btn-help" (click)="openHelp(helpModal)">
-  <span class="icon-flottant2"></span>
-</button>
+  <button class="btn btn-secondary btn-help" (click)="openHelp(helpModal)">
+    <span class="icon-flottant2"></span>
+  </button>
 </div>
 
 <ng-template #content let-c="close" let-d="dismiss">
   <div class="modal-body">
     <img src="{{selectedPhoto.inpnFileUri}}">
-    <button class="btn btn-success btn-modal" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'true')">
-      <span class="icon-cheked"></span>
-    </button>
-    <button class="btn btn-danger btn-modal btn-right" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'false')">
-      <span class="icon-refuse"></span>
-    </button>
+
+  </div>
+  <div class="modal-footer">
+    <form class="container" (submit)="submit(qualifcationForm)">
+      <div class="form-group">
+        <label for="qualif" class="form-control-label">Qualification de la photo</label>
+        <select #qualif class="form-control">
+          <option  *ngFor="let item of qualifications" value="{{item.cdRef}}">{{item.lbRef}}</option>
+        </select>
+      </div>
+    </form>
+    <div class="flex-btn">
+      <button class="btn btn-success btn-modal" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'true',qualif.value)">
+        <span class="icon-cheked"></span>
+      </button>
+      <button class="btn btn-danger btn-modal" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'false',qualif.value)">
+        <span class="icon-refuse"></span>
+      </button>
+    </div>
+
   </div>
 </ng-template>
 

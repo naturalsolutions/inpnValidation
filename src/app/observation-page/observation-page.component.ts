@@ -27,6 +27,7 @@ export class ObservationPageComponent implements OnChanges,OnInit {
   grpTaxoSelect: boolean = false;
   filter: any;
   useerrrr: any;
+  showMap: boolean;
 
   constructor(private loginService: LoginService) {
   }
@@ -43,37 +44,43 @@ export class ObservationPageComponent implements OnChanges,OnInit {
     this.selectedValidator = "espece";
     this.validationText = "Espèce";
     this.isActive = "validation";
-    this.showList = false
+    this.showList = false;
+    this.showMap = false;
   }
   selectGrpTaxo() {
     this.selectedValidator = "taxo";
     this.validationText = "Groupe taxonomique";
     this.isActive = "validation";
-    this.showList = false
+    this.showList = false;
+    this.showMap = false;
   }
   selectGrpSimple() {
     this.selectedValidator = "simple";
     this.validationText = "Groupe simple";
     this.isActive = "validation";
-    this.showList = false
+    this.showList = false;
+    this.showMap = false;
   }
   selectPhoto() {
     this.selectedValidator = "photo";
     this.validationText = "Photos";
-    this.isActive = "validation",
-      this.showList = false
+    this.isActive = "validation";
+      this.showList = false;
+      this.showMap = false;
   }
   gridObs() {
     this.isActive = "grid";
     this.validationText = "Validation";
     this.selectedValidator = null;
-    this.showList = true
+    this.showList = true;
+    this.showMap = false;
   }
   mapObs() {
     this.isActive = "maps";
     this.validationText = "Validation";
     this.selectedValidator = null;
-    this.showList = false
+    this.showList = false;
+    this.showMap = true;
   }
   newFilter(event) {
     this.filter=event;

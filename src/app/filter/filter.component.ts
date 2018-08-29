@@ -102,7 +102,7 @@ resetFilter() {
     value.selectedObs = ""
     return value
   });
-  this.filter.emit(null);
+  this.filter.emit('reset');
   this.observationService.getlistGroupOP()
     .subscribe(
       (groupOP) => this.listGroupOP = groupOP,

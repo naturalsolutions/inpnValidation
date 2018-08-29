@@ -49,7 +49,7 @@ export class ValidationComponent implements OnChanges, OnInit {
   private observations;
   totalItems;
   private cuurentPage: number = 1;
-  private nbItems: number = 11;
+  private nbItems: number = 12;
   private previousPage: number = 1;
   private listGroupOP;
   principalPhoto: any;
@@ -65,7 +65,7 @@ export class ValidationComponent implements OnChanges, OnInit {
   helpText;
   @Input() filter;
   advencedSearch: boolean = false;
-
+  disableButton: boolean = false;
 
   constructor(private modalService: NgbModal,
     private formBuilder: FormBuilder,
@@ -75,7 +75,7 @@ export class ValidationComponent implements OnChanges, OnInit {
     private observationService: ObservationService) { }
 
   ngOnInit() {
-    this.getObs(this.cuurentPage, this.nbItems + 1);
+    this.getObs(this.cuurentPage, this.nbItems);
   }
 
   ngOnChanges() {
@@ -88,11 +88,11 @@ export class ValidationComponent implements OnChanges, OnInit {
     let paginEnd;
     if (page !== this.previousPage) {
       if (page > 1)
-        paginStart = this.nbItems * (page - 1);
+        paginStart = this.nbItems * (page - 1) + 1;
       else
         paginStart = 1;
       this.previousPage = page;
-      paginEnd = paginStart + this.nbItems
+      paginEnd = paginStart + this.nbItems - 1
       this.getObs(paginStart, paginEnd)
     }
   }
@@ -279,22 +279,10 @@ export class ValidationComponent implements OnChanges, OnInit {
           this.loadForm = true;
         }
       )
-    this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
+    this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'validate-modal' })
     this.modalRef.result.then((result) => {
     }, (reason) => {
-
-      _.map(this.listGroupeSimple.GroupGp, (value) => {
-        if (this.selectedObs.groupSimple == value.cdGroupGrandPublic)
-          value.selectedObs = ""
-        return value
-      });
-      if (this.selectedObs.gpSipmlePrevious.length > 0) {
-        this.selectedObs.gpSipmle = this.selectedObs.gpSipmlePrevious[0];
-        this.selectedObs.groupSimple = this.selectedObs.groupSimplePrevious[0];
-      }
-      if (this.selectedObs.previousCdGroupOP.length > 0) {
-        this.selectedObs.cdGroupOP = this.selectedObs.previousCdGroupOP;
-      }
+      this.closeModalConfig()
     });
   }
 
@@ -325,10 +313,13 @@ export class ValidationComponent implements OnChanges, OnInit {
             }
             return value
           });
-          if (this.modalRef)
+          if (this.modalRef) {
+            this.closeModalConfig();
             this.modalRef.close()
+          }
         },
-        (error) => console.log("error validateObs", error)
+        (error) => console.log("error validateObs", error),
+        () => this.disableButton = false
       )
   }
 
@@ -344,8 +335,6 @@ export class ValidationComponent implements OnChanges, OnInit {
         else console.log("shortcut gop error");
         break;
       case 'IE_VALIDATOR_EXPERT':
-
-
         if (obs.groupeOP && obs.cdNom != 0 && obs.cd_ref != 0) {
           this.validateObs(obs.idData, obs.groupSimple,
             obs.cdGroupOP, obs.cd_nom, obs.cd_ref)
@@ -359,9 +348,9 @@ export class ValidationComponent implements OnChanges, OnInit {
     }
   }
 
-  submit(obsForm) {   
-    console.log("obsForm",obsForm.value);
-    
+  submit(obsForm) {
+    console.log("obsForm", obsForm.value);
+    this.disableButton = true
     {
       switch (this.userRole) {
         case 'IE_VALIDATOR_GRSIMPLE':
@@ -378,8 +367,8 @@ export class ValidationComponent implements OnChanges, OnInit {
         case 'IE_VALIDATOR_EXPERT':
           if (obsForm.valid) {
             if (typeof obsForm.value.espece == "object") {
-              console.log("obsFormespece",obsForm.value.espece.cd_nom[0]);
-    
+              console.log("obsFormespece", obsForm.value.espece.cd_nom[0]);
+
               this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
                 obsForm.value.groupOP, obsForm.value.espece.cd_nom[0], obsForm.value.espece.cd_ref, obsForm.value.comment)
               this.selectedObs.cdGroupOP = obsForm.value.groupOP;
@@ -387,9 +376,9 @@ export class ValidationComponent implements OnChanges, OnInit {
               this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
             }
             else if (typeof obsForm.value.especeSupra == "object") {
-              console.log("obsFormespece2",obsForm.value.especeSupra.cdNom);
+              console.log("obsFormespece2", obsForm.value.especeSupra.cdNom);
               this.validationForm.controls['espece'].clearValidators()
-    
+
               this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
                 obsForm.value.groupOP, obsForm.value.especeSupra.cdNom, obsForm.value.especeSupra.cdRef, obsForm.value.comment)
               this.selectedObs.cdGroupOP = obsForm.value.groupOP;
@@ -438,6 +427,11 @@ export class ValidationComponent implements OnChanges, OnInit {
   openHelp(helpModal) {
     this.modalService.open(helpModal, { centered: true, windowClass: 'help-modal' })
   }
+  openLargePhoto(largePhoto,obs)
+  {
+    this.selectedObs = obs;
+    this.modalService.open(largePhoto, { centered: true, windowClass: 'css-modal' })
+  }
 
   supraSearch() {
     this.advencedSearch = !this.advencedSearch
@@ -450,7 +444,31 @@ export class ValidationComponent implements OnChanges, OnInit {
       str = str.toString();
     return str.replace(/<[^>]*>/g, '');
   }
-  
+  formatter(str) {
+    let res = str.nomCompletHtml
+    if ((res === null) || (res === ''))
+      return false;
+    else
+      res = res.toString();
+    return res.replace(/<[^>]*>/g, '');
+
+  }
+
+  private closeModalConfig() {
+    _.map(this.listGroupeSimple.GroupGp, (value) => {
+      if (this.selectedObs.groupSimple == value.cdGroupGrandPublic)
+        value.selectedObs = ""
+      return value
+    });
+    if (this.selectedObs.gpSipmlePrevious.length > 0) {
+      this.selectedObs.gpSipmle = this.selectedObs.gpSipmlePrevious[0];
+      this.selectedObs.groupSimple = this.selectedObs.groupSimplePrevious[0];
+    }
+    if (this.selectedObs.previousCdGroupOP.length > 0) {
+      this.selectedObs.cdGroupOP = this.selectedObs.previousCdGroupOP;
+    }
+  }
+
   formatMatches = (value: any) => value.nom_complet_valide || '';
   search = (text$: Observable<string>) =>
     text$
@@ -470,7 +488,7 @@ export class ValidationComponent implements OnChanges, OnInit {
       .merge(this.hideSearchingWhenUnsubscribed);
 
 
-  especeSup = (value: any) => value.nomCompletHtml || '';
+  especeSup = (value: any) => this.strip_html_tags(value.nomCompletHtml) || '';
   searchEspeceSup = (text$: Observable<string>) =>
     text$
       .debounceTime(300)
@@ -487,4 +505,6 @@ export class ValidationComponent implements OnChanges, OnInit {
           }))
       .do(() => this.searching = false)
       .merge(this.hideSearchingWhenUnsubscribed);
+
+
 }

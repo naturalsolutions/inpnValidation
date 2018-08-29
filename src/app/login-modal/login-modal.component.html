@@ -15,7 +15,7 @@
         <label for="pwd" class="form-control-label">Mot de passe</label>
         <input formControlName="password" type="password" class="form-control" id="pwd">
       </div>
-      <ngb-alert *ngIf="errorLogin" type="danger"  [dismissible]="false"> {{errorMsg}} </ngb-alert>
+      <ngb-alert *ngIf="errorLogin" type="danger" [dismissible]="false"> {{errorMsg}} </ngb-alert>
     </div>
     <div class="modal-footer">
       <button type="submit" class="btn btn-secondary">Se connecter</button>

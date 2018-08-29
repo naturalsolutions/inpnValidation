@@ -1,45 +1,48 @@
 <ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <div *ngIf="obsLoaded" class="container-fluid">
-  <div class="row">
-    <div *ngFor="let item of observations.observations" class="col-xl-2 col-lg-3 col-md-4 col-xs-6 thumb">
-      <div class="card card-list ">
-        <button *ngIf="item.isTreated!=true" [ngClass]="item.classValidBtn" (click)="shortcutValidate(item)">
-          <span class="icon-cheked"></span>
-        </button>
-        <button *ngIf="item.isTreated!=true" [ngClass]="item.classModifyBtn" (click)="open(content,item)">
-          <span class="icon-pen"></span>
-        </button>
-        <div *ngIf="item.isTreated==true" class="tag valid-tag">
-          <span class="icon-cheked"></span>
-        </div>
-        <img *ngIf="item.photos.length < 2" class="card-img-top-list" src="{{item.principalPhoto.thumbnailFileUri}}">
-        <ngb-carousel interval=0 *ngIf="item.photos.length > 1">
-          <ng-template *ngFor="let photo of item.photos" ngbSlide>
-            <img [ngClass]="{
+    <div class="row">
+      <div *ngFor="let item of observations.observations" class="col-xl-2 col-lg-3 col-md-4 col-xs-6 thumb d-flex">
+        <div class="card flex-fill">
+          <button *ngIf="item.isTreated!=true" [ngClass]="item.classValidBtn" (click)="shortcutValidate(item)">
+            <span class="icon-cheked"></span>
+          </button>
+          <button *ngIf="item.isTreated!=true" [ngClass]="item.classModifyBtn" (click)="open(content,item)">
+            <span class="icon-pen"></span>
+          </button>
+          <div *ngIf="item.isTreated==true" class="tag valid-tag">
+            <span class="icon-cheked"></span>
+          </div>
+          <div class="zoom-image">
+            <span class="icon-full" (click)="openLargePhoto(largePhoto,item)"></span>
+          </div>
+          <img *ngIf="item.photos.length < 2" class="card-img-top-list" src="{{item.principalPhoto.thumbnailFileUri}}">
+          <ngb-carousel interval=0 *ngIf="item.photos.length > 1">
+            <ng-template *ngFor="let photo of item.photos" ngbSlide>
+              <img [ngClass]="{
               'card-img-top-list':photo.isValidated == 'true',
               'invalidPhoto':photo.isValidated == 'false'
             }" src="{{photo.thumbnailFileUri}}">
-            <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
-              <span class="icon-refuse"></span>
+              <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
+                <span class="icon-refuse"></span>
+              </div>
+            </ng-template>
+          </ngb-carousel>
+          <div class="card-body">
+            <span class="{{item.gpSipmle.icons}} icon-gp"></span>
+            <h5 class="card-title">{{item.gpSipmle.groupGrandPublic}}</h5>
+            <p *ngIf="item.groupeOP" class="card-text">{{item.groupeOP.lbGroup}}</p>
+            <div class="especeName" [innerHtml]=item.nomCompletHtml></div>
+            <div class="meta-data">
+              <div class="location">
+                <span class="icon-pin"></span> {{item.commune}}</div>
+              <div class="date">
+                <span class="icon-calendar"></span> {{item.dateCrea}} </div>
+              <div class="user">
+                <span class="icon-profil"></span> Anonyme {{item.idUtilisateur}} </div>
             </div>
-          </ng-template>
-        </ngb-carousel>
-        <div class="card-body">
-          <span class="{{item.gpSipmle.icons}} icon-gp"></span>
-          <h5 class="card-title">{{item.gpSipmle.groupGrandPublic}}</h5>
-          <p *ngIf="item.groupeOP" class="card-text">{{item.groupeOP.lbGroup}}</p>
-          <div class="especeName" [innerHtml]=item.nomCompletHtml></div>
-          <div class="meta-data">
-            <div class="location">
-              <span class="icon-pin"></span> {{item.commune}}</div>
-            <div class="date">
-              <span class="icon-calendar"></span> {{item.dateCrea}} </div>
-            <div class="user">
-              <span class="icon-profil"></span> Anonyme {{item.idUtilisateur}} </div>
           </div>
         </div>
       </div>
-    </div>
   </div>
   <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems" [(page)]="cuurentPage"
     (pageChange)="loadPage($event)"></ngb-pagination>
@@ -96,18 +99,18 @@
             Champs Obligatoire
           </div>
         </div>
-        <p class="supra-search" (click)=supraSearch()>+ trouvez l'espèce par niveau supérieur ?</p>
+        <p *ngIf="expertValidator" class="supra-search" (click)=supraSearch()>+ trouver l'espèce par niveau supérieur ?</p>
         <div *ngIf="expertValidator && advencedSearch" class="form-group">
-            <label for="espece2" class="form-control-label">espèce supra</label>
-            <input formControlName="especeSupra" class="form-control " [ngbTypeahead]="searchEspeceSup" [inputFormatter]="especeSup" [resultFormatter]="especeSup"
-              id="espece2"  >
-          </div>
+          <label for="espece2" class="form-control-label">Taxon supra</label>
+          <input formControlName="especeSupra" class="form-control " [ngbTypeahead]="searchEspeceSup" [inputFormatter]="especeSup"
+            [resultFormatter]="especeSup" [resultTemplate]="formatter" id="espece2">
+        </div>
         <div class="form-group">
           <textarea class="form-control" formControlName="comment" placeholder="Veuillez laisser un commentaire..." rows="3"></textarea>
         </div>
       </div>
       <div class="btn-raw">
-        <button type="submit" class="btn btn-success btn-valid-modal">
+        <button type="submit" [disabled]="disableButton" class="btn btn-success btn-valid-modal">
           Valider
         </button>
       </div>
@@ -115,8 +118,28 @@
   </div>
 </ng-template>
 
+<ng-template #formatter let-r="result" let-t="term">
+  <div [innerHtml]="r.nomCompletHtml"></div>
+</ng-template>
+
 <ng-template #helpModal let-c="close" let-d="dismiss">
   <div class="modal-body">
     <div [innerHtml]=helpText.Text></div>
+  </div>
+</ng-template>
+
+<ng-template #largePhoto let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <img *ngIf="selectedObs.photos.length < 2" class="card-img-large" src="{{selectedObs.principalPhoto.inpnFileUri}}">
+    <ngb-carousel interval=0 *ngIf="selectedObs.photos.length > 1">
+      <ng-template *ngFor="let photo of selectedObs.photos" ngbSlide>
+        <img [ngClass]="{
+              'invalidPhoto-large':photo.isValidated == 'false'
+        }" src="{{photo.inpnFileUri}}">
+        <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
+          <span class="icon-refuse"></span>
+        </div>
+      </ng-template>
+    </ngb-carousel>
   </div>
 </ng-template>

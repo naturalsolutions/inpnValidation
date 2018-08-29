@@ -51,16 +51,17 @@
   padding-top: 2%;
 }
 
-.btn-modal{
-  position: absolute;
-  z-index: 999;
-  width: 50%;
-  left: 0;
-  bottom: 0;
-  opacity: 0.7;
-  border-radius: 0;
-  font-size: 30px
+.flex-btn{
+  padding: 5px 10px;
+  display: flex;
+  justify-content: flex-end;
 }
+.btn-modal{
+  margin: 4px 8px;
+  padding: 8px 12px;
+}
+
+
 .btn-right{
   left: 50%; 
 }

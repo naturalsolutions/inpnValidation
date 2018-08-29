@@ -27,13 +27,22 @@ export class ImagesService {
       .set('idValidateur', idValidateur)
       .set('isValidated', isValidated);
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
-    console.log("cdPhoto", cdPhoto);
-
     return this.http.post<any>(Conf.apiBaseUrl + 'validation/photo/' + cdPhoto, body.toString(),
       { headers, observe: 'response' })
-
   }
 
+  getQualifications() {
+    return this.http.get<any>(Conf.apiBaseUrl + 'data/reference/qualifications')
+  }
+
+  setQualifications(cdPhoto: string,cdQualification :string) {
+    let body = new HttpParams()
+    .set('cdQualification', cdQualification)
+    let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    return this.http.post<any>(Conf.apiBaseUrl + 'updateData/qualification/photo/'+cdPhoto,body.toString(),
+    { headers, observe: 'response' })
+  }
+ 
 }
 
 interface pagination {

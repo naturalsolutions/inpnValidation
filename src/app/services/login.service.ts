@@ -33,7 +33,7 @@ export class LoginService {
   }
 
   refreshToken() {
-    let refreshToken = localStorage.getItem('refresh_token');
+    let refreshToken = localStorage.getItem('inpnUser_refresh_token');
     let body = new HttpParams()
       .set('client_secret', 'qy9yV3R6')
       .set('refresh_token', refreshToken)
