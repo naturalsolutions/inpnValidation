@@ -42,8 +42,12 @@ export class ObsMapComponent implements OnInit,OnChanges  {
       "filtrePhotoValidated": "true",
     }
     if (filter) {
-      obsFilter["filtreName"] = filter.filtreName;
-      obsFilter["filtreValue"] = filter.filtreValue
+      filter = _.omitBy(filter, _.isNil);
+      Object.keys(filter).forEach(function (key) {
+        if (key == 'cdSig')
+          filter[key] = filter[key].cd_sig_ref
+        obsFilter[key] = filter[key]
+      });
     }
     this.observationService.getObservations({
     }, obsFilter)
@@ -101,7 +105,6 @@ export class ObsMapComponent implements OnInit,OnChanges  {
             });
 
             this.mymap.addLayer(markersList);
-            console.log("this.observations_map", this.observations);
             this.obsLoaded = true;
             this.spinner.hide();
           }

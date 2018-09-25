@@ -1,4 +1,4 @@
-import { Component, OnInit,OnChanges } from '@angular/core';
+import { Component, OnInit, OnChanges } from '@angular/core';
 import { LoginService } from '../services/login.service';
 import { User } from "../user";
 import * as _ from "lodash";
@@ -9,8 +9,8 @@ import * as _ from "lodash";
   templateUrl: './observation-page.component.html',
   styleUrls: ['./observation-page.component.scss']
 })
-export class ObservationPageComponent implements OnChanges,OnInit {
-  
+export class ObservationPageComponent implements OnChanges, OnInit {
+
   public isCollapsed = true;
   selectedValidator: String = null;
   validationText: String = "Validation";
@@ -33,11 +33,11 @@ export class ObservationPageComponent implements OnChanges,OnInit {
   }
 
   ngOnChanges() {
-    
+
   }
   ngOnInit() {
 
-   
+
   }
 
   selectEspece() {
@@ -65,8 +65,8 @@ export class ObservationPageComponent implements OnChanges,OnInit {
     this.selectedValidator = "photo";
     this.validationText = "Photos";
     this.isActive = "validation";
-      this.showList = false;
-      this.showMap = false;
+    this.showList = false;
+    this.showMap = false;
   }
   gridObs() {
     this.isActive = "grid";
@@ -83,28 +83,36 @@ export class ObservationPageComponent implements OnChanges,OnInit {
     this.showMap = true;
   }
   newFilter(event) {
-    this.filter=event;
+    this.filter = event;
     this.isCollapsed = true
-   
+
   }
-  getUser(event)
-  {
-    console.log("eventuser",event);
+  getUser(event) {
+    console.log("eventuser", event);
     this.currentUser = event;
-   
+
     this.roles = this.currentUser.attributes.GROUPS.split(",");
-    if (_.includes(this.roles, 'IE_VALIDATOR_PHOTO'))
-      this.photoSelect = true
-    if (_.includes(this.roles, 'IE_VALIDATOR_GRSIMPLE'))
-      this.grpSimpleSelect = true
-    if (_.includes(this.roles, 'IE_VALIDATOR_GROPE'))
-      this.grpTaxoSelect = true
-    if (_.includes(this.roles, 'IE_VALIDATOR_EXPERT'))
-      this.especeSelect = true
+    if (_.includes(this.roles, 'IE_VALIDATOR_PHOTO')) {
+      this.photoSelect = true;
+      this.userRole = 'IE_VALIDATOR_PHOTO'
+    }
+    if (_.includes(this.roles, 'IE_VALIDATOR_GRSIMPLE')) {
+      this.grpSimpleSelect = true;
+      this.userRole = 'IE_VALIDATOR_GRSIMPLE'
+    }
+    if (_.includes(this.roles, 'IE_VALIDATOR_GROPE')) {
+      this.grpTaxoSelect = true;
+      this.userRole = 'IE_VALIDATOR_GROPE'
+    }
+    if (_.includes(this.roles, 'IE_VALIDATOR_EXPERT')) {
+      this.especeSelect = true;
+      this.userRole = 'IE_VALIDATOR_EXPERT'
+    }
     if (_.includes(this.roles, 'IE_VALIDATOR_PHOTO') || _.includes(this.roles, 'IE_VALIDATOR_GRSIMPLE') ||
       _.includes(this.roles, 'IE_VALIDATOR_GROPE') || _.includes(this.roles, 'IE_VALIDATOR_EXPERT'))
       this.isValidator = true;
   }
+
 
 
 }

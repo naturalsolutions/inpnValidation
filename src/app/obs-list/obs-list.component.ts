@@ -45,14 +45,12 @@ export class ObsListComponent implements OnChanges, OnInit {
   ) { }
 
   ngOnInit() {
-    if(!this.filter)
-    this.getObs(this.cuurentPage, this.nbItems);
+    if (!this.filter)
+      this.getObs(this.cuurentPage, this.nbItems);
   }
 
   ngOnChanges() {
-   
-    
-    if(this.filter)
+    if (this.filter)
       this.reloadObs(this.filter)
   }
 
@@ -81,8 +79,14 @@ export class ObsListComponent implements OnChanges, OnInit {
       "filtrePhotoValidated": "true",
     }
     if (filter) {
-      obsFilter["filtreName"] = filter.filtreName;
-      obsFilter["filtreValue"] = filter.filtreValue
+      filter = _.omitBy(filter, _.isNil);
+      Object.keys(filter).forEach(function (key) {
+        if (key == 'cdSig')
+          filter[key] = filter[key].cd_sig_ref
+          if (key == 'pseudo')
+          filter[key] = filter[key].pseudo
+        obsFilter[key] = filter[key]
+      });
     }
     this.observationService.getObservations({
       paginStart: paginStart,

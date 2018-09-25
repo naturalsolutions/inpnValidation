@@ -5,6 +5,7 @@ import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from 'lodash';
 import { User } from '../user';
 import { TextService } from '../services/text.service';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-gallery-thumbnail',
@@ -12,7 +13,10 @@ import { TextService } from '../services/text.service';
   styleUrls: ['./gallery-thumbnail.component.scss']
 })
 export class GalleryThumbnailComponent implements OnInit {
+  qualifForm: FormGroup;
+  invalidForm: FormGroup;
   qualifications;
+  icon_Qualif_Color: string;
   noPhotos: boolean = false;
   idValidateur: string;
   valdidate: boolean = false;
@@ -32,6 +36,7 @@ export class GalleryThumbnailComponent implements OnInit {
   constructor(private modalService: NgbModal,
     private spinner: NgxSpinnerService,
     private textService: TextService,
+    private formBuilder: FormBuilder,
     private imagesService: ImagesService) {
   }
 
@@ -39,10 +44,10 @@ export class GalleryThumbnailComponent implements OnInit {
     this.idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
     this.getPhotos(this.currentPage, this.nbItems);
     this.imagesService.getQualifications()
-      .subscribe((data) => {
-        this.qualifications = data.qualifications;
-        console.log("this.qualifications", this.qualifications);
-      });
+      .subscribe(
+        (data) => {
+          this.qualifications = data.qualifications;
+        });
     this.textService.getText(1).
       subscribe(
         (text) => {
@@ -84,6 +89,9 @@ export class GalleryThumbnailComponent implements OnInit {
         () => {
           if (this.photos)
             this.noPhotos = false;
+          _.map(this.photos, (photo) => {
+            photo.icon_Qualif_Color = '#555'
+          });
           this.photosLoaded = true;
           this.spinner.hide();
         }
@@ -96,12 +104,19 @@ export class GalleryThumbnailComponent implements OnInit {
       this.modalRef = this.modalService.open(content, { centered: true, windowClass: 'css-modal' })
   }
 
-  public validatePhoto(cdPhoto, idValidateur, isValidated, qualif) {
-    this.imagesService.validatePhoto(cdPhoto, idValidateur, isValidated)
+  openLargePhoto(largePhoto, photo) {
+    this.selectedPhoto = photo;
+    this.modalRef = this.modalService.open(largePhoto, { centered: true, windowClass: 'css-modal' })
+  }
+
+  public validatePhoto(isValidated, qualif) {
+    console.log('this.selectedPhoto.cdPhoto',this.selectedPhoto.cdPhoto);
+    
+    this.imagesService.validatePhoto(this.selectedPhoto.cdPhoto, this.idValidateur, isValidated)
       .subscribe(
         () => {
           _.map(this.photos, (value) => {
-            if (value.cdPhoto == cdPhoto) {
+            if (value.cdPhoto == this.selectedPhoto.cdPhoto) {
               value.isTreated = 'true';
               value.isValidated = isValidated;
             }
@@ -110,11 +125,7 @@ export class GalleryThumbnailComponent implements OnInit {
         },
         (error) => console.log("validation_error", error),
         () => {
-          this.imagesService.setQualifications(cdPhoto, qualif)
-            .subscribe(
-              () => this.modalRef.close(),
-              error => console.log("error set qualif", error)
-            )
+          this.setQualifications(qualif)
         }
       )
   }
@@ -135,5 +146,37 @@ export class GalleryThumbnailComponent implements OnInit {
       });
     })
   }
+
+  public invalidPhoto(event, photo, modalInvalidPhoto) {
+    this.selectedPhoto = photo;
+    event.stopPropagation()
+    this.invalidForm = this.formBuilder.group({
+      qualif: [this.selectedPhoto.qualification],
+    });
+    this.modalRef = this.modalService.open(modalInvalidPhoto, { centered: true, windowClass: 'css-modal' })
+  }
+  
+  public qualiferPhoto(event, photo, modalQualifPhoto) {
+    this.selectedPhoto = photo;
+    this.qualifForm = this.formBuilder.group({
+      qualif: [this.selectedPhoto.qualification],
+    });
+    event.stopPropagation()
+    this.modalRef = this.modalService.open(modalQualifPhoto, { centered: true, windowClass: 'css-modal' })
+
+  }
+  setQualifications(qualif) {
+    this.imagesService.setQualifications(this.selectedPhoto.cdPhoto, qualif)
+      .subscribe(
+        () => {
+          this.selectedPhoto.icon_Qualif_Color = 'gold';
+          this.selectedPhoto.qualification = qualif;
+          this.modalRef.close()
+        },
+        error => console.log("error set qualif", error)
+      )
+  }
+
+
 
 }

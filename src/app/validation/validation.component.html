@@ -34,11 +34,11 @@
             <div class="especeName" [innerHtml]=item.nomCompletHtml></div>
             <div class="meta-data">
               <div class="location">
-                <span class="icon-pin"></span> {{item.commune}}</div>
+                <span class="icon-pin"></span> {{item.commune}} ({{item.numDepartement}})</div>
               <div class="date">
                 <span class="icon-calendar"></span> {{item.dateCrea}} </div>
               <div class="user">
-                <span class="icon-profil"></span> Anonyme {{item.idUtilisateur}} </div>
+                <span class="icon-profil"></span> {{item.pseudo}} </div>
             </div>
           </div>
         </div>
@@ -91,7 +91,7 @@
             Champs Obligatoire
           </div>
         </div>
-        <div *ngIf="expertValidator" class="form-group">
+        <div *ngIf="expertValidator && !advencedSearch" class="form-group">
           <label for="espece" class="form-control-label">Nom de l'espèce*</label>
           <input formControlName="espece" class="form-control " [ngbTypeahead]="search" [inputFormatter]="formatMatches" [resultFormatter]="formatMatches"
             id="espece" [class.is-invalid]="validationForm.controls.espece.invalid" [class.is-valid]="validationForm.controls.espece.valid">
@@ -99,11 +99,11 @@
             Champs Obligatoire
           </div>
         </div>
-        <p *ngIf="expertValidator" class="supra-search" (click)=supraSearch()>+ trouver l'espèce par niveau supérieur ?</p>
-        <div *ngIf="expertValidator && advencedSearch" class="form-group">
-          <label for="espece2" class="form-control-label">Taxon supra</label>
+        <p *ngIf="expertValidator" class="supra-search" (click)=supraSearch()>{{supraEspeceText}}</p>
+        <div *ngIf="expertValidator  && advencedSearch" class="form-group">
+          <label for="supra-search" class="form-control-label">Taxon supra*</label>
           <input formControlName="especeSupra" class="form-control " [ngbTypeahead]="searchEspeceSup" [inputFormatter]="especeSup"
-            [resultFormatter]="especeSup" [resultTemplate]="formatter" id="espece2">
+            [resultFormatter]="especeSup" [resultTemplate]="formatter" id="supra" [class.is-invalid]="validationForm.controls.especeSupra.invalid" [class.is-valid]="validationForm.controls.especeSupra.valid">
         </div>
         <div class="form-group">
           <textarea class="form-control" formControlName="comment" placeholder="Veuillez laisser un commentaire..." rows="3"></textarea>

@@ -30,7 +30,7 @@
   </li>
 </ul>
 <div id="collapseExample" [ngbCollapse]="isCollapsed">
-    <app-filter (filter)="newFilter($event)"></app-filter>
+    <app-filter  [userRole]="userRole" (filter)="newFilter($event)"></app-filter>
   </div>
   <app-gallery-thumbnail *ngIf="selectedValidator == 'photo'"  [currentUser]="currentUser"></app-gallery-thumbnail>
   <app-validation *ngIf="selectedValidator == 'simple'" [filter]="filter" [currentUser]="currentUser" [userRole]="'IE_VALIDATOR_GRSIMPLE'"></app-validation>

@@ -3,7 +3,7 @@
 <div *ngIf="photosLoaded" class="container-fluid">
   <div class="row ">
     <div *ngFor="let photo of photos" class=" col-lg-2 col-md-4 col-xs-6 thumb ">
-      <div class="thumbnail" (click)="open(content,photo)">
+      <div class="thumbnail" (click)="openLargePhoto(largePhoto,photo)">
         <div *ngIf="photo.isValidated=='true' && photo.isTreated=='true'" class="tag valid-tag">
           <span class="icon-cheked"></span>
         </div>
@@ -13,45 +13,77 @@
         <button *ngIf="photo.isTreated=='false'" class="btn btn-success btn-list" (click)="quickValidate($event,photo.cdPhoto,idValidateur,'true')">
           <span class="icon-cheked"></span>
         </button>
-        <button *ngIf="photo.isTreated=='false'" class="btn btn-danger btn-list btn-right" (click)="quickValidate($event,photo.cdPhoto,idValidateur,'false')">
+        <button *ngIf="photo.isTreated=='false'" class="btn btn-danger btn-list btn-right" (click)="invalidPhoto($event,photo,modalInvalidPhoto)">
           <span class="icon-refuse"></span>
         </button>
+        <button  class="btn btn-qualif" (click)="qualiferPhoto($event,photo,modalQualifPhoto)">
+          <span class="icon-star" [style.color]=photo.icon_Qualif_Color></span>
+        </button>
         <div class="thumb-img " [style.background-image]="'url(' + photo.thumbnailFileUri + ')'"></div>
+
       </div>
     </div>
   </div>
-  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems" [(page)]="currentPage"
-    (pageChange)="loadPage($event)"></ngb-pagination>
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems"
+    [(page)]="currentPage" (pageChange)="loadPage($event)"></ngb-pagination>
   <button class="btn btn-secondary btn-help" (click)="openHelp(helpModal)">
     <span class="icon-flottant2"></span>
   </button>
 </div>
 
-<ng-template #content let-c="close" let-d="dismiss">
+
+
+<ng-template #largePhoto let-c="close" let-d="dismiss">
   <div class="modal-body">
     <img src="{{selectedPhoto.inpnFileUri}}">
-
-  </div>
-  <div class="modal-footer">
-    <form class="container" (submit)="submit(qualifcationForm)">
-      <div class="form-group">
-        <label for="qualif" class="form-control-label">Qualification de la photo</label>
-        <select #qualif class="form-control">
-          <option  *ngFor="let item of qualifications" value="{{item.cdRef}}">{{item.lbRef}}</option>
-        </select>
-      </div>
-    </form>
-    <div class="flex-btn">
-      <button class="btn btn-success btn-modal" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'true',qualif.value)">
-        <span class="icon-cheked"></span>
-      </button>
-      <button class="btn btn-danger btn-modal" (click)="validatePhoto(selectedPhoto.cdPhoto,idValidateur,'false',qualif.value)">
-        <span class="icon-refuse"></span>
-      </button>
-    </div>
-
   </div>
 </ng-template>
+
+
+<ng-template #modalInvalidPhoto let-c="close" let-d="dismiss">
+  <div class="container">
+    <div class="modal-body">
+        <form [formGroup]="invalidForm">
+        <div class="form-group">
+          <label for="qualif" class="form-control-label qualif-label">Qualification de la photo</label>
+          <select #qualif  formControlName="qualif" class="form-control">
+            <option *ngFor="let item of qualifications" value="{{item.cdRef}}">{{item.lbRef}}</option>
+          </select>
+        </div>
+      </form>
+      <div class="flex-btn">
+        <button class="btn btn-secondary btn-modal" (click)="validatePhoto('false',qualif.value)">
+          Valider
+        </button>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+
+
+<ng-template #modalQualifPhoto let-c="close" let-d="dismiss">
+  <div class="modal-body">
+      <img src="{{selectedPhoto.inpnFileUri}}">
+    </div>
+    <div class="modal-footer">
+      <form class="container" [formGroup]="qualifForm"> 
+        <div class="form-group">
+          <label for="qualif" class="form-control-label">Qualification de la photo</label>
+          <select #qualif formControlName="qualif" class="form-control">
+            <option *ngFor="let item of qualifications"  value="{{item.cdRef}}">{{item.lbRef}}</option>
+          </select>
+        </div>
+      </form>
+      <div class="flex-btn">
+          <button class="btn btn-secondary btn-modal" (click)="setQualifications(qualif.value)">
+            Valider
+          </button>
+        </div>
+  
+    </div>
+</ng-template>
+
 
 <ng-template #helpModal let-c="close" let-d="dismiss">
   <div class="modal-body">

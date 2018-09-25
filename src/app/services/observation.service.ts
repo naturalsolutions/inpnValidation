@@ -23,6 +23,8 @@ export class ObservationService {
         httpParams = httpParams.append(key, filtreObs[key]);
       });
     }
+    console.log("httpParams",httpParams);
+    
     return this.http.get<obs>(Conf.apiBaseUrl + 'data', { params: httpParams, headers });
   }
   getObsByID(id) {
@@ -40,7 +42,6 @@ export class ObservationService {
   }
 
   getEspece(textSearch, groupOP) {
-    console.log("textSearch", textSearch);
     let httpParams = new HttpParams();
     httpParams = httpParams.append("cd_group_op", groupOP);
     if (textSearch.length > 1) {
@@ -51,7 +52,6 @@ export class ObservationService {
   }
   
   getEspeceSupra(textSearch) {
-    console.log("textSearch", textSearch);
     let httpParams = new HttpParams();
     if (textSearch.length > 1) {
       httpParams = httpParams.append("nomScientifique", textSearch);
@@ -60,10 +60,34 @@ export class ObservationService {
       .map(res => res = res.taxons.taxonSimpl)
   }
 
+  getLocalization(textSearch) {
+    let httpParams = new HttpParams();
+    
+    if (textSearch.length > 1) {
+      httpParams = httpParams.append("texte", textSearch);
+    }
+    return this.http.get<any>(Conf.apiBaseUrl2 + 'autocomplete/communes/recherche', { params: httpParams })
+      .map(res => res = res.response.docs)
+  }
+
+  getPseudo(textSearch) {
+    let httpParams = new HttpParams();
+      httpParams = httpParams.append("s", textSearch);
+    return this.http.get<any>(Conf.apiBaseUrl + 'users/ac/pseudo', { params: httpParams })   
+  }
+
+  
   getGroupeSimple() {
     return this.http.get<any[]>(Conf.apiBaseUrl2 + 'mobile/biodiv/groupgp/json');
   }
 
+
+
+  getValidationStatus() {
+    return this.http.get<any[]>(Conf.apiBaseUrl + 'validation/status');
+  }
+
+ 
 
   validateObs(idData: string, idValidateur: string, isValidated: string,
     idStatus: string, groupSimple?, groupOP?, cdNom?, cdRef?, comment?) {
