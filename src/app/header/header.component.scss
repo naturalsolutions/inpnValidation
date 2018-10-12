@@ -30,8 +30,7 @@ li {
 }
 
 .navbar-brand {
-  padding: 10px 0px;
-  padding-bottom: 18px
+  padding: 6px;
 }
 
 .bg-light {
@@ -39,6 +38,7 @@ li {
 }
 
 .navbar {
+  border-bottom: 1px solid #bdbbbb;
   align-items: flex-end;
 }
 

@@ -1,9 +1,8 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { LoginService } from '../services/login.service';
-import { User } from "../user";
-import { Router, RouterModule } from '@angular/router';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { Router } from '@angular/router';
 import 'rxjs/add/operator/first';
+import { FilterService } from '../services/filter.service';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -12,52 +11,40 @@ import 'rxjs/add/operator/first';
 export class HeaderComponent implements OnInit {
   userConnected: boolean = false;
   @Output() user = new EventEmitter();
-  private currentUser: User;
+  private currentUser: any;
   public isCollapsed = true;
   loadHeader: boolean = false;
 
 
   constructor(
     private loginService: LoginService,
-    private spinner: NgxSpinnerService,
     protected router: Router,
+    private filterService :FilterService
   ) { }
 
   ngOnInit() {
-    this.isConnected();
-  }
-
-  isConnected() {
-    this.loginService.getIsConnected()
-      .subscribe(
-        (isConnected) => {
-          if (isConnected == true)
-            this.loginService.getUser().subscribe(
-              (currentUser) => {
-              this.currentUser = currentUser;
-                this.user.emit(this.currentUser)
-              },
-              (error) =>{console.log("getUserErr: ", error);
-              this.loginService.refreshToken().subscribe(
-                (newToken) => console.log("newToken",newToken),
-                err => console.log("refreshTokenErr",err)               
-              )
-            }, 
-              () => {
-                this.loadHeader = true;
-                this.userConnected = isConnected;
-              }
-            )
-          else {
-            this.loadHeader = true;
-            this.userConnected = isConnected;
-          }
+    this.loginService.getCurrentUser()
+      .then((currentUser) => {
+        this.currentUser = currentUser;
+        this.user.emit(this.currentUser)
+        this.loadHeader = true;
+        this.userConnected = true;
+      },
+        (error) => {
+          this.loadHeader = true;
+          this.userConnected = false;
+          this.user.emit(null)
         })
   }
 
+
   logout() {
+    this.userConnected = false;
     this.loginService.logout();
+    this.filterService.setFilterNotifications(0);
     this.router.navigate(['home']);
+    this.filterService.setFilter('init');
   }
+
 
 }

@@ -1,9 +1,109 @@
-<div class="container-fluid">
-  <div class="title">{{observation.lbGroupSimple}}</div>
-  <img *ngIf="observation.photos.length < 2" class="card-img-top-list" src="{{observation.photos[0].inpnFileUri}}">
-  <ngb-carousel interval=0 *ngIf="observation.photos.length > 1">
-    <ng-template *ngFor="let photo of observation.photos" ngbSlide>
-      <img class="card-img-top-list" src="{{photo.inpnFileUri}}">
-    </ng-template>
-  </ngb-carousel>
+<app-header></app-header>
+<div *ngIf="obsLoaded" class="container-fluid">
+
+
+  <div class='row container-block justify-content-lg-center'>
+    <div class="title col-lg-11 col-xl-10">{{observation.lbGroupSimple}}</div>
+    <div class='col-lg-7 img-col'>
+      <div class="row photo-container">
+        <a class="zoom" (click)="agrandirPhoto(largePhoto)"><img class="img-fluid photo-principal" src="{{photoSelected}}"></a>
+
+      </div>
+      <div class="row thumbnail" *ngIf="observation.photos.length > 1">
+        <a *ngFor="let photo of observation.photos" class="thumb-img rounded" [style.background-image]="'url(' + photo.thumbnailFileUri + ')'"
+          (click)="selectPhoto(photo)"></a>
+      </div>
+    </div>
+    <div class='col-lg-4  col-xl-3 info'>
+      <div class="row info-block">
+        <div class="col-auto">
+          <a class="avatar" [style.background-image]="'url(' + observation.avatar + ')'"></a>
+        </div>
+        <div class="col observateur">
+          <div class="pseudo">
+            <a>{{observation.pseudo}}</a>
+          </div>
+          <div class="score">
+            <a><i class="icon-new-obs"></i> 154 Points</a>
+          </div>
+        </div>
+      </div>
+      <div class="row info-block">
+        <div class="col-auto">
+          <i class="grp-icon icon-insecte_araignee"></i>
+        </div>
+        <div class="col observateur">
+          <div class="grpSimple">{{observation.lbGroupSimple}}</div>
+          <div class="grpTaxo">{{observation.lbGroupOP}}</div>
+          <div class="espece" [innerHtml]=observation.nomCompletHtml></div>
+        </div>
+      </div>
+      <div class="row info-block map">
+        <div id="mapid"></div>
+        <div class="adresse"> <img height="26px" src="../assets/imgs/marker-icon.png"> {{observation.commune}},
+          {{observation.departement}}</div>
+      </div>
+    </div>
+  </div>
+  <div class='row container-block history-row justify-content-lg-center'>
+    <div class='col-lg-11 col-xl-10 history-col'>
+      <ngb-tabset #t="ngbTabset" id="detailTab">
+        <ngb-tab id="tab-selectbyid1" title="Historique des validation">
+          <ng-template ngbTabContent>
+            <ul class="timeline">
+              <li *ngFor="let validation of validationHistory">
+                <div class="timeline-badge success"><i class="icon-databaseokay"></i></div>
+                <div class="timeline-panel">
+                  <div class="timeline-heading">
+                    <h5 class="timeline-title">{{validation.lbStatus}}</h5>
+                    <p> <i class="icon-clock"></i>
+                      <small class="text-muted">{{validation.dateStatus | formatDate}}
+                      </small></p>
+                  </div>
+                  <div class="timeline-body">
+                    <p>" {{validation.commentaire}} "</p>
+                  </div>
+                </div>
+              </li>
+              <li *ngIf="nextStep" class="last-step">
+                <div class="timeline-badge "><i class="icon-enAttenteSynchro"></i></div>
+                <div class="timeline-panel">
+                </div>
+              </li>
+            </ul>
+          </ng-template>
+        </ngb-tab>
+        <ngb-tab id="tab-selectbyid2" title="Historique des scores">
+          <ng-template ngbTabContent>
+            <div class="card score-card">
+              <ul class="list-group ">
+                <li *ngFor="let score of observationScore.scoresHistorique" class="list-group-item">
+                  <div><i class="icon-clock"></i>
+                    <small class="text-muted">{{score.dateCrea | formatDate}}
+                    </small><span class="badge badge-pill badge-warning">{{score.score}} POINT(S)</span>
+                  </div>
+                  <div class="score-body">{{score.causes}}
+                  </div>
+                </li>
+
+              </ul>
+            </div>
+          </ng-template>
+        </ngb-tab>
+      </ngb-tabset>
+    </div>
+  </div>
 </div>
+
+<app-footer *ngIf="obsLoaded"></app-footer>
+
+<ng-template #largePhoto let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <img *ngIf="observation.photos.length < 2" class="card-img-large" src="{{photoSelected}}">
+    <ngb-carousel interval=0 *ngIf="observation.photos.length > 1">
+      <ng-template *ngFor="let photo of observation.photos" ngbSlide>
+        <img src="{{photo.inpnFileUri}}">
+      </ng-template>
+    </ngb-carousel>
+  </div>
+</ng-template>

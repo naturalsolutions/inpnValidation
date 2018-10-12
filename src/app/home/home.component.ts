@@ -10,6 +10,7 @@ import { LoginService } from '../services/login.service';
 export class HomeComponent implements OnInit {
   private homeStyle = "homeStyle";
   userConnected: boolean = false;
+  loadPage: boolean = false;;
 
   constructor(
     private loginService: LoginService
@@ -21,5 +22,4 @@ export class HomeComponent implements OnInit {
         this.userConnected = isConnected;
       })
   }
-
 }

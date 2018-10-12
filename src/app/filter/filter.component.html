@@ -1,8 +1,8 @@
 <div class="card filter-card">
   <div class="card-body ">
     <form *ngIf="showFilter" [formGroup]="filterForm" (submit)="submit(filterForm)">
-      <div class="row justify-content-md-center ">
-        <div class="col-lg-auto">
+      <div class="row justify-content-center ">
+        <div class="col-lg-auto ml-md-auto">
           <label class="label-filtre">catégories</label>
           <div *ngFor="let row of listGroupeSimpleArray" class="row-filter">
             <div *ngFor="let grpSimple of row" [ngbTooltip]="tipContent" triggers="mouseenter:mouseleave" ngbPopover="{{grpSimple.groupGrandPublic}}"
@@ -14,7 +14,7 @@
             </div>
           </div>
         </div>
-        <div class="col-lg">
+        <div class="col-lg ml-md-auto">
           <label for="groupOP" class="label-filtre">Groupe taxonomique</label>
           <select id="groupOP" class="form-control" formControlName="groupOp">
             <option value="">---</option>
@@ -24,26 +24,24 @@
           <input formControlName="taxon" class="form-control " [ngbTypeahead]="search" [inputFormatter]="formatMatches"
             [resultFormatter]="formatMatches" id="espece">
         </div>
-        <div class="col-lg">
+        <div class="col-lg ml-md-auto">
           <label class="label-filtre">Date</label>
           <div class="form-row">
             <div class="col-md-6 ">
               <div class="input-group">
-                <input type="text" class="form-control" formControlName="dateInf" placeholder="Début" [(ngModel)]="modeldateInf"
-                  ngbDatepicker #dfrom="ngbDatepicker">
+                <input type="text" class="form-control" formControlName="dateInf" placeholder="Début" ngbDatepicker
+                  #dfrom="ngbDatepicker">
                 <div class="input-group-append">
-                  <button class="btn btn-light calendar" id="inputGroupPrepend" (click)="dfrom.toggle()" type="button"><span
-                      class="icon-calendar"></span></button>
+                  <button class="btn btn-light calendar" (click)="dfrom.toggle()" type="button"><span class="icon-calendar"></span></button>
                 </div>
               </div>
             </div>
             <div class="col-md-6 ">
               <div class="input-group">
-                <input type="text" class="form-control" formControlName="dateSup" placeholder="Fin" [(ngModel)]="modeldateSup"
-                  ngbDatepicker #dto="ngbDatepicker" [minDate]="startDate" [disabled]="calendarActivate">
+                <input type="text" class="form-control" formControlName="dateSup" placeholder="Fin" ngbDatepicker #dto="ngbDatepicker"
+                  [minDate]="startDate" [disabled]="calendarActivate">
                 <div class="input-group-append">
-                  <button class="btn btn-light calendar" id="inputGroupPrepend" (click)="dto.toggle()" type="button"
-                    [disabled]="calendarActivate">
+                  <button class="btn btn-light calendar" (click)="dto.toggle()" type="button" [disabled]="calendarActivate">
                     <span class="icon-calendar"></span></button>
                 </div>
               </div>
@@ -55,20 +53,33 @@
               [resultFormatter]="city" [resultTemplate]="formatter" id="lieu">
           </div>
         </div>
-        <div class="col-lg">
-          <label for="observateur" class="label-filtre">Observateur</label>
-          <input formControlName="pseudo" class="form-control " [ngbTypeahead]="searchPseudo" [inputFormatter]="pseudo"
-            [resultFormatter]="pseudo" id="espece">
-          <div *ngIf="userRole=='IE_VALIDATOR_EXPERT'"><label for="validation" class="label-filtre">Statut de validation</label>
-            <select id="filtrestatuValidation" class="form-control" formControlName="filtrestatuValidation">
+        <div *ngIf="userId" class="col-lg ml-md-auto">
+          <div *ngIf="validationFilter">
+            <label for="observateur" class="label-filtre">Observateur</label>
+            <input formControlName="pseudo" class="form-control " [ngbTypeahead]="searchPseudo" [inputFormatter]="pseudo"
+              [resultFormatter]="pseudo" id="observateur">
+          </div>
+          <div *ngIf="!validationFilter && showSatutsFilter"><label for="validation" class="label-filtre">Statut de
+              validation</label>
+            <select id="filtrestatuValidation" class="form-control" formControlName="filtreStatutValidation">
+                <option value="">---</option>
               <option *ngFor="let statu of ValidationStatus.Status" value="{{statu.cdRef}}">{{statu.lbRef}}</option>
             </select>
           </div>
         </div>
       </div>
-      <div class="form-btn">
-        <button type="submit" class="btn btn-success">Filtrer</button>
-        <button type="button" class="btn btn-secondary" (click)="resetFilter()">Réinitialiser</button>
+      <div class="row justify-content-between">
+        <div class="col-md-6">
+          <div *ngIf="userId && !validationFilter" class="custom-control custom-checkbox">
+            <input type="checkbox" formControlName="idUtilisateur" class="custom-control-input" id="customCheck1">
+            <label class="custom-control-label" for="customCheck1">Mes observations</label>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="float-right"> <button type="submit" class="btn btn-filter btn-success">Filtrer</button>
+            <button type="button" class="btn btn-filter btn-secondary" (click)="resetFilter()">Réinitialiser</button>
+          </div>
+        </div>
       </div>
     </form>
   </div>

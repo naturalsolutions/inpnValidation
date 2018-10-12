@@ -20,19 +20,19 @@ export class ObservationService {
     if (filtreObs) {
       Object.keys(filtreObs).forEach(function (key) {
         if (filtreObs[key])
-        httpParams = httpParams.append(key, filtreObs[key]);
+          httpParams = httpParams.append(key, filtreObs[key]);
       });
     }
-    console.log("httpParams",httpParams);
-    
     return this.http.get<obs>(Conf.apiBaseUrl + 'data', { params: httpParams, headers });
   }
+
   getObsByID(id) {
     let token = localStorage.getItem('inpnUser_Access_token');
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
       .set('Authorization', 'Bearer ' + token);
-    return this.http.get<obs>(Conf.apiBaseUrl + 'data/'+id);
+    return this.http.get<obs>(Conf.apiBaseUrl + 'data/' + id);
   }
+
   getlistGroupOP(groupSimple?) {
     let httpParams = new HttpParams();
     if (groupSimple) {
@@ -50,7 +50,7 @@ export class ObservationService {
     return this.http.get<any>(Conf.apiBaseUrl2 + 'autocomplete/especes/recherche', { params: httpParams })
       .map(res => res = res.response.docs)
   }
-  
+
   getEspeceSupra(textSearch) {
     let httpParams = new HttpParams();
     if (textSearch.length > 1) {
@@ -62,7 +62,7 @@ export class ObservationService {
 
   getLocalization(textSearch) {
     let httpParams = new HttpParams();
-    
+
     if (textSearch.length > 1) {
       httpParams = httpParams.append("texte", textSearch);
     }
@@ -72,22 +72,26 @@ export class ObservationService {
 
   getPseudo(textSearch) {
     let httpParams = new HttpParams();
-      httpParams = httpParams.append("s", textSearch);
-    return this.http.get<any>(Conf.apiBaseUrl + 'users/ac/pseudo', { params: httpParams })   
+    httpParams = httpParams.append("s", textSearch);
+    return this.http.get<any>(Conf.apiBaseUrl + 'users/ac/pseudo', { params: httpParams })
   }
 
-  
+
   getGroupeSimple() {
     return this.http.get<any[]>(Conf.apiBaseUrl2 + 'mobile/biodiv/groupgp/json');
   }
-
-
 
   getValidationStatus() {
     return this.http.get<any[]>(Conf.apiBaseUrl + 'validation/status');
   }
 
- 
+  getValidationHistory(dataId) {
+    return this.http.get<any[]>(Conf.apiBaseUrl + 'validation/data/'+dataId+'/historique');
+  }
+
+  getObservationScore(dataId) {
+    return this.http.get<any[]>(Conf.apiBaseUrl + 'score/iddata/'+dataId);
+  }
 
   validateObs(idData: string, idValidateur: string, isValidated: string,
     idStatus: string, groupSimple?, groupOP?, cdNom?, cdRef?, comment?) {
@@ -106,12 +110,11 @@ export class ObservationService {
       validateObj['cdNom'] = cdNom;
     if (cdRef)
       validateObj['cdRef'] = cdRef;
-    //if (comment)
-     // validateObj['commentValidation'] = comment;
+    if (comment)
+      validateObj['commentStatus'] = comment;
     Object.keys(validateObj).forEach(function (key) {
       httpParams = httpParams.append(key, validateObj[key]);
     });
-
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
     return this.http.post<any>(Conf.apiBaseUrl + 'validation/', httpParams.toString(), { headers, observe: 'response' })
   }

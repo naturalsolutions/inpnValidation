@@ -1,7 +1,6 @@
-<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <nav *ngIf="loadHeader" class="navbar navbar-expand-lg navbar-light bg-light justify-content-between">
   <a class="navbar-brand" routerLink="home">
-    <img src="../assets/imgs/logo_inpn.png" width="200px">
+    <img src="../assets/imgs/logo-inpn.png" width="170px">
   </a>
   <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" aria-controls="collapse">
     <span class="navbar-toggler-icon"></span>
@@ -12,7 +11,7 @@
         <a class="nav-link " routerLink="/home" routerLinkActive="active">Accueil</a>
       </li>
       <li  class="nav-item">
-        <a class="nav-link" routerLink="/observations" routerLinkActive="active">Observations</a>
+        <a class="nav-link" routerLink="/observations/list" routerLinkActive="active">Observations</a>
       </li>
       <li *ngIf="!userConnected" class="nav-item">
         <login-modal class="nav-link" routerLinkActive="active"></login-modal>

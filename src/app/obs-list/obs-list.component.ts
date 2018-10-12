@@ -1,5 +1,6 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ObservationService } from '../services/observation.service';
+import { FilterService } from '../services/filter.service'
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from "lodash";
 
@@ -8,8 +9,8 @@ import * as _ from "lodash";
   templateUrl: './obs-list.component.html',
   styleUrls: ['./obs-list.component.scss']
 })
-export class ObsListComponent implements OnChanges, OnInit {
-  @Input() filter;
+export class ObsListComponent implements OnInit, OnDestroy {
+  filter: any = {};
   private icons = {
     506: "icon-reptile_amphibien",
     501: "icon-champignon_lichen",
@@ -25,34 +26,48 @@ export class ObsListComponent implements OnChanges, OnInit {
 
   public obsLoaded: boolean = false;
   noObs: boolean = false;
-  selectedObs: any;
   private observations;
+  invalidPhoto: boolean = false;
   totalItems;
   private cuurentPage: number = 1;
   private nbItems: number = 12;
   private previousPage: number = 1;
   principalPhoto: any;
-  groupeOP: any;
-  groupeSimple: any;
-  listGroupeSimple;
-  listGroupeSimpleArray: any;
-  expertValidator: boolean = false;
-  gropValidator: boolean = false;
+  nbFilterSelected: any;
+  userChecked: boolean = false;
+  mySubscription;
+  validator = {
+    photoSelect: false,
+    grpSimpleSelect: false,
+    grpTaxoSelect: false,
+    especeSelect: false,
+    userId: null,
+    userRole: null,
+    isValidator: false,
+    validationFilter: false
+  }
 
   constructor(
     private spinner: NgxSpinnerService,
-    private observationService: ObservationService
+    private observationService: ObservationService,
+    private filterService: FilterService,
   ) { }
 
   ngOnInit() {
-    if (!this.filter)
-      this.getObs(this.cuurentPage, this.nbItems);
+    this.mySubscription = this.filterService.getFilter().subscribe(
+      (filter) => {
+        if (filter != 'init') {
+          this.filter = filter;
+          if (this.filter)
+            this.reloadObs(this.filter)
+          else {
+            this.invalidPhoto = false;
+            this.reloadObs()
+          }
+        }
+      })
   }
 
-  ngOnChanges() {
-    if (this.filter)
-      this.reloadObs(this.filter)
-  }
 
   loadPage(page: number) {
     let paginStart;
@@ -76,17 +91,38 @@ export class ObsListComponent implements OnChanges, OnInit {
     this.obsLoaded = false;
     let obsFilter = {
       "filtreStatutValidation": "5",
-      "filtrePhotoValidated": "true",
     }
     if (filter) {
+      if (!filter.idUtilisateur)
+        this.filter.filtreStatutValidation = '5';
       filter = _.omitBy(filter, _.isNil);
+      console.log("filter", filter);
+
+      this.nbFilterSelected = _.size(filter);
+      console.log("this.nbFilterSelected", this.nbFilterSelected);
+      if (!filter.idUtilisateur)
+        this.nbFilterSelected--;
+      if (filter.idUtilisateur == false)
+        this.nbFilterSelected--;
+      this.filterService.setFilterNotifications(this.nbFilterSelected)
+
       Object.keys(filter).forEach(function (key) {
         if (key == 'cdSig')
           filter[key] = filter[key].cd_sig_ref
-          if (key == 'pseudo')
+        if (key == 'pseudo')
           filter[key] = filter[key].pseudo
-        obsFilter[key] = filter[key]
+        if (key == 'taxon')
+          filter[key] = filter[key].cd_nom[0]
       });
+      if (filter.idUtilisateur)
+        this.invalidPhoto = true;
+      else
+        this.invalidPhoto = false;
+
+      obsFilter = filter
+    }
+    else {
+      this.filterService.setFilterNotifications(0)
     }
     this.observationService.getObservations({
       paginStart: paginStart,
@@ -132,4 +168,42 @@ export class ObsListComponent implements OnChanges, OnInit {
     this.cuurentPage = 1;
     this.getObs(this.cuurentPage, this.nbItems, filter);
   }
+  getUser(currentUser) {
+    this.userChecked = true;
+    if (currentUser) {
+      this.validator.userId = currentUser.attributes.ID_UTILISATEUR;
+      this.filterService.setFilterNotifications(1);
+      this.filter = { 'idUtilisateur': this.validator.userId };
+      this.reloadObs(this.filter);
+      let roles = currentUser.attributes.GROUPS.split(",");
+      if (_.includes(roles, 'IE_VALIDATOR_PHOTO')) {
+        this.validator.photoSelect = true;
+        this.validator.userRole = 'IE_VALIDATOR_PHOTO'
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_GRSIMPLE')) {
+        this.validator.grpSimpleSelect = true;
+        this.validator.userRole = 'IE_VALIDATOR_GRSIMPLE'
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_GROPE')) {
+        this.validator.grpTaxoSelect = true;
+        this.validator.userRole = 'IE_VALIDATOR_GROPE'
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_EXPERT')) {
+        this.validator.especeSelect = true;
+        this.validator.userRole = 'IE_VALIDATOR_EXPERT'
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_PHOTO') || _.includes(roles, 'IE_VALIDATOR_GRSIMPLE') ||
+        _.includes(roles, 'IE_VALIDATOR_GROPE') || _.includes(roles, 'IE_VALIDATOR_EXPERT'))
+        this.validator.isValidator = true;
+    }
+    else
+      this.reloadObs()
+  }
+  ngOnDestroy() {
+    this.filterService.setFilter('init');
+    if (this.mySubscription)
+      this.mySubscription.unsubscribe();
+  }
+
 }
+

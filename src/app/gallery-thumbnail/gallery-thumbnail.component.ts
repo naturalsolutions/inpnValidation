@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImagesService } from '../services/images.service';
 import { NgxSpinnerService } from 'ngx-spinner';
@@ -24,7 +24,8 @@ export class GalleryThumbnailComponent implements OnInit {
   totalItems: number;
   photosLoaded: boolean = false;
   closeResult: string;
-  @Input() currentUser: User;
+  currentUser: User;
+  userChecked: boolean = false;
   photos;
   selectedPhoto;
   private modalRef: NgbModalRef;
@@ -32,7 +33,16 @@ export class GalleryThumbnailComponent implements OnInit {
   private nbItems: number = 18;
   private previousPage: number = 1;
   helpText;
-
+  validator = {
+    photoSelect: false,
+    grpSimpleSelect: false,
+    grpTaxoSelect: false,
+    especeSelect: false,
+    userId: null,
+    userRole: null,
+    isValidator: false,
+    validationFilter: false
+  }
   constructor(private modalService: NgbModal,
     private spinner: NgxSpinnerService,
     private textService: TextService,
@@ -41,7 +51,6 @@ export class GalleryThumbnailComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
     this.getPhotos(this.currentPage, this.nbItems);
     this.imagesService.getQualifications()
       .subscribe(
@@ -110,8 +119,6 @@ export class GalleryThumbnailComponent implements OnInit {
   }
 
   public validatePhoto(isValidated, qualif) {
-    console.log('this.selectedPhoto.cdPhoto',this.selectedPhoto.cdPhoto);
-    
     this.imagesService.validatePhoto(this.selectedPhoto.cdPhoto, this.idValidateur, isValidated)
       .subscribe(
         () => {
@@ -155,7 +162,7 @@ export class GalleryThumbnailComponent implements OnInit {
     });
     this.modalRef = this.modalService.open(modalInvalidPhoto, { centered: true, windowClass: 'css-modal' })
   }
-  
+
   public qualiferPhoto(event, photo, modalQualifPhoto) {
     this.selectedPhoto = photo;
     this.qualifForm = this.formBuilder.group({
@@ -176,7 +183,33 @@ export class GalleryThumbnailComponent implements OnInit {
         error => console.log("error set qualif", error)
       )
   }
+  getUser(currentUser) {
+    this.userChecked = true;
+    if (currentUser) {
+      this.validator.userId = currentUser.attributes.ID_UTILISATEUR;
+      this.currentUser = currentUser
+      this.idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
+      let roles = currentUser.attributes.GROUPS.split(",");
+      if (_.includes(roles, 'IE_VALIDATOR_PHOTO')) {
+        this.validator.photoSelect = true;
+        this.validator.userRole = 'IE_VALIDATOR_PHOTO'
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_GRSIMPLE')) {
+        this.validator.grpSimpleSelect = true;
+        this.validator.userRole = 'IE_VALIDATOR_GRSIMPLE'
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_GROPE')) {
+        this.validator.grpTaxoSelect = true;
+        this.validator.userRole = 'IE_VALIDATOR_GROPE'
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_EXPERT')) {
+        this.validator.especeSelect = true;
+        this.validator.userRole = 'IE_VALIDATOR_EXPERT'
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_PHOTO') || _.includes(roles, 'IE_VALIDATOR_GRSIMPLE') ||
+        _.includes(roles, 'IE_VALIDATOR_GROPE') || _.includes(roles, 'IE_VALIDATOR_EXPERT'))
+        this.validator.isValidator = true;
+    }
 
-
-
+  }
 }

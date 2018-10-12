@@ -1,1 +1,5 @@
-<div  id="mapid" ></div>
+<app-header (user)="getUser($event)"></app-header>
+<observations-nav *ngIf="userChecked" [navItem]="'map'" [validator]=validator></observations-nav>
+<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
+<div id="mapid"></div>
+<app-footer  *ngIf="obsLoaded || noObs"></app-footer>

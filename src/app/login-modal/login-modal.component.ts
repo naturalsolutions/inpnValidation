@@ -1,8 +1,9 @@
-import { Component, ViewEncapsulation, Input } from '@angular/core';
+import { Component, ViewEncapsulation, Input, OnDestroy } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { LoginService } from '../services/login.service';
-import { Router } from '@angular/router';
+import { Router, NavigationEnd } from '@angular/router';
+import { FilterService } from '../services/filter.service';
 
 @Component({
   selector: 'login-modal',
@@ -18,10 +19,11 @@ export class LoginModalComponent {
   private modalRef: NgbModalRef;
   errorMsg: string = "Email ou mot de passe incorrect";
   errorLogin: boolean = false;
+  mySubscription;
   constructor(
     private modalService: NgbModal,
     private formBuilder: FormBuilder,
-    protected router: Router,
+    private router: Router,
     private loginService: LoginService) {
   }
 
@@ -52,11 +54,21 @@ export class LoginModalComponent {
             this.errorLogin = true
         },
         () => {
-          this.loginService.setIsConnected(true);
           this.modalRef.close();
-          this.router.navigate(['observations'])
+          // ###### can reload the same route #######
+          this.router.routeReuseStrategy.shouldReuseRoute = function () {
+            return false;
+          };
+          this.mySubscription = this.router.events.subscribe((event) => {
+            if (event instanceof NavigationEnd) {
+              this.router.navigated = false;
+            }
+          })
+          // ##########
+          
+          this.router.navigate(['observations/list'])
         }
-      );
+      )
   }
 
   private splitString(str) {
@@ -66,5 +78,8 @@ export class LoginModalComponent {
       return a;
     }, {})
   }
-
+  ngOnDestroy() {
+    if (this.mySubscription)
+      this.mySubscription.unsubscribe();
+  }
 }

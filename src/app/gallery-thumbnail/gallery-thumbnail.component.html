@@ -1,5 +1,6 @@
+<app-header (user)="getUser($event)"></app-header>
+<observations-nav *ngIf="userChecked" [navItem]="'photo'" [validationText]="'Photos'" [validator]=validator></observations-nav>
 <ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
-
 <div *ngIf="photosLoaded" class="container-fluid">
   <div class="row ">
     <div *ngFor="let photo of photos" class=" col-lg-2 col-md-4 col-xs-6 thumb ">
@@ -19,7 +20,7 @@
         <button  class="btn btn-qualif" (click)="qualiferPhoto($event,photo,modalQualifPhoto)">
           <span class="icon-star" [style.color]=photo.icon_Qualif_Color></span>
         </button>
-        <div class="thumb-img " [style.background-image]="'url(' + photo.thumbnailFileUri + ')'"></div>
+        <div class="thumb-img" [style.background-image]="'url(' + photo.thumbnailFileUri + ')'"></div>
 
       </div>
     </div>
@@ -31,14 +32,11 @@
   </button>
 </div>
 
-
-
 <ng-template #largePhoto let-c="close" let-d="dismiss">
   <div class="modal-body">
     <img src="{{selectedPhoto.inpnFileUri}}">
   </div>
 </ng-template>
-
 
 <ng-template #modalInvalidPhoto let-c="close" let-d="dismiss">
   <div class="container">
@@ -60,8 +58,6 @@
   </div>
 </ng-template>
 
-
-
 <ng-template #modalQualifPhoto let-c="close" let-d="dismiss">
   <div class="modal-body">
       <img src="{{selectedPhoto.inpnFileUri}}">
@@ -80,7 +76,6 @@
             Valider
           </button>
         </div>
-  
     </div>
 </ng-template>
 
@@ -95,3 +90,4 @@
   <span class="icon-obsPasFaite"></span>
   <p style="font-size: 20px">Aucune observation n'est disponible</p>
 </div>
+<app-footer  *ngIf="obsLoaded || noObs"></app-footer>

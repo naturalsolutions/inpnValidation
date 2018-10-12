@@ -1,8 +1,9 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
-import { ObservationService } from '../services/observation.service';
+import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
+import { ObservationService } from '../../services/observation.service';
+import { FilterService } from '../../services/filter.service'
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { FormValidator } from './especeValidator'
+import { FormValidator } from '../especeValidator'
 import { NgxSpinnerService } from 'ngx-spinner';
 import { Observable } from 'rxjs/Observable';
 import { of } from 'rxjs/observable/of';
@@ -15,15 +16,14 @@ import 'rxjs/add/operator/switchMap';
 import 'rxjs/add/operator/merge';
 import * as _ from "lodash";
 import * as moment from 'moment';
-import { ObsGuard } from '../services/obs-guard.service';
-import { User } from "../user";
-import { TextService } from '../services/text.service';
+import { TextService } from '../../services/text.service';
+
 @Component({
-  selector: 'app-validation',
-  templateUrl: './validation.component.html',
-  styleUrls: ['./validation.component.scss']
+  selector: 'app-validation-espece',
+  templateUrl: './validation-espece.component.html',
+  styleUrls: ['./validation-espece.component.scss']
 })
-export class ValidationComponent implements OnChanges, OnInit {
+export class ValidationEspeceComponent implements OnInit, OnDestroy {
 
   private icons = {
     506: "icon-reptile_amphibien",
@@ -39,8 +39,6 @@ export class ValidationComponent implements OnChanges, OnInit {
   };
   private modalRef: NgbModalRef;
   validationForm: FormGroup;
-  @Input() currentUser: User;
-  @Input() userRole: string;
   public obsLoaded: boolean = false;
   loadForm: boolean = false;
   noObs: boolean = false;
@@ -54,36 +52,51 @@ export class ValidationComponent implements OnChanges, OnInit {
   private previousPage: number = 1;
   private listGroupOP;
   principalPhoto: any;
-  groupeOP: any;
-  groupeSimple: any;
   listGroupeSimple;
   listGroupeSimpleArray: any;
   hideSearchingWhenUnsubscribed = new Observable(() => () => this.searching = false);
   searching: boolean = false;
   searchFailed: boolean = false;
   expertValidator: boolean = false;
-  gropValidator: boolean = false;
   helpText;
-  @Input() filter;
+  filter: any = {};
   advencedSearch: boolean = false;
   disableButton: boolean = false;
-  supraEspeceText: string = "+ trouver l'espèce par niveau supérieur ?";
+  supraEspeceText: string = "+ Identifier au niveau supérieur ?";
+  userChecked: boolean = false;
+
+  validator = {
+    photoSelect: false,
+    grpSimpleSelect: false,
+    grpTaxoSelect: false,
+    especeSelect: false,
+    userId: null,
+    userRole: null,
+    isValidator: false,
+    validationFilter: true
+  }
+  mySubscription;
+  nbFilterSelected: any;
 
   constructor(private modalService: NgbModal,
     private formBuilder: FormBuilder,
     private spinner: NgxSpinnerService,
-    private authGuard: ObsGuard,
     private textService: TextService,
+    private filterService: FilterService,
     private observationService: ObservationService) { }
 
   ngOnInit() {
-    if (!this.filter)
-      this.getObs(this.cuurentPage, this.nbItems);
-  }
 
-  ngOnChanges() {
-    if (this.filter)
-      this.reloadObs(this.filter)
+    this.mySubscription = this.filterService.getFilter().subscribe(
+      (filter) => {
+        if (filter != 'init') {
+          this.filter = filter;
+          if (this.filter)
+            this.reloadObs(this.filter)
+          else
+            this.reloadObs()
+        }
+      })
   }
 
   loadPage(page: number) {
@@ -102,54 +115,52 @@ export class ValidationComponent implements OnChanges, OnInit {
         this.getObs(paginStart, paginEnd)
     }
   }
-  private reloadObs(filter) {
+  private reloadObs(filter?) {
     this.getObs(this.cuurentPage, this.nbItems, filter);
   }
+
   getObs(paginStart, paginEnd, filter?) {
-    let obsFilter = {
-      "filtreStatutValidation": 0,
-      "filtreAllPhotoTreated": "true",
-      "filtrePhotoValidated": "true",
-    }
+
     if (filter) {
       filter = _.omitBy(filter, _.isNil);
+      this.nbFilterSelected = _.size(filter);
+      if (filter.idUtilisateur == false)
+        this.nbFilterSelected--;
+      this.filterService.setFilterNotifications(this.nbFilterSelected)
       Object.keys(filter).forEach(function (key) {
         if (key == 'cdSig')
           filter[key] = filter[key].cd_sig_ref
         if (key == 'pseudo')
           filter[key] = filter[key].pseudo
-        obsFilter[key] = filter[key]
-      });
+        if (key == 'taxon')
+          filter[key] = filter[key].cd_nom[0]
+      })
+      this.filter = filter;
+      this.filter.filtreStatutValidation = 4;
+    }
+    else {
+      this.filterService.setFilterNotifications(0);
+      let intiFilter = {
+        'filtreStatutValidation': 4,
+      };
+      this.filter = intiFilter
     }
     this.spinner.show();
     this.obsLoaded = false;
-    switch (this.userRole) {
-      case 'IE_VALIDATOR_GRSIMPLE':
-        obsFilter.filtreStatutValidation = 2;
-        this.textService.getText(2).subscribe((text) => this.helpText = text);
-        break;
-      case 'IE_VALIDATOR_GROPE':
-        obsFilter.filtreStatutValidation = 3;
-        this.textService.getText(3).subscribe((text) => this.helpText = text);
-        this.gropValidator = true;
-        break;
-      case 'IE_VALIDATOR_EXPERT':
-        obsFilter.filtreStatutValidation = 4;
-        this.textService.getText(4).subscribe((text) => this.helpText = text);
-        this.expertValidator = true
-        break;
-      default:
-        break;
-    }
+    this.textService.getText(4).subscribe((text) => this.helpText = text);
+    this.expertValidator = true
+
     this.observationService.getObservations({
       paginStart: paginStart,
       paginEnd: paginEnd
-    }, obsFilter)
+    }, this.filter)
       .subscribe(
         (obs) => {
           console.log("obs :", obs);
-          if (!obs)
-            console.log("no obs");
+          if (!obs) {
+            this.observations = null;
+            console.log("no obs")
+          }
           else {
             this.observations = obs;
             this.totalItems = obs.totLines;
@@ -171,54 +182,21 @@ export class ValidationComponent implements OnChanges, OnInit {
                   });
                   _.map(this.observations.observations, (value) => {
                     value.dateCrea = moment(value.dateCrea).format('DD-MM-YYYY, h:mm');
-                    switch (this.userRole) {
-                      case 'IE_VALIDATOR_GRSIMPLE':
-                        value.classValidBtn = {
-                          'btn btn-success btn-valid': true,
-                        }
-                        value.classModifyBtn = {
-                          'btn': true,
-                          'btn-secondary': true,
-                          ' btn-valid': true,
-                          'btn-modify ': true,
-                        }
-                        break;
-                      case 'IE_VALIDATOR_GROPE':
-                        if (value.cdGroupOP == 0)
-                          value.canValidate = false;
-                        else
-                          value.canValidate = true;
-                        value.classValidBtn = {
-                          'btn btn-success btn-valid': value.canValidate,
-                          'btn-valid-disabled': !value.canValidate
-                        }
-                        value.classModifyBtn = {
-                          'btn': true,
-                          'btn-secondary': true,
-                          ' btn-valid': true,
-                          'btn-modify ': value.canValidate,
-                          'btn-modify-large': !value.canValidate
-                        }
-                        break;
-                      case 'IE_VALIDATOR_EXPERT':
-                        if (value.cdNom == 0 || value.cdGroupOP == 0)
-                          value.canValidate = false
-                        else
-                          value.canValidate = true
-                        value.classValidBtn = {
-                          'btn btn-success btn-valid': value.canValidate,
-                          'btn-valid-disabled': !value.canValidate
-                        }
-                        value.classModifyBtn = {
-                          'btn': true,
-                          'btn-secondary': true,
-                          ' btn-valid': true,
-                          'btn-modify ': value.canValidate,
-                          'btn-modify-large': !value.canValidate
-                        }
-                        break;
-                      default:
-                        break;
+
+                    if (value.cdNom == 0 || value.cdGroupOP == 0)
+                      value.canValidate = false
+                    else
+                      value.canValidate = true
+                    value.classValidBtn = {
+                      'btn btn-success btn-valid': value.canValidate,
+                      'btn-valid-disabled': !value.canValidate
+                    }
+                    value.classModifyBtn = {
+                      'btn': true,
+                      'btn-secondary': true,
+                      ' btn-valid': true,
+                      'btn-modify ': value.canValidate,
+                      'btn-modify-large': !value.canValidate
                     }
                     value.principalPhoto = _.find(value.photos, { "cdPhoto": value.cdPhotoPrincipal });
                     value.gpSipmle = _.find(this.listGroupeSimple.GroupGp, { "cdGroupGrandPublic": value.groupSimple })
@@ -233,9 +211,10 @@ export class ValidationComponent implements OnChanges, OnInit {
                           value.groupeOP = _.find(this.listGroupOP, { "cdGroup": value.cdGroupOP });
                           return value
                         });
-                        this.obsLoaded = true;
-                        this.spinner.hide()
+                        this.noObs = false;
                         this.listGroupeSimpleArray = _.chunk(_.values(this.listGroupeSimple.GroupGp), 5);
+                        this.spinner.hide()
+                        this.obsLoaded = true;
                       }
                     )
                 }
@@ -274,15 +253,13 @@ export class ValidationComponent implements OnChanges, OnInit {
                 cd_ref: this.selectedObs.cdRef,
                 cd_nom: [this.selectedObs.cdNom]
               }, FormValidator.especeValidator],
-              //especeSupra: [''],
-              comment: [this.selectedObs.validation.commentaireValidation],
+              comment: [this.selectedObs.validation.StatusComment],
             });
           else
             this.validationForm = this.formBuilder.group({
               groupOP: ['', Validators.required],
               espece: ['', FormValidator.especeValidator],
-              //especeSupra: [''],
-              comment: [this.selectedObs.validation.commentaireValidation]
+              comment: [this.selectedObs.validation.StatusComment]
             });
 
 
@@ -302,23 +279,9 @@ export class ValidationComponent implements OnChanges, OnInit {
   }
 
   private validateObs(idData, groupSimple?, groupOP?, cdNom?, cdRef?, comment?) {
-    let idValidateur = (this.currentUser.attributes.ID_UTILISATEUR).toString();
-    let idStatus = '2';
-    let isValidated = 'false';
-    switch (this.userRole) {
-      case 'IE_VALIDATOR_GRSIMPLE':
-        idStatus = '3'
-        break;
-      case 'IE_VALIDATOR_GROPE':
-        idStatus = '4'
-        break;
-      case 'IE_VALIDATOR_EXPERT':
-        idStatus = '5'
-        isValidated = 'true'
-        break;
-      default:
-        break;
-    }
+    let idValidateur = (this.validator.userId).toString();
+    let idStatus = '5';
+    let isValidated = 'true';
     this.disableButton = true;
     this.observationService.validateObs(idData, idValidateur, isValidated,
       idStatus, groupSimple, groupOP, cdNom, cdRef, comment).subscribe(
@@ -343,72 +306,38 @@ export class ValidationComponent implements OnChanges, OnInit {
   }
 
   public shortcutValidate(obs) {
-    switch (this.userRole) {
-      case 'IE_VALIDATOR_GRSIMPLE':
-        this.validateObs(obs.idData, obs.groupSimple)
-        break;
-      case 'IE_VALIDATOR_GROPE':
-        if (obs.groupeOP) {
-          this.validateObs(obs.idData, obs.groupSimple, obs.groupOP)
-        }
-        else console.log("shortcut gop error");
-        break;
-      case 'IE_VALIDATOR_EXPERT':
-        if (obs.groupeOP && obs.cdNom != 0 && obs.cd_ref != 0) {
-          this.validateObs(obs.idData, obs.groupSimple,
-            obs.cdGroupOP, obs.cd_nom, obs.cd_ref)
-        }
-        else {
-          console.log("shortcut error espece");
-        }
-        break;
-      default:
-        break;
+    if (obs.groupeOP && obs.cdNom != 0 && obs.cd_ref != 0) {
+      this.validateObs(obs.idData, obs.groupSimple,
+        obs.cdGroupOP, obs.cd_nom, obs.cd_ref)
+    }
+    else {
+      console.log("shortcut error espece");
     }
   }
 
   submit(obsForm) {
-    //console.log("obsForm especeValid", obsForm.errors.especeValid);
-    console.log("obsForm", obsForm);
     {
-      switch (this.userRole) {
-        case 'IE_VALIDATOR_GRSIMPLE':
-          this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple, null, null, null, obsForm.value.comment)
-          break;
-        case 'IE_VALIDATOR_GROPE':
-          if (obsForm.controls.groupOP.valid) {
-            this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple, obsForm.value.groupOP, null, null, obsForm.value.comment)
-            this.selectedObs.cdGroupOP = obsForm.value.groupOP;
-            this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
-          }
-          else console.log("form error");
-          break;
-        case 'IE_VALIDATOR_EXPERT':
-          if (obsForm.valid) {
-            if (typeof obsForm.value.espece == "object") {
-              this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
-                obsForm.value.groupOP, obsForm.value.espece.cd_nom[0], obsForm.value.espece.cd_ref, obsForm.value.comment)
-              this.selectedObs.cdGroupOP = obsForm.value.groupOP;
-              this.selectedObs.nomCompletHtml = obsForm.value.espece.nom_complet_html_valide;
-              this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
-            }
-            else if (typeof obsForm.value.especeSupra == "object") {
-              this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
-                obsForm.value.groupOP, obsForm.value.especeSupra.cdNom, obsForm.value.especeSupra.cdRef, obsForm.value.comment)
-              this.selectedObs.cdGroupOP = obsForm.value.groupOP;
-              this.selectedObs.nomCompletHtml = obsForm.value.especeSupra.nomCompletHtml;
-              this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
-            }
-            else {
-              console.log("form error espece");
+      if (obsForm.valid) {
+        if (typeof obsForm.value.espece == "object") {
+          this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
+            obsForm.value.groupOP, obsForm.value.espece.cd_nom[0], obsForm.value.espece.cd_ref, obsForm.value.comment)
+          this.selectedObs.cdGroupOP = obsForm.value.groupOP;
+          this.selectedObs.nomCompletHtml = obsForm.value.espece.nom_complet_html_valide;
+          this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
+        }
+        else if (typeof obsForm.value.especeSupra == "object") {
+          this.validateObs(this.selectedObs.idData, this.selectedObs.groupSimple,
+            obsForm.value.groupOP, obsForm.value.especeSupra.cdNom, obsForm.value.especeSupra.cdRef, obsForm.value.comment)
+          this.selectedObs.cdGroupOP = obsForm.value.groupOP;
+          this.selectedObs.nomCompletHtml = obsForm.value.especeSupra.nomCompletHtml;
+          this.selectedObs.groupeOP = _.find(this.listGroupOP, { "cdGroup": Number(this.selectedObs.cdGroupOP) })
+        }
+        else {
+          console.log("form error espece");
 
-            }
-          }
-          else console.log("form error");
-          break;
-        default:
-          break;
+        }
       }
+      else console.log("form error");
     }
   }
 
@@ -532,4 +461,33 @@ export class ValidationComponent implements OnChanges, OnInit {
       .merge(this.hideSearchingWhenUnsubscribed);
 
 
+  getUser(currentUser) {
+    this.userChecked = true;
+    if (currentUser) {
+      this.validator.userId = currentUser.attributes.ID_UTILISATEUR;
+      let roles = currentUser.attributes.GROUPS.split(",");
+      if (_.includes(roles, 'IE_VALIDATOR_PHOTO')) {
+        this.validator.photoSelect = true;
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_GRSIMPLE')) {
+        this.validator.grpSimpleSelect = true;
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_GROPE')) {
+        this.validator.grpTaxoSelect = true;
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_EXPERT')) {
+        this.validator.especeSelect = true;
+      }
+      if (_.includes(roles, 'IE_VALIDATOR_PHOTO') || _.includes(roles, 'IE_VALIDATOR_GRSIMPLE') ||
+        _.includes(roles, 'IE_VALIDATOR_GROPE') || _.includes(roles, 'IE_VALIDATOR_EXPERT'))
+        this.validator.isValidator = true;
+      this.reloadObs()
+    }
+  }
+
+  ngOnDestroy() {
+    this.filterService.setFilter('init');
+    if (this.mySubscription)
+      this.mySubscription.unsubscribe();
+  }
 }

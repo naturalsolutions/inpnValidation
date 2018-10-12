@@ -53,7 +53,7 @@ export class LoginService {
     return this.userStatus.asObservable();
   }
 
-  isconnected(): Promise<boolean> {
+  getCurrentUser(): Promise<boolean> {
 
     return new Promise((resolve, reject) => {
       if (localStorage.getItem('inpnUser_Access_token')) {
@@ -67,31 +67,34 @@ export class LoginService {
             },
             (error) => {
               if (error.error.error[0] = 'expired_accessToken') {
-                console.log("getUserHeaderErr :  expired_accessToken")
-                this.refreshToken().subscribe((data) => console.log("data", data))
+                console.log("getUserErr :  expired_accessToken")
+                this.refreshToken()
+                  .subscribe(
+                    (data) => console.log("user"),
+                    (error) => {
+                      console.log("refreshTokenErr", error);
+                      localStorage.removeItem('inpnUser_Access_token');
+                      localStorage.removeItem('inpnUser_refresh_token');
+                    })
               }
-              return resolve(false);
+              return reject(error);
             },
             () => {
               this.userStatus.next(true);
-              return resolve(true);
+              return resolve(this.userProfile);
             }
           );
 
       } else {
-        resolve(false)
+        reject(false)
       }
     })
   }
   getIsConnected(): Observable<any> {
-    this.isconnected();
     return this.userStatus.asObservable();
   }
 
   setIsConnected(status: boolean) {
     this.userStatus.next(status);
   }
-
-
-
 }

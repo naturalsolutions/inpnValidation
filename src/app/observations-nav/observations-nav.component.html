@@ -1,0 +1,35 @@
+<ul class="nav nav-pills ">
+  <li class="nav-item">
+    <a class="nav-link " [class.active]="navItem=='grid'" routerLink="/observations/list" >
+      <span class="icon-grid"></span> Liste</a>
+  </li>
+  <div class="vline"></div>
+  <li class="nav-item">
+    <a class="nav-link" [class.active]="navItem=='map'" routerLink="/observations/carte" >
+      <span class="icon-pin"></span> Carte</a>
+  </li>
+  <div class="vline"></div>
+  <li *ngIf="validator.isValidator" class="nav-item dropdown">
+    <div ngbDropdown class="d-inline-block">
+      <a class="nav-link" [class.active]="navItem=='validation' || navItem=='photo' " id="dropdownBasic1" ngbDropdownToggle>
+        <span class="icon-seen"></span>
+        {{validationText}}
+      </a>
+      <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button *ngIf="validator.photoSelect" class="dropdown-item" routerLink="/observations/validation/photo">Photos</button>
+        <button *ngIf="validator.grpSimpleSelect" class="dropdown-item" routerLink="/observations/validation/groupeSimple">Groupe simple</button>
+        <button *ngIf="validator.grpTaxoSelect" class="dropdown-item" routerLink="/observations/validation/groupeTaxonomique" >Groupe taxonomique</button>
+        <button *ngIf="validator.especeSelect" class="dropdown-item" routerLink="/observations/validation/espece" >Espèce</button>
+      </div>
+    </div>
+  </li>
+  <li  class="nav-item pull-right" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed"
+    aria-controls="collapseFilter">
+    <a class="nav-link" *ngIf="showFilter">
+      <span class="icon-filter"></span> Filtres <span class="badge badge-pill badge-warning" *ngIf="filterSelected">{{nbfilterSelected}}</span></a>
+  </li>
+</ul>
+<div id="collapseFilter" [ngbCollapse]="isCollapsed">
+  <app-filter  [validationFilter]="validator.validationFilter" [userId]="validator.userId"
+    (filter)="newFilter($event)"></app-filter>
+</div>

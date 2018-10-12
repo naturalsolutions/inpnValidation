@@ -1,7 +1,6 @@
 .container-fluid {
-
-  padding: 1% 5%
-  
+  padding: 1% 5%;
+  min-height: calc(100% - 459px);
 }
 
 .card {
@@ -17,6 +16,7 @@
 }
 
 .card-body {
+
   text-align: center;
   h5 {
     font-size: 16px
@@ -40,11 +40,9 @@ ngb-pagination {
 }
 
 .no-obs {
-  position: absolute;
-  top: 45%;
-  left: 50%;
+  min-height: calc(100% - 459px);
+  padding:10% 0;
   color: gray;
-  transform: translate(-50%, -50%);
   display: flex;
   flex-direction: column;
   align-items: center
@@ -57,11 +55,73 @@ ngb-pagination {
 .especeName {
   font-size: 14px;
   color: #71cb7f;
+  padding-bottom: 15px
 }
-.icon-chevron{
-  bottom: 15px;
-  right: 15px;
-  position: absolute;
-  color: #bcbaba;
+.icon-more_on{
+  color:white;
   font-size: 12px;
+}
+.invalidPhoto {
+  object-fit: cover;
+  width: 100%;
+  height: 250px;
+  opacity: 0.6
+}
+.carouselInvalid {
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  span {
+    font-size: 50px;
+    color: red;
+    opacity: 0.4
+  }
+}
+.principalInvalid {
+  position: absolute;
+  z-index: 10;
+  text-align: center;
+  top: 125px;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  span {
+    font-size: 50px;
+    color: red;
+    opacity: 0.4
+  }
+}
+ .detail{
+  cursor: pointer;
+  bottom: 6px;
+  right: 6px;
+ position: absolute;
+ background-color: #999999;
+ }
+ 
+.avatar{
+  vertical-align: middle;
+  display: inline-block;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+
+}
+.pseudo{
+  display: inline-block; 
+  font-size: 14px;
+  padding-left : 4px;
+  margin-bottom: 4px ;
+  color: white;
+}
+.user{
+  padding: 4px 8px;
+  background-color: #999999;
 }

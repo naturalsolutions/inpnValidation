@@ -1,0 +1,129 @@
+<app-header (user)="getUser($event)"></app-header>
+<observations-nav *ngIf="userChecked" [navItem]="'validation'" [validationText]="'Groupe simple'" [validator]="validator"></observations-nav>
+<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
+<div *ngIf="obsLoaded" class="container-fluid">
+  <div class="row">
+    <div *ngFor="let item of observations.observations" class="col-xl-2 col-lg-3 col-md-4 col-xs-6 thumb d-flex">
+      <div class="card flex-fill">
+        <button *ngIf="item.isTreated!=true" [ngClass]="item.classValidBtn" (click)="shortcutValidate(item)">
+          <span class="icon-cheked"></span>
+        </button>
+        <button *ngIf="item.isTreated!=true" [ngClass]="item.classModifyBtn" (click)="open(content,item)">
+          <span class="icon-pen"></span>
+        </button>
+        <div *ngIf="item.isTreated==true" class="tag valid-tag">
+          <span class="icon-cheked"></span>
+        </div>
+        <div class="zoom-image">
+          <span class="icon-full" (click)="openLargePhoto(largePhoto,item)"></span>
+        </div>
+        <img *ngIf="item.photos.length < 2" class="card-img-top-list" src="{{item.principalPhoto.thumbnailFileUri}}">
+        <ngb-carousel interval=0 *ngIf="item.photos.length > 1">
+          <ng-template *ngFor="let photo of item.photos" ngbSlide>
+            <img [ngClass]="{
+              'card-img-top-list':photo.isValidated == 'true',
+              'invalidPhoto':photo.isValidated == 'false'
+            }"
+              src="{{photo.thumbnailFileUri}}">
+            <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
+              <span class="icon-refuse"></span>
+            </div>
+          </ng-template>
+        </ngb-carousel>
+        <div class="card-body">
+          <span class="{{item.gpSipmle.icons}} icon-gp"></span>
+          <h5 class="card-title">{{item.gpSipmle.groupGrandPublic}}</h5>
+          <p *ngIf="item.groupeOP" class="card-text">{{item.groupeOP.lbGroup}}</p>
+          <div class="especeName" [innerHtml]=item.nomCompletHtml></div>
+          <div class="meta-data">
+            <div class="location">
+              <span class="icon-pin"></span> {{item.commune}} ({{item.numDepartement}})</div>
+            <div class="date">
+              <span class="icon-calendar"></span> {{item.dateCrea}} </div>
+            <div class="user">
+              <span class="icon-profil"></span> {{item.pseudo}} </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems"
+    [(page)]="cuurentPage" (pageChange)="loadPage($event)"></ngb-pagination>
+</div>
+
+<div *ngIf="noObs" class="no-obs">
+  <span class="icon-obsPasFaite "></span>
+  <p style="font-size: 20px">Aucune observation n'est disponible</p>
+</div>
+<app-footer *ngIf="obsLoaded || noObs"></app-footer>
+
+<button class="btn btn-secondary btn-help" (click)="openHelp(helpModal)">
+  <span class="icon-flottant2"></span>
+</button>
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div *ngIf="loadForm" class="modal-body">
+    <img *ngIf="selectedObs.photos.length < 2" class="card-img-top" src="{{selectedObs.principalPhoto.thumbnailFileUri}}">
+    <ngb-carousel interval=0 *ngIf="selectedObs.photos.length > 1">
+      <ng-template *ngFor="let photo of selectedObs.photos" ngbSlide>
+        <img [ngClass]="{
+          'card-img-top':photo.isValidated == 'true',
+          'invalidPhoto-modal':photo.isValidated == 'false'
+        }"
+          src="{{photo.thumbnailFileUri}}">
+        <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
+          <span class="icon-refuse"></span>
+        </div>
+      </ng-template>
+    </ngb-carousel>
+    <form class="container" [formGroup]="validationForm" (submit)="submit(validationForm)">
+      <div *ngFor="let row of listGroupeSimpleArray" class="row justify-content-center">
+        <div *ngFor="let grpSimple of row">
+          <button type="button" [ngClass]="grpSimple.selectedObs" class="btn btn-outline-secondary btn-circle" (click)="modifyGrpSimple(grpSimple)">
+            <span class="{{grpSimple.icons}}"></span>
+          </button>
+        </div>
+      </div>
+      <div class="form-input">
+        <div class="form-group ">
+          <div class="gpSimpleLabel">{{selectedObs.gpSipmle.groupGrandPublic}}</div>
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" formControlName="comment" placeholder="Veuillez laisser un commentaire..."
+            rows="3"></textarea>
+        </div>
+      </div>
+      <div class="btn-raw">
+        <button type="submit" [disabled]="disableButton" class="btn btn-success btn-valid-modal">
+          Valider
+        </button>
+      </div>
+    </form>
+  </div>
+</ng-template>
+
+<ng-template #formatter let-r="result" let-t="term">
+  <div [innerHtml]="r.nomCompletHtml"></div>
+</ng-template>
+
+<ng-template #helpModal let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <div [innerHtml]=helpText.Text></div>
+  </div>
+</ng-template>
+
+<ng-template #largePhoto let-c="close" let-d="dismiss">
+  <div class="modal-body">
+    <img *ngIf="selectedObs.photos.length < 2" class="card-img-large" src="{{selectedObs.principalPhoto.inpnFileUri}}">
+    <ngb-carousel interval=0 *ngIf="selectedObs.photos.length > 1">
+      <ng-template *ngFor="let photo of selectedObs.photos" ngbSlide>
+        <img [ngClass]="{
+              'invalidPhoto-large':photo.isValidated == 'false'
+        }" src="{{photo.inpnFileUri}}">
+        <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
+          <span class="icon-refuse"></span>
+        </div>
+      </ng-template>
+    </ngb-carousel>
+  </div>
+</ng-template>

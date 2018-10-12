@@ -1,11 +1,12 @@
-import { Component, OnInit, Output, Input, EventEmitter, Injectable } from '@angular/core';
+import { Component, OnInit, Output, Input, EventEmitter, Injectable, OnChanges } from '@angular/core';
 import { ObservationService } from '../services/observation.service';
-import { FormBuilder, FormGroup } from '@angular/forms';
-import { NgbDatepickerConfig, NgbDatepickerI18n, NgbDateStruct, NgbDate, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
+import { FormBuilder, FormGroup, FormControl } from '@angular/forms';
+import { NgbDatepickerConfig, NgbDatepickerI18n, NgbDateStruct, NgbCalendar } from '@ng-bootstrap/ng-bootstrap';
 import * as _ from "lodash";
+import { FilterService } from '../services/filter.service';
 import { Observable, of } from 'rxjs';
 import * as moment from 'moment';
-
+import { User } from "../user";
 const I18N_VALUES = {
   'fr': {
     weekdays: ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'],
@@ -47,19 +48,16 @@ export class CustomDatepickerI18n extends NgbDatepickerI18n {
   styleUrls: ['./filter.component.scss'],
   providers: [NgbDatepickerConfig, I18n, { provide: NgbDatepickerI18n, useClass: CustomDatepickerI18n }]
 })
-export class FilterComponent implements OnInit {
+export class FilterComponent implements OnInit, OnChanges {
   @Output() filter = new EventEmitter();
-  @Input() userRole: string;
-  hoveredDate: NgbDate;
-  fromDate: NgbDate;
-  toDate: NgbDate;
+  @Input() userId: User;
+  @Input() validationFilter;
   filterForm: FormGroup;
   groupSimpleFilter;
   showFilter: boolean = false;
   listGroupeSimple;
   listGroupeSimpleArray: any;
   listGroupOP: any[];
-  model: NgbDateStruct;
   private icons = {
     506: "icon-reptile_amphibien",
     501: "icon-champignon_lichen",
@@ -75,26 +73,39 @@ export class FilterComponent implements OnInit {
   hideSearchingWhenUnsubscribed = new Observable(() => () => this.searching = false);
   searching: boolean = false;
   searchFailed: boolean = false;
-  from: any;
-  to: any;
   calendarActivate: boolean = true;
   startDate: any;
   ValidationStatus: any;
+  showSatutsFilter: boolean = false;
+  filterType: string;
 
   constructor(
     private observationService: ObservationService,
     private formBuilder: FormBuilder,
     public calendar: NgbCalendar,
-    datePickerConfig: NgbDatepickerConfig
+    datePickerConfig: NgbDatepickerConfig,
+    private filterService: FilterService
   ) {
     datePickerConfig.outsideDays = 'hidden';
   }
+  ngOnChanges() {
 
+  }
   ngOnInit() {
+    if (this.validationFilter)
+    this.filterService.setFilter('init')
+
+
     this.observationService.getValidationStatus()
       .subscribe(
         (data) => this.ValidationStatus = data,
         (error) => console.log("getValidationStatusErr", error),
+        () => {
+          _.remove(this.ValidationStatus.Status, (value) => {
+            return value.cdRef == 0;
+          });
+        }
+
       );
     this.observationService.getGroupeSimple()
       .subscribe(
@@ -120,8 +131,17 @@ export class FilterComponent implements OnInit {
                   cdSig: [],
                   dateInf: [],
                   dateSup: [],
-                  filtrestatuValidation: []
+                  filtreStatutValidation: [],
+                  idUtilisateur: []
                 });
+                if (this.userId && !this.validationFilter) {
+                  this.filterForm.controls['idUtilisateur'].setValue(true);
+                  this.showSatutsFilter = true;
+                  this.filterForm.value.idUtilisateur = this.userId
+                  
+                }
+                
+
                 this.filterForm.controls['dateInf'].statusChanges
                   .subscribe(() => {
                     if (this.filterForm.controls['dateInf'].value) {
@@ -130,9 +150,15 @@ export class FilterComponent implements OnInit {
                       this.calendarActivate = false;
                     }
                   })
+                this.filterForm.controls['idUtilisateur'].statusChanges
+                  .subscribe((status) => {
+                    if (this.filterForm.controls['idUtilisateur'].value == true)
+                      this.showSatutsFilter = true
+                    else
+                      this.showSatutsFilter = false
+                  })
               }
             )
-
         });
   }
 
@@ -159,25 +185,26 @@ export class FilterComponent implements OnInit {
   }
 
   submit(filterForm) {
-    console.log('filterForm',filterForm);
-    
     if (this.groupSimpleFilter)
-      this.filterForm.value.groupSimple = this.groupSimpleFilter.cdGroupGrandPublic;
-    if (this.filterForm.value.dateInf)
-      this.filterForm.value.dateInf = moment(filterForm.value.dateInf).toISOString();
-    if (this.filterForm.value.dateSup)
-      this.filterForm.value.dateSup = moment(filterForm.value.dateSup).toISOString();
-    this.filter.emit(filterForm.value);
+      filterForm.value.groupSimple = this.groupSimpleFilter.cdGroupGrandPublic;
+    if (filterForm.value.dateInf)
+      filterForm.value.dateInf = moment(filterForm.value.dateInf).toISOString();
+    if (filterForm.value.dateSup)
+      filterForm.value.dateSup = moment(filterForm.value.dateSup).toISOString();
+    if (filterForm.value.idUtilisateur)
+      filterForm.value.idUtilisateur = this.userId
+    this.filterService.setFilter(filterForm.value)
   }
 
   resetFilter() {
     this.filterForm.reset();
+    this.calendarActivate = true;
     this.groupSimpleFilter = null;
     _.map(this.listGroupeSimple.GroupGp, (value) => {
       value.selectedObs = ""
       return value
     });
-    this.filter.emit('reset');
+    this.filterService.setFilter(null)
     this.observationService.getlistGroupOP()
       .subscribe(
         (groupOP) => this.listGroupOP = groupOP,
@@ -207,6 +234,18 @@ export class FilterComponent implements OnInit {
       .do(() => this.searching = false)
       .merge(this.hideSearchingWhenUnsubscribed);
 
+
+  dptNum(value) {
+    if ((value == null) || (value == ''))
+      return false;
+    else {
+      var ville;
+      var dptNum = value.cd_sig_dep.replace('INSEED', '');
+      ville = (value.lb_adm_tr + ' (' + dptNum + ')');
+    }
+    return ville;
+  }
+
   city = (value: any) => this.dptNum(value) || '';
   searchCity = (text$: Observable<string>) =>
     text$
@@ -226,19 +265,6 @@ export class FilterComponent implements OnInit {
       .merge(this.hideSearchingWhenUnsubscribed);
 
 
-
-  dptNum(value) {
-    if ((value == null) || (value == ''))
-      return false;
-    else {
-      var ville;
-      var dptNum = value.cd_sig_dep.replace('INSEED', '');
-      ville = (value.lb_adm_tr + ' (' + dptNum + ')');
-    }
-
-    return ville;
-  }
-
   pseudo = (value: any) => value.pseudo || '';
   searchPseudo = (text$: Observable<string>) =>
     text$
@@ -256,10 +282,5 @@ export class FilterComponent implements OnInit {
           }))
       .do(() => this.searching = false)
       .merge(this.hideSearchingWhenUnsubscribed);
-
-
-
-
-
 
 }

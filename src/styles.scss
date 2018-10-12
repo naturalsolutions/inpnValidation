@@ -6,93 +6,21 @@
 @import "~bootstrap/scss/grid";
 @import "~bootstrap/scss/navbar";
 @import "~bootstrap/scss/forms";
+
 // import your own custom files, e.g.
-.btn-success {
-  background-color: #79c67a
-}
 
-.css-modal {
-  @media (min-width: 576px) {
-    .modal-dialog {
-      max-width: fit-content !important
-    }
-  }
-  .modal-body {
-    padding: 0
-  }
-  .modal-content {
-    border: none !important
-  }
-}
-
-.validate-modal {
-  .modal-body {
-    padding: 0
-  }
-  .modal-content {
-    border: none !important
-  }
-}
-
-.help-modal {
-  @media (min-width: 576px) {
-    .modal-dialog {
-      min-width: 560px
-    }
-  }
-  .modal-body {
-    padding: 20px 30px;
-  }
-}
-
-.help {
-  display: flex;
-  justify-content: flex-end;
-}
-
-#photoValidation,
-#simpleValidation,
-#taxoValidation,
-#especeValidation {
-  color: #495057;
-  &.active {
-    border-top: 2px solid #28a745;
-  }
-}
-
-ngb-pagination {
-  a.page-link {
-    color: #565758;
-  }
-  .page-item.active .page-link {
-    color: #fff;
-    background-color: #8e8e8e;
-    border-color: #8e8e8e;
-  }
-  .page-link:focus {
-    box-shadow: 0 0 0 0.1rem rgba(194, 194, 194, 1);
-  }
-}
-
-.carousel-indicators li {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%
-}
-
-.modal-footer {
-  display: block;
-}
 
 @font-face {
   font-family: 'icomoon';
-  src: url('./assets/fonts/icomoon.eot?73wbxx');
-  src: url('./assets/fonts/icomoon.eot?73wbxx#iefix') format('embedded-opentype'), url('./assets/fonts/icomoon.woff2?73wbxx') format('woff2'), url('./assets/fonts/icomoon.ttf?73wbxx') format('truetype'), url('./assets/fonts/icomoon.woff?73wbxx') format('woff'), url('./assets/fonts/icomoon.svg?73wbxx#icomoon') format('svg');
+  src:  url('./assets/fonts/icomoon.eot?cp4g80');
+  src:  url('./assets/fonts/icomoon.eot?cp4g80#iefix') format('embedded-opentype'),
+    url('./assets/fonts/icomoon.woff2?cp4g80') format('woff2'),
+    url('./assets/fonts/icomoon.ttf?cp4g80') format('truetype'),
+    url('./assets/fonts/icomoon.woff?cp4g80') format('woff'),
+    url('./assets/fonts/icomoon.svg?cp4g80#icomoon') format('svg');
   font-weight: normal;
   font-style: normal;
 }
-
-
 
 [class^="icon-"], [class*=" icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
@@ -109,6 +37,12 @@ ngb-pagination {
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-clock:before {
+  content: "\e932";
+}
+.icon-bino:before {
+  content: "\e933";
+}
 .icon-flottant2:before {
   content: "\e931";
 }
@@ -363,6 +297,7 @@ ngb-pagination {
 }
 
 
+
 .icon-help {
   cursor: pointer;
   color: #A9A9A9;
@@ -382,27 +317,187 @@ ngb-pagination {
   text-align: center
 }
 
+// ######### leflet style ##########
 .leaflet-popup-content {
   width: fit-content !important;
   margin: 0;
-  p{
-    margin-top: 0;
-    margin-bottom: 0;
-    padding-bottom: 10px;
-    padding-left: 10px;
+
+  p {
+    margin: 1px 0
   }
 }
-.leaflet-popup-content-wrapper{
+
+.leaflet-popup-content-wrapper {
   padding: 0
 }
+
 .img-inner {
-  width: 256px;
+  width: 200px;
 }
 
 .img-popUp {
   object-fit: cover;
   width: 100%;
-  height: 230px;
+  height: 140px;
   border-top-left-radius: 12px;
   border-top-right-radius: 12px;
+}
+
+.leflet-container {
+  padding: 10px;
+}
+
+.leflet-pop {
+  display: flex;
+  align-items: center;
+}
+
+.img-pop-leflet {
+  width: 30px;
+  height: 30px;
+  border: 1px gray solid;
+  border-radius: 50%
+}
+
+.pseudo-leflet {
+  padding-left: 6px;
+  font-size: 14px;
+}
+
+.leflet-list {
+  padding: 5px 0;
+  display: flex;
+  text-align: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.leflet-groupSimple {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.leflet-groupOP {
+  font-size: 12px;
+}
+
+.leflet-espece {
+  font-size: 12px;
+  color: #71cb7f;
+}
+
+// ######### leflet style ##########
+html, body {
+  height: 100%;
+}
+#detailTab{
+  .nav-tabs .nav-link.active, .nav-tabs .nav-item.show .nav-link {
+    color: black;
+    background-color: #fff;
+    border-color: #d8d8d8 #d8d8d8 white;
+    border-top-color: #28a745;
+    background-color: white;
+  }
+  .nav-tabs {
+    border-bottom: 1px solid #d8d8d8;
+}
+  .nav-tabs .nav-link {
+    color: #495057;
+    border-style: solid;
+    border-width: 3px 1px 1px;
+    border-radius: 3px 3px 0 0;
+  }
+  .tab-content{
+    padding: 30px 60px;
+    background-color: white;
+    border-bottom: 1px  solid #d8d8d8;
+    border-right: 1px  solid #d8d8d8;
+    border-left: 1px  solid #d8d8d8;
+  }
+ 
+}
+
+
+.btn-success {
+  background-color: #79c67a
+}
+
+.css-modal {
+  @media (min-width: 576px) {
+    .modal-dialog {
+      max-width: fit-content !important
+    }
+  }
+
+  .modal-body {
+    padding: 0
+  }
+
+  .modal-content {
+    border: none !important
+  }
+}
+
+.validate-modal {
+  .modal-body {
+    padding: 0
+  }
+
+  .modal-content {
+    border: none !important
+  }
+}
+
+.help-modal {
+  @media (min-width: 576px) {
+    .modal-dialog {
+      min-width: 560px
+    }
+  }
+
+  .modal-body {
+    padding: 20px 30px;
+  }
+}
+
+.help {
+  display: flex;
+  justify-content: flex-end;
+}
+
+#photoValidation,
+#simpleValidation,
+#taxoValidation,
+#especeValidation {
+  color: #495057;
+
+  &.active {
+    border-top: 2px solid #28a745;
+  }
+}
+
+ngb-pagination {
+  a.page-link {
+    color: #565758;
+  }
+
+  .page-item.active .page-link {
+    color: #fff;
+    background-color: #8e8e8e;
+    border-color: #8e8e8e;
+  }
+
+  .page-link:focus {
+    box-shadow: 0 0 0 0.1rem rgba(194, 194, 194, 1);
+  }
+}
+
+.carousel-indicators li {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%
+}
+
+.modal-footer {
+  display: block;
 }

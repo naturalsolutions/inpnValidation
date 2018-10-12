@@ -3,6 +3,8 @@ import { CanActivate, Router } from '@angular/router';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Conf } from '../conf';
 import { User } from "../user";
+import * as _ from "lodash";
+
 @Injectable()
 
 export class GalleryGuard implements CanActivate {
@@ -22,7 +24,8 @@ export class GalleryGuard implements CanActivate {
                         (user) => { this.userProfile = user },
                         (error) => { return resolve(false) },
                         () => {
-                            if (this.userProfile.attributes.GROUPS == "IE_VALIDATOR_PHOTO")
+                            let roles = this.userProfile.attributes.GROUPS.split(",");
+                            if (_.includes(roles, 'IE_VALIDATOR_PHOTO'))
                                 return resolve(true)
                             else {
                                 this.router.navigate(['home']);
