@@ -2,11 +2,11 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 import { Conf } from '../conf';
-import { User } from "../user";
+import { User } from "../shared/user";
 import { Observable, BehaviorSubject } from 'rxjs';
 
 @Injectable()
-export class LoginService {
+export class UserService {
 
   public userProfile;
   private userStatus: BehaviorSubject<any> = new BehaviorSubject('');
@@ -23,15 +23,7 @@ export class LoginService {
       { headers, responseType: "text" })
   }
 
-  getUser() {
-    let token = localStorage.getItem('inpnUser_Access_token');
-    //let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
-    //.set('Authorization', 'Bearer ' + token);
-    let params = new HttpParams()
-      .set('access_token', token)
-    return this.http.get<User>(Conf.casBaseUrl + "profile", { params: params })
-  }
-
+  
   refreshToken() {
     let refreshToken = localStorage.getItem('inpnUser_refresh_token');
     let body = new HttpParams()
@@ -53,7 +45,7 @@ export class LoginService {
     return this.userStatus.asObservable();
   }
 
-  getCurrentUser(): Promise<boolean> {
+  getCurrentUser(): Promise<User> {
 
     return new Promise((resolve, reject) => {
       if (localStorage.getItem('inpnUser_Access_token')) {
@@ -67,7 +59,7 @@ export class LoginService {
             },
             (error) => {
               if (error.error.error[0] = 'expired_accessToken') {
-                console.log("getUserErr :  expired_accessToken")
+                console.log("getCurrentUserErr :  expired_accessToken")
                 this.refreshToken()
                   .subscribe(
                     (data) => console.log("user"),
@@ -97,4 +89,14 @@ export class LoginService {
   setIsConnected(status: boolean) {
     this.userStatus.next(status);
   }
+
+  getProfil(userID) {
+    return this.http.get<any>(Conf.apiBaseUrl + "contributor/" +userID)
+  }
+
+  getUsersRank(){
+    return this.http.get<any>(Conf.apiBaseUrl + "rank" )
+
+  }
+
 }

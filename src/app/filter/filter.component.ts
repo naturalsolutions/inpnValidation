@@ -6,7 +6,8 @@ import * as _ from "lodash";
 import { FilterService } from '../services/filter.service';
 import { Observable, of } from 'rxjs';
 import * as moment from 'moment';
-import { User } from "../user";
+import { User } from "../shared/user";
+import { icons } from "../shared/icons";
 const I18N_VALUES = {
   'fr': {
     weekdays: ['Lu', 'Ma', 'Me', 'Je', 'Ve', 'Sa', 'Di'],
@@ -58,18 +59,6 @@ export class FilterComponent implements OnInit, OnChanges {
   listGroupeSimple;
   listGroupeSimpleArray: any;
   listGroupOP: any[];
-  private icons = {
-    506: "icon-reptile_amphibien",
-    501: "icon-champignon_lichen",
-    502: "icon-crabe_crevette_cloporte_millepatte",
-    503: "icon-escargot_mollusque",
-    504: "icon-insecte_araignee",
-    154: "icon-mammifere",
-    148: "icon-oiseau",
-    505: "icon-plante_mousse_fougere",
-    158: "icon-poisson",
-    24222202: "icon-more",
-  };
   hideSearchingWhenUnsubscribed = new Observable(() => () => this.searching = false);
   searching: boolean = false;
   searchFailed: boolean = false;
@@ -93,7 +82,7 @@ export class FilterComponent implements OnInit, OnChanges {
   }
   ngOnInit() {
     if (this.validationFilter)
-    this.filterService.setFilter('init')
+      this.filterService.setFilter('init')
 
 
     this.observationService.getValidationStatus()
@@ -113,7 +102,7 @@ export class FilterComponent implements OnInit, OnChanges {
         (error) => console.log("getGroupeSimpleErr", error),
         () => {
           _.map(this.listGroupeSimple.GroupGp, (value) => {
-            value.icons = this.icons[value.cdGroupGrandPublic];
+            value.icons = icons[value.cdGroupGrandPublic];
             value.selectedObs = ""
             return value
           });
@@ -138,9 +127,8 @@ export class FilterComponent implements OnInit, OnChanges {
                   this.filterForm.controls['idUtilisateur'].setValue(true);
                   this.showSatutsFilter = true;
                   this.filterForm.value.idUtilisateur = this.userId
-                  
+
                 }
-                
 
                 this.filterForm.controls['dateInf'].statusChanges
                   .subscribe(() => {

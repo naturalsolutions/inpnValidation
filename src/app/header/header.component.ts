@@ -1,8 +1,9 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { LoginService } from '../services/login.service';
-import { Router } from '@angular/router';
+import { UserService } from '../services/user.service';
+import { Router, NavigationEnd } from '@angular/router';
 import 'rxjs/add/operator/first';
 import { FilterService } from '../services/filter.service';
+import { log } from 'util';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -14,16 +15,17 @@ export class HeaderComponent implements OnInit {
   private currentUser: any;
   public isCollapsed = true;
   loadHeader: boolean = false;
+  mySubscription: any;
 
 
   constructor(
-    private loginService: LoginService,
+    private userService: UserService,
     protected router: Router,
-    private filterService :FilterService
+    private filterService: FilterService
   ) { }
 
   ngOnInit() {
-    this.loginService.getCurrentUser()
+    this.userService.getCurrentUser()
       .then((currentUser) => {
         this.currentUser = currentUser;
         this.user.emit(this.currentUser)
@@ -40,11 +42,28 @@ export class HeaderComponent implements OnInit {
 
   logout() {
     this.userConnected = false;
-    this.loginService.logout();
+    this.userService.logout();
     this.filterService.setFilterNotifications(0);
     this.router.navigate(['home']);
     this.filterService.setFilter('init');
   }
 
+  myProfil() {
+    // ###### can reload the same route #######
+    this.router.routeReuseStrategy.shouldReuseRoute = function () {
+      return false;
+    };
+    this.mySubscription = this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        this.router.navigated = false;
+      }
+    })
+    // ##########
+    this.router.navigate(['/profil', this.currentUser.attributes.ID_UTILISATEUR])
+  }
 
+  ngOnDestroy() {
+    if (this.mySubscription)
+      this.mySubscription.unsubscribe();
+  }
 }

@@ -3,13 +3,12 @@ import { ObservationService } from '../../services/observation.service';
 import { FilterService } from '../../services/filter.service'
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { FormValidator } from '../especeValidator'
 import { NgxSpinnerService } from 'ngx-spinner';
-import { Observable } from 'rxjs/Observable';
+import { icons } from "../../shared/icons";
 
 import * as _ from "lodash";
 import * as moment from 'moment';
-import { User } from "../../user";
+import { User } from "../../shared/user";
 import { TextService } from '../../services/text.service';
 import { ActivatedRoute } from '@angular/router';
 @Component({
@@ -19,19 +18,6 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class ValidationGroupesimpleComponent implements OnInit {
 
-
-  private icons = {
-    506: "icon-reptile_amphibien",
-    501: "icon-champignon_lichen",
-    502: "icon-crabe_crevette_cloporte_millepatte",
-    503: "icon-escargot_mollusque",
-    504: "icon-insecte_araignee",
-    154: "icon-mammifere",
-    148: "icon-oiseau",
-    505: "icon-plante_mousse_fougere",
-    158: "icon-poisson",
-    24222202: "icon-more",
-  };
   private modalRef: NgbModalRef;
   validationForm: FormGroup;
   currentUser: User;
@@ -164,7 +150,6 @@ export class ValidationGroupesimpleComponent implements OnInit {
     }, this.filter)
       .subscribe(
         (obs) => {
-          console.log("obs :", obs);
           if (!obs) {
             this.observations = null;
             console.log("no obs")
@@ -183,7 +168,7 @@ export class ValidationGroupesimpleComponent implements OnInit {
                 (error) => console.log("getGroupeSimpleErr", error),
                 () => {
                   _.map(this.listGroupeSimple.GroupGp, (value) => {
-                    value.icons = this.icons[value.cdGroupGrandPublic];
+                    value.icons = icons[value.cdGroupGrandPublic];
                     value.selectedObs = ""
                     return value
                   });
@@ -257,7 +242,7 @@ export class ValidationGroupesimpleComponent implements OnInit {
     let idValidateur = (this.validator.userId).toString();
     let idStatus = '3';
     let isValidated = 'false';
-    this.disableButton = true; 
+    this.disableButton = true;
     this.observationService.validateObs(idData, idValidateur, isValidated,
       idStatus, groupSimple, groupOP, cdNom, cdRef, comment).subscribe(
         (data) => {
@@ -327,7 +312,7 @@ export class ValidationGroupesimpleComponent implements OnInit {
 
   }
 
-  getUser(currentUser) {
+  getCurrentUser(currentUser) {
     this.userChecked = true;
     if (currentUser) {
       this.validator.userId = currentUser.attributes.ID_UTILISATEUR;

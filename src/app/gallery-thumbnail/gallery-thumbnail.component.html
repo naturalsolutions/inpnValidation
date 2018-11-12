@@ -1,4 +1,4 @@
-<app-header (user)="getUser($event)"></app-header>
+<app-header (user)="getCurrentUser($event)"></app-header>
 <observations-nav *ngIf="userChecked" [navItem]="'photo'" [validationText]="'Photos'" [validator]=validator></observations-nav>
 <ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <div *ngIf="photosLoaded" class="container-fluid">
@@ -17,7 +17,7 @@
         <button *ngIf="photo.isTreated=='false'" class="btn btn-danger btn-list btn-right" (click)="invalidPhoto($event,photo,modalInvalidPhoto)">
           <span class="icon-refuse"></span>
         </button>
-        <button  class="btn btn-qualif" (click)="qualiferPhoto($event,photo,modalQualifPhoto)">
+        <button class="btn btn-qualif" (click)="qualiferPhoto($event,photo,modalQualifPhoto)">
           <span class="icon-star" [style.color]=photo.icon_Qualif_Color></span>
         </button>
         <div class="thumb-img" [style.background-image]="'url(' + photo.thumbnailFileUri + ')'"></div>
@@ -25,8 +25,8 @@
       </div>
     </div>
   </div>
-  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems"
-    [(page)]="currentPage" (pageChange)="loadPage($event)"></ngb-pagination>
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="7" [pageSize]="nbItems"
+    [(page)]="currentPage" (pageChange)="loadPage($event)" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"></ngb-pagination>
   <button class="btn btn-secondary btn-help" (click)="openHelp(helpModal)">
     <span class="icon-flottant2"></span>
   </button>
@@ -41,10 +41,10 @@
 <ng-template #modalInvalidPhoto let-c="close" let-d="dismiss">
   <div class="container">
     <div class="modal-body">
-        <form [formGroup]="invalidForm">
+      <form [formGroup]="invalidForm">
         <div class="form-group">
           <label for="qualif" class="form-control-label qualif-label">Qualification de la photo</label>
-          <select #qualif  formControlName="qualif" class="form-control">
+          <select #qualif formControlName="qualif" class="form-control">
             <option *ngFor="let item of qualifications" value="{{item.cdRef}}">{{item.lbRef}}</option>
           </select>
         </div>
@@ -60,23 +60,23 @@
 
 <ng-template #modalQualifPhoto let-c="close" let-d="dismiss">
   <div class="modal-body">
-      <img src="{{selectedPhoto.inpnFileUri}}">
+    <img src="{{selectedPhoto.inpnFileUri}}">
+  </div>
+  <div class="modal-footer">
+    <form class="container" [formGroup]="qualifForm">
+      <div class="form-group">
+        <label for="qualif" class="form-control-label">Qualification de la photo</label>
+        <select #qualif formControlName="qualif" class="form-control">
+          <option *ngFor="let item of qualifications" value="{{item.cdRef}}">{{item.lbRef}}</option>
+        </select>
+      </div>
+    </form>
+    <div class="flex-btn">
+      <button class="btn btn-secondary btn-modal" (click)="setQualifications(qualif.value)">
+        Valider
+      </button>
     </div>
-    <div class="modal-footer">
-      <form class="container" [formGroup]="qualifForm"> 
-        <div class="form-group">
-          <label for="qualif" class="form-control-label">Qualification de la photo</label>
-          <select #qualif formControlName="qualif" class="form-control">
-            <option *ngFor="let item of qualifications"  value="{{item.cdRef}}">{{item.lbRef}}</option>
-          </select>
-        </div>
-      </form>
-      <div class="flex-btn">
-          <button class="btn btn-secondary btn-modal" (click)="setQualifications(qualif.value)">
-            Valider
-          </button>
-        </div>
-    </div>
+  </div>
 </ng-template>
 
 
@@ -90,4 +90,4 @@
   <span class="icon-obsPasFaite"></span>
   <p style="font-size: 20px">Aucune observation n'est disponible</p>
 </div>
-<app-footer  *ngIf="obsLoaded || noObs"></app-footer>
+<app-footer *ngIf="obsLoaded || noObs"></app-footer>

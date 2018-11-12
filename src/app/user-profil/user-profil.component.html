@@ -1,0 +1,65 @@
+<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
+<app-header (user)="getCurrentUser($event)"></app-header>
+<div *ngIf="userloaded && obsLoaded && userChecked" class="container">
+  <div class="row justify-content-center">
+    <div class="col-auto observateur">
+      <a class="avatar" [style.background-image]="'url(' +userProfile.avatar+ ')'"></a>
+      <p class="pseudo">{{userProfile.pseudo}}</p>
+      <p class="status">{{userProfile.status}}</p>
+    </div>
+  </div>
+  <hr class="style-two">
+  <div class="row justify-content-center">
+    <div class="col-auto ">
+      <p class="chiffres">{{observations.totLines}}</p>
+      <p>OBSERVATIONS</p>
+    </div>
+    <div class="col-auto">
+      <p class="chiffres">{{userProfile.ScoreTotal}}</p>
+      <p>POINTS</p>
+    </div>
+    <div class="col-auto">
+      <p class="chiffres">{{userProfile.rang}}</p>
+      <p>CLASSEMENT</p>
+    </div>
+  </div>
+  <hr class="style-two">
+  <div class="title">MES OBSERVATIONS</div>
+  <div *ngIf="obsLoaded && !noObs" class="container-fluid">
+    <div class="row">
+      <div *ngFor="let item of observations.observations" class="d-flex col-xl-3 col-lg-3 col-md-4 col-xs-6 thumb">
+        <div class="card flex-fill">
+          <div style="position:relative">
+            <div *ngIf="item.isValidated=='true'" class="badge badge-pill badge-success badge-score">
+              <i class="icon-databaseokay"></i>
+              <p class="badge-text"> {{item.scoreTotal}} Point(s)</p>
+            </div>
+            <div *ngIf="item.isValidated=='false'" class="badge badge-pill badge-warning badge-score">
+              <i class="icon-enAttenteSynchro"></i>
+              <p class="badge-text"> {{item.scoreTotal}} Point(s)</p>
+            </div>
+            <img *ngIf="item.photos.length < 2" class="card-img-top-list" src="{{item.principalPhoto.thumbnailFileUri}}">
+            <ngb-carousel interval=0 *ngIf="item.photos.length > 1">
+              <ng-template *ngFor="let photo of item.photos" ngbSlide>
+                <img class="card-img-top-list" src="{{photo.thumbnailFileUri}}">
+              </ng-template>
+            </ngb-carousel>
+          </div>
+          <div class="card-body">
+            <span class="{{item.icon}} icon-gp"></span>
+            <h5 class="card-title">{{item.lbGroupSimple}}</h5>
+            <p class="card-text">{{item.lbGroupOP}}</p>
+            <div class="especeName" [innerHtml]=item.nomCompletHtml>
+            </div>
+            <div class="badge badge-pill badge-secondary detail" [routerLink]="['/observations/detail',item.idData]">
+              <span class="icon-more_on "></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="7" [pageSize]="nbItems"
+      [(page)]="cuurentPage" (pageChange)="loadPage($event)" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"></ngb-pagination>
+  </div>
+</div>
+
+<app-footer *ngIf="obsLoaded"></app-footer>

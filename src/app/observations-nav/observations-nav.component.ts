@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { User } from "../user";
+import { User } from "../shared/user";
 import * as _ from "lodash";
 import { FilterService } from '../services/filter.service'
 

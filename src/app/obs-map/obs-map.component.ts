@@ -126,13 +126,11 @@ export class ObsMapComponent implements OnInit {
           L.control.layers(baseLayers).addTo(this.mymap);
 
           if (this.observations) {
-            console.log("obsss",this.observations);
-            
             var markersList = L.markerClusterGroup();
             _.forEach(this.observations.observations, (element) => {
               let customPopup = '<div class="img-inner"> <img class="img-popUp" src=' + element.photos[0].thumbnailFileUri + '> </div>'
                 + '<div class="leflet-container"><div class="leflet-pop">'
-                + '<img src="../assets/imgs/user.png" class="img-pop-leflet"><p class="pseudo-leflet">'
+                + '<img src="' + element.avatar + '" class="img-pop-leflet"><p class="pseudo-leflet">'
                 + element.pseudo + '</p> </div>'
                 + '<div class="leflet-list">'
                 + '<p  class="leflet-groupSimple">' + element.lbGroupSimple + '</p>'
@@ -157,7 +155,7 @@ export class ObsMapComponent implements OnInit {
       )
   }
 
-  getUser(currentUser) {
+  getCurrentUser(currentUser) {
     this.userChecked = true;
     if (currentUser) {
 

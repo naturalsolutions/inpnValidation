@@ -1,4 +1,4 @@
-<app-header (user)="getUser($event)"></app-header>
+<app-header (user)="getCurrentUser($event)"></app-header>
 <observations-nav *ngIf="userChecked" [navItem]="'validation'" [validationText]="'Groupe taxonomique'" [validator]="validator"></observations-nav>
 <ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <div *ngIf="obsLoaded" class="container-fluid">
@@ -47,8 +47,8 @@
       </div>
     </div>
   </div>
-  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems"
-    [(page)]="cuurentPage" (pageChange)="loadPage($event)"></ngb-pagination>
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="7" [pageSize]="nbItems"
+    [(page)]="cuurentPage" (pageChange)="loadPage($event)" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"></ngb-pagination>
 </div>
 
 <div *ngIf="noObs" class="no-obs">

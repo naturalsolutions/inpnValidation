@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { AppComponent } from './app.component';
@@ -18,10 +18,12 @@ import { ObsListComponent } from './obs-list/obs-list.component';
 import { ObsDetailsComponent } from './obs-details/obs-details.component';
 import { FilterComponent } from './filter/filter.component';
 import { ObsMapComponent } from './obs-map/obs-map.component';
+import { UserProfilComponent } from './user-profil/user-profil.component';
+import { ObserversListComponent } from './observers-list/observers-list.component';
 //service
 import { ImagesService } from './services/images.service';
 import { ObservationService } from './services/observation.service';
-import { LoginService } from './services/login.service';
+import { UserService } from './services/user.service';
 import { ObsGuard } from './services/obs-guard.service';
 import { GalleryGuard } from './services/gallery-guard';
 import { GrpSimpleGuard } from './services/grpSimple-guard';
@@ -32,14 +34,15 @@ import { FilterService } from './services/filter.service';
 import { AuthInterceptor } from './services/authInterceptor';
 //routing
 import { routing } from './app.routing';
-import {icon, Marker} from 'leaflet';
+import { icon, Marker } from 'leaflet';
 import { ObservationsNavComponent } from './observations-nav/observations-nav.component';
 import { ValidationEspeceComponent } from './validation/validation-espece/validation-espece.component';
 import { ValidationGroupetaxoComponent } from './validation/validation-groupetaxo/validation-groupetaxo.component';
 import { ValidationGroupesimpleComponent } from './validation/validation-groupesimple/validation-groupesimple.component';
 
 //pipe
-import {FormatDatePipe } from './pipes/format-date';
+import { FormatDatePipe } from './pipes/format-date';
+
 
 const iconRetinaUrl = 'assets/marker-icon-2x.png';
 const iconUrl = 'assets/imgs/marker-icon.png';
@@ -73,8 +76,10 @@ Marker.prototype.options.icon = iconDefault;
     ValidationEspeceComponent,
     ValidationGroupetaxoComponent,
     ValidationGroupesimpleComponent,
-    FormatDatePipe
- 
+    FormatDatePipe,
+    UserProfilComponent,
+    ObserversListComponent
+
   ],
   imports: [
     BrowserModule,
@@ -96,7 +101,7 @@ Marker.prototype.options.icon = iconDefault;
     AuthInterceptor,
     ImagesService,
     ObservationService,
-    LoginService,
+    UserService,
     TextService,
     FilterService,
     ObsGuard,

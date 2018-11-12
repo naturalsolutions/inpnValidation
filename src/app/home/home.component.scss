@@ -2,26 +2,33 @@
   position: relative;
 }
 
-.col-sm {
-  text-align: center;
-  padding: 20px;
-  padding-top: 60px
-}
-
-h1 {
-  color: #5b5b5b;
-  font-size: 21px;
-  font-weight: 500;
-  text-transform: uppercase
-}
-
-p {
-  color: #5b5b5b;
-}
-
 .picto {
-  padding-bottom: 30px
+  cursor: pointer;
+  text-align: center;
+  padding: 60px 0;
+  color: black;
+
+  h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 600;
+  }
+
+  p {
+    font-size: 20px;
+  }
 }
+
+.picto-icon {
+  padding-bottom: 20px;
+  width: 60px;
+}
+
+.picto:last-child {
+  cursor: default;
+}
+
+
 
 .band-text {
   position: absolute;
@@ -41,4 +48,216 @@ p {
   bottom: 30%;
   z-index: 999;
   transform: translateX(-50%)
+}
+
+.fold2 {
+  padding: 0
+}
+
+.fold2-img {
+  padding: 20px 0;
+
+}
+
+.fold2-description {
+  padding: 0;
+  background-color: #72b4b4;
+  color: white;
+
+  h1 {
+    padding: 40px 0;
+    text-align: center;
+    margin: 0;
+    font-size: 30px;
+    font-weight: 400;
+    text-transform: uppercase
+  }
+
+  p {
+    padding: 0 40px;
+    font-size: 20px;
+    text-align: center
+  }
+}
+
+.observations {
+  padding: 30px 10%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  .title {
+    padding-top: 50px;
+    text-align: center;
+    text-transform: uppercase;
+    font-size: 22px;
+    font-weight: 600;
+    color: #626262
+  }
+
+  .title::before,
+  .title::after {
+    display: inline-block;
+    content: "";
+    border-top: 1px solid #b1b0b0;
+    width: 6rem;
+    margin: 0 1rem;
+    transform: translateY(-8px);
+  }
+
+  .thumb {
+    padding: 0 25px
+  }
+
+  @media (min-width: 1600px) {
+    .thumb {
+      padding: 0 46px
+    }
+  }
+
+  .card {
+    margin: 50px 0;
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12);
+
+    .icon-gp {
+      color: #49cf76;
+      font-size: 34px;
+      font-weight: 500
+    }
+
+    .card-body {
+      text-align: center;
+
+      h5 {
+        font-size: 16px
+      }
+    }
+
+    .card-img-top-list {
+      cursor: pointer;
+      object-fit: cover;
+      width: 100%;
+      height: 180px;
+    }
+
+    .card-text {
+      font-size: 14px;
+      margin-bottom: 1px
+    }
+
+    .especeName {
+      font-size: 14px;
+      color: #71cb7f;
+      padding-bottom: 15px
+    }
+
+    .icon-more_on {
+      color: white;
+    }
+
+    .detail {
+      cursor: pointer;
+      bottom: 6px;
+      right: 6px;
+      padding: 2px 6px;
+      font-size: 10px;
+      font-weight: 200;
+      position: absolute;
+      background-color: #999999;
+    }
+  }
+
+  .obs-btn {
+    text-align: center;
+    background-color: #49cf76;
+    border-radius: 400px;
+    color: white;
+    opacity: 0.85;
+    font-size: 14px;
+    text-transform: uppercase;
+    padding: 10px 30px;
+    font-weight: 500;
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+}
+
+.user-block {
+  padding: 50px 0;
+  width: 100%;
+  text-align: center;
+
+  .avatar {
+    cursor: pointer;
+    background-image: url("/assets/imgs/user.png");
+    display: block;
+    position: relative;
+    border-radius: 50%;
+    min-width: 40px;
+    width: 130px;
+    height: 130px;
+    background-size: cover;
+    background-position: center;
+    text-align: center;
+  }
+
+  .pseudo {
+    cursor: pointer;
+    text-transform: capitalize;
+    font-size: 18px;
+    font-weight: 600;
+    padding-top: 6px;
+  }
+
+  .score {
+    cursor: pointer;
+  }
+}
+
+.mobile-fold {
+  padding-top: 80px;
+  padding-bottom: 120px;
+
+  .mobile-img {
+    height: 500px;
+    margin-top: -40px;
+    margin-left: 15%;
+    margin-bottom: -40px
+  }
+
+  .inner-img {
+    display: flex;
+    padding: 0;
+    background-color: #72b4b4;
+  }
+
+  .mobile-desc {
+    padding: 40px 10%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+      padding-bottom: 40px;
+      margin: 0;
+      font-size: 30px;
+      font-weight: 400;
+      text-transform: uppercase
+    }
+
+    p {
+      font-size: 20px;
+    }
+
+    .inner-store {
+      margin-top: auto;
+    }
+
+    .store-icon {
+      width: 180px;
+      padding-right: 40px;
+    }
+  }
 }

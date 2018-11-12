@@ -11,18 +11,24 @@ import { ValidationEspeceComponent } from './validation/validation-espece/valida
 import { ValidationGroupetaxoComponent } from './validation/validation-groupetaxo/validation-groupetaxo.component';
 import { ValidationGroupesimpleComponent } from './validation/validation-groupesimple/validation-groupesimple.component';
 import { GalleryThumbnailComponent } from './gallery-thumbnail/gallery-thumbnail.component';
+import { UserProfilComponent } from './user-profil/user-profil.component';
+import { ObserversListComponent } from './observers-list/observers-list.component';
+
+
 export const routing = RouterModule.forRoot([
 
   { path: 'home', component: HomeComponent },
+  { path: 'profil/:id', component: UserProfilComponent, runGuardsAndResolvers: 'always' },
+  { path: 'observateursList', component: ObserversListComponent },
   { path: 'observations/list', component: ObsListComponent, runGuardsAndResolvers: 'always' },
   { path: 'observations/detail/:id', component: ObsDetailsComponent },
   { path: 'observations/carte', component: ObsMapComponent },
-  { path: 'observations/validation/photo', component: GalleryThumbnailComponent ,canActivate :[GalleryGuard]},
-  { path: 'observations/validation/espece', component: ValidationEspeceComponent,canActivate :[EspeceGuard]},
-  { path: 'observations/validation/groupeTaxonomique', component: ValidationGroupetaxoComponent,canActivate :[GrpTaxoGuard]},
-  { path: 'observations/validation/groupeSimple', component:  ValidationGroupesimpleComponent,canActivate :[GrpSimpleGuard]},
+  { path: 'observations/validation/photo', component: GalleryThumbnailComponent, canActivate: [GalleryGuard] },
+  { path: 'observations/validation/espece', component: ValidationEspeceComponent, canActivate: [EspeceGuard] },
+  { path: 'observations/validation/groupeTaxonomique', component: ValidationGroupetaxoComponent, canActivate: [GrpTaxoGuard] },
+  { path: 'observations/validation/groupeSimple', component: ValidationGroupesimpleComponent, canActivate: [GrpSimpleGuard] },
 
- 
+
   { path: '', component: HomeComponent },
   { path: '**', redirectTo: 'home' },
 ], { useHash: true, onSameUrlNavigation: 'reload' })

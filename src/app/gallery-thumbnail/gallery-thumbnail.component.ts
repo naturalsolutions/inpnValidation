@@ -3,7 +3,7 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { ImagesService } from '../services/images.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import * as _ from 'lodash';
-import { User } from '../user';
+import { User } from '../shared/user';
 import { TextService } from '../services/text.service';
 import { FormBuilder, FormGroup } from '@angular/forms';
 
@@ -183,7 +183,7 @@ export class GalleryThumbnailComponent implements OnInit {
         error => console.log("error set qualif", error)
       )
   }
-  getUser(currentUser) {
+  getCurrentUser(currentUser) {
     this.userChecked = true;
     if (currentUser) {
       this.validator.userId = currentUser.attributes.ID_UTILISATEUR;

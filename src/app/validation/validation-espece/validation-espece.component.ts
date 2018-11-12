@@ -17,7 +17,7 @@ import 'rxjs/add/operator/merge';
 import * as _ from "lodash";
 import * as moment from 'moment';
 import { TextService } from '../../services/text.service';
-
+import { icons } from "../../shared/icons";
 @Component({
   selector: 'app-validation-espece',
   templateUrl: './validation-espece.component.html',
@@ -25,18 +25,6 @@ import { TextService } from '../../services/text.service';
 })
 export class ValidationEspeceComponent implements OnInit, OnDestroy {
 
-  private icons = {
-    506: "icon-reptile_amphibien",
-    501: "icon-champignon_lichen",
-    502: "icon-crabe_crevette_cloporte_millepatte",
-    503: "icon-escargot_mollusque",
-    504: "icon-insecte_araignee",
-    154: "icon-mammifere",
-    148: "icon-oiseau",
-    505: "icon-plante_mousse_fougere",
-    158: "icon-poisson",
-    24222202: "icon-more",
-  };
   private modalRef: NgbModalRef;
   validationForm: FormGroup;
   public obsLoaded: boolean = false;
@@ -156,7 +144,6 @@ export class ValidationEspeceComponent implements OnInit, OnDestroy {
     }, this.filter)
       .subscribe(
         (obs) => {
-          console.log("obs :", obs);
           if (!obs) {
             this.observations = null;
             console.log("no obs")
@@ -176,7 +163,7 @@ export class ValidationEspeceComponent implements OnInit, OnDestroy {
                 (error) => console.log("getGroupeSimpleErr", error),
                 () => {
                   _.map(this.listGroupeSimple.GroupGp, (value) => {
-                    value.icons = this.icons[value.cdGroupGrandPublic];
+                    value.icons = icons[value.cdGroupGrandPublic];
                     value.selectedObs = ""
                     return value
                   });
@@ -461,7 +448,7 @@ export class ValidationEspeceComponent implements OnInit, OnDestroy {
       .merge(this.hideSearchingWhenUnsubscribed);
 
 
-  getUser(currentUser) {
+  getCurrentUser(currentUser) {
     this.userChecked = true;
     if (currentUser) {
       this.validator.userId = currentUser.attributes.ID_UTILISATEUR;

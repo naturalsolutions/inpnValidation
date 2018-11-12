@@ -1,8 +1,8 @@
 <div class="card filter-card">
   <div class="card-body ">
     <form *ngIf="showFilter" [formGroup]="filterForm" (submit)="submit(filterForm)">
-      <div class="row justify-content-center ">
-        <div class="col-lg-auto ml-md-auto">
+      <div class="row justify-content-center">
+        <div class="col-auto ">
           <label class="label-filtre">catégories</label>
           <div *ngFor="let row of listGroupeSimpleArray" class="row-filter">
             <div *ngFor="let grpSimple of row" [ngbTooltip]="tipContent" triggers="mouseenter:mouseleave" ngbPopover="{{grpSimple.groupGrandPublic}}"
@@ -14,7 +14,7 @@
             </div>
           </div>
         </div>
-        <div class="col-lg ml-md-auto">
+        <div class="col-xl-3 col-lg-3">
           <label for="groupOP" class="label-filtre">Groupe taxonomique</label>
           <select id="groupOP" class="form-control" formControlName="groupOp">
             <option value="">---</option>
@@ -24,8 +24,8 @@
           <input formControlName="taxon" class="form-control " [ngbTypeahead]="search" [inputFormatter]="formatMatches"
             [resultFormatter]="formatMatches" id="espece">
         </div>
-        <div class="col-lg ml-md-auto">
-          <label class="label-filtre">Date</label>
+        <div class="col-xl-3 col-lg-3">
+          <label class=" label-filtre">Date</label>
           <div class="form-row">
             <div class="col-md-6 ">
               <div class="input-group">
@@ -53,7 +53,7 @@
               [resultFormatter]="city" [resultTemplate]="formatter" id="lieu">
           </div>
         </div>
-        <div *ngIf="userId" class="col-lg ml-md-auto">
+        <div *ngIf="userId" class="col-xl-3 col-lg-3">
           <div *ngIf="validationFilter">
             <label for="observateur" class="label-filtre">Observateur</label>
             <input formControlName="pseudo" class="form-control " [ngbTypeahead]="searchPseudo" [inputFormatter]="pseudo"
@@ -62,7 +62,7 @@
           <div *ngIf="!validationFilter && showSatutsFilter"><label for="validation" class="label-filtre">Statut de
               validation</label>
             <select id="filtrestatuValidation" class="form-control" formControlName="filtreStatutValidation">
-                <option value="">---</option>
+              <option value="">---</option>
               <option *ngFor="let statu of ValidationStatus.Status" value="{{statu.cdRef}}">{{statu.lbRef}}</option>
             </select>
           </div>

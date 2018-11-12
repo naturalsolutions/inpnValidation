@@ -2,7 +2,8 @@
   <a class="navbar-brand" routerLink="home">
     <img src="../assets/imgs/logo-inpn.png" width="170px">
   </a>
-  <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed" aria-controls="collapse">
+  <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" [attr.aria-expanded]="!isCollapsed"
+    aria-controls="collapse">
     <span class="navbar-toggler-icon"></span>
   </button>
   <div class="collapse navbar-collapse" id="collapse" [ngbCollapse]="isCollapsed">
@@ -10,19 +11,24 @@
       <li class="nav-item ">
         <a class="nav-link " routerLink="/home" routerLinkActive="active">Accueil</a>
       </li>
-      <li  class="nav-item">
+      <li class="nav-item">
         <a class="nav-link" routerLink="/observations/list" routerLinkActive="active">Observations</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" routerLink="/observateursList" routerLinkActive="active">Observateurs</a>
       </li>
       <li *ngIf="!userConnected" class="nav-item">
         <login-modal class="nav-link" routerLinkActive="active"></login-modal>
       </li>
       <li *ngIf="userConnected" class="nav-item">
         <div ngbDropdown class="d-inline-block">
-          <a class="nav-link  " id="dropdownBasic1" ngbDropdownToggle>
+          <a class="nav-link " id="dropdownBasic1" ngbDropdownToggle>
             <span class="icon-user"></span>
             <p class="userName"> {{currentUser.attributes.PRENOM}} {{currentUser.attributes.NOM}}</p>
           </a>
-          <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+
+          <div ngbDropdownMenu aria-labelledby="dropdownBasic1" #userMenu>
+            <button class="dropdown-item" (click)="myProfil()">Mon profil</button>
             <button class="dropdown-item" (click)="logout()">Se déconnecter</button>
           </div>
         </div>

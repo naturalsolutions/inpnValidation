@@ -1,36 +1,52 @@
+<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <app-header></app-header>
 <div *ngIf="obsLoaded" class="container-fluid">
+  <div class='row container-block  justify-content-center'>
+    <div class="title col-lg-11 col-xl-10">{{observation.lbGroupSimple}}
+      <div *ngIf="observation.isValidated=='true'" class="badge badge-pill badge-success">
+        <i class="icon-databaseokay"></i>
+        <p class="badge-text"> {{observation.scoreTotal}} Point(s)</p>
+      </div>
+      <div *ngIf="observation.isValidated=='false'" class="badge badge-pill badge-warning">
+        <i class="icon-enAttenteSynchro"></i>
+        <p class="badge-text"> {{observation.scoreTotal}} Point(s)</p>
+      </div>
+    </div>
 
+    <div class='col-lg-7 img-col '>
+      <div class="row photo-container align-items-center">
 
-  <div class='row container-block justify-content-lg-center'>
-    <div class="title col-lg-11 col-xl-10">{{observation.lbGroupSimple}}</div>
-    <div class='col-lg-7 img-col'>
-      <div class="row photo-container">
-        <a class="zoom" (click)="agrandirPhoto(largePhoto)"><img class="img-fluid photo-principal" src="{{photoSelected}}"></a>
-
+        <a class="zoom" (click)="agrandirPhoto(largePhoto)">
+          <div class="invalid-tag" *ngIf="photoSelected.isValidated=='false' && photoSelected.isTreated=='true'">
+            <span class="icon-refuse"></span> Photo non validée
+          </div>
+          <img class="img-fluid photo-principal" src="{{photoSelected.inpnFileUri}}">
+        </a>
       </div>
       <div class="row thumbnail" *ngIf="observation.photos.length > 1">
-        <a *ngFor="let photo of observation.photos" class="thumb-img rounded" [style.background-image]="'url(' + photo.thumbnailFileUri + ')'"
-          (click)="selectPhoto(photo)"></a>
+        <div style="position: relative" *ngFor="let photo of observation.photos">
+          <div class="invalid-thump" *ngIf="photo.isValidated=='false' && photo.isTreated=='true'">
+            <span class="icon-refuse"></span>
+          </div>
+          <a class="thumb-img rounded" [style.background-image]="'url(' + photo.thumbnailFileUri + ')'" (click)="selectPhoto(photo)"></a>
+        </div>
       </div>
     </div>
     <div class='col-lg-4  col-xl-3 info'>
       <div class="row info-block">
         <div class="col-auto">
-          <a class="avatar" [style.background-image]="'url(' + observation.avatar + ')'"></a>
+          <a class="avatar" [style.background-image]="'url(' + observation.avatar + ')'" [routerLink]="['/profil',observation.idUtilisateur]"></a>
         </div>
         <div class="col observateur">
-          <div class="pseudo">
-            <a>{{observation.pseudo}}</a>
-          </div>
+          <a class="pseudo" [routerLink]="['/profil',observation.idUtilisateur]">{{observation.pseudo}}</a>
           <div class="score">
-            <a><i class="icon-new-obs"></i> 154 Points</a>
+            <a><i class="icon-new-obs"></i> {{userProfile.ScoreTotal}} Points</a>
           </div>
         </div>
       </div>
       <div class="row info-block">
         <div class="col-auto">
-          <i class="grp-icon icon-insecte_araignee"></i>
+          <i class="grp-icon {{observation.icon}}"></i>
         </div>
         <div class="col observateur">
           <div class="grpSimple">{{observation.lbGroupSimple}}</div>
@@ -61,12 +77,12 @@
                       </small></p>
                   </div>
                   <div class="timeline-body">
-                    <p>" {{validation.commentaire}} "</p>
+                    <p>{{validation.commentaire}}</p>
                   </div>
                 </div>
               </li>
               <li *ngIf="nextStep" class="last-step">
-                <div class="timeline-badge "><i class="icon-enAttenteSynchro"></i></div>
+                <div class="timeline-badge warning "><i class="icon-enAttenteSynchro"></i></div>
                 <div class="timeline-panel">
                 </div>
               </li>
@@ -99,11 +115,6 @@
 
 <ng-template #largePhoto let-c="close" let-d="dismiss">
   <div class="modal-body">
-    <img *ngIf="observation.photos.length < 2" class="card-img-large" src="{{photoSelected}}">
-    <ngb-carousel interval=0 *ngIf="observation.photos.length > 1">
-      <ng-template *ngFor="let photo of observation.photos" ngbSlide>
-        <img src="{{photo.inpnFileUri}}">
-      </ng-template>
-    </ngb-carousel>
+    <img class="card-img-large" src="{{photoSelected.inpnFileUri}}">
   </div>
 </ng-template>

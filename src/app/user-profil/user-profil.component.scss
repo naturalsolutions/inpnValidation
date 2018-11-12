@@ -1,0 +1,183 @@
+.avatar {
+  display: block;
+  position: relative;
+  border-radius: 50%;
+  min-width: 40px;
+  width: 130px;
+  height: 130px;
+  background-size: cover;
+  background-position: center;
+  text-align: center;
+}
+
+
+.container {
+  padding-top: 50px;
+
+}
+
+.row-info {
+  padding-top: 6px;
+}
+
+.pseudo {
+  font-size: 22px;
+  display: flex;
+  color: #868686;
+  text-align: center;
+  text-transform: capitalize;
+  font-weight: 500
+}
+
+.status {
+  font-size: 22px;
+  display: flex;
+  color: #71cb7f;
+  text-align: center;
+  text-transform: capitalize;
+
+}
+
+hr.style-two {
+  width: 70%;
+  border: 0;
+  height: 1px;
+  background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(156, 156, 156, 0.75), rgba(0, 0, 0, 0));
+}
+
+p {
+  display: flex;
+  justify-content: center;
+  line-height: 1.2;
+  margin: 0
+}
+
+.chiffres {
+  font-weight: 600;
+  font-size: 24px;
+}
+
+.title {
+  padding-top: 50px;
+  padding-bottom: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 22px;
+  font-weight: 600;
+  color: #626262
+}
+
+.title::before,
+.title::after {
+  display: inline-block;
+  content: "";
+  border-top: 1px solid #b1b0b0;
+  width: 6rem;
+  margin: 0 1rem;
+  transform: translateY(-8px);
+}
+
+.card {
+  //cursor: pointer;
+  margin-top: 30px;
+  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12)
+}
+
+.icon-gp {
+  color: #49cf76;
+  font-size: 34px;
+  font-weight: 500
+}
+
+.card-body {
+
+  text-align: center;
+
+  h5 {
+    font-size: 16px
+  }
+}
+
+.card-img-top-list {
+  object-fit: cover;
+  width: 100%;
+  height: 180px;
+}
+
+.card-text {
+  font-size: 14px;
+  margin-bottom: 1px
+}
+
+
+ngb-pagination {
+  margin-top: 50px;
+}
+
+.no-obs {
+  min-height: calc(100% - 459px);
+  padding: 10% 0;
+  color: gray;
+  display: flex;
+  flex-direction: column;
+  align-items: center
+}
+
+.icon-obsPasFaite {
+  font-size: 100px;
+}
+
+.especeName {
+  font-size: 14px;
+  color: #71cb7f;
+  padding-bottom: 15px
+}
+
+.icon-more_on {
+  color: white;
+}
+
+
+.detail {
+  cursor: pointer;
+  bottom: 6px;
+  right: 6px;
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 200;
+  position: absolute;
+  background-color: #999999;
+}
+
+.observateur {
+  padding-left: 0;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center
+}
+
+@media (min-width: 1600px) {
+  .container {
+    padding: 2% 12%;
+    min-height: calc(100% - 459px);
+  }
+
+}
+
+.badge-score {
+  z-index: 999;
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-weight: 400;
+  font-size: 12px;
+  text-transform: none;
+
+  .badge-text {
+    display: inline-block;
+    padding-left: 4px;
+    margin: 0;
+    vertical-align: top;
+  }
+}

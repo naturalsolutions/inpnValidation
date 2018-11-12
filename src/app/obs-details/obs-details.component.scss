@@ -11,6 +11,19 @@
   color: #626262
 }
 
+.badge {
+  font-weight: 400;
+  font-size: 16px;
+  text-transform: none;
+
+  .badge-text {
+    display: inline-block;
+    padding-left: 4px;
+    margin: 0;
+    vertical-align: top;
+  }
+}
+
 .photo-principal {
   height: auto;
   width: auto;
@@ -18,8 +31,45 @@
   max-height: 460px;
 }
 
+.zoom {
+  cursor: zoom-in;
+  position: relative;
+}
+
+.invalid-tag {
+  position: absolute;
+  z-index: 999;
+  width: 100%;
+  text-align: center;
+  padding: 5px;
+  opacity: 0.7;
+  border-radius: 0;
+  background-color: red;
+  color: white
+}
+
+.invalid-thump {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  z-index: 999;
+  width: 20px;
+  height: 20px;
+  font-size: 12px;
+  text-align: center;
+  padding: 1px;
+  opacity: 0.7;
+  border-radius: 50%;
+  background-color: red;
+  color: white;
+}
+
 .img-col {
   border: 1px solid #d8d8d8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: white;
 }
 
 .photo-container {
@@ -31,13 +81,9 @@
 
 .container-block {
   padding: 0;
- 
 
 }
 
-.zoom {
-  cursor: pointer;
-}
 
 .info-block {
   padding: 15px 0;
@@ -46,6 +92,7 @@
 }
 
 .thumb-img {
+  display: inline-block;
   margin: 0 6px;
   cursor: pointer;
   background: no-repeat center;
@@ -82,9 +129,12 @@
 }
 
 .pseudo,
-.grpSimple,
-.grpTaxo {
+.grpSimple {
   font-size: 20px;
+}
+
+.grpTaxo {
+  font-size: 18px
 }
 
 .score {
@@ -92,7 +142,12 @@
 }
 
 .pseudo {
+  color: black;
   text-transform: capitalize
+}
+
+.pseudo:hover {
+  text-decoration: none
 }
 
 .icon-new-obs {
@@ -106,7 +161,7 @@
 }
 
 .grp-icon {
-  font-size: 80px;
+  font-size: 74px;
   color: #9a9a9a;
 }
 
@@ -118,6 +173,7 @@
   flex: 1;
   width: 100%;
   height: auto;
+  min-height: 260px;
   padding: 0;
 }
 
@@ -177,40 +233,41 @@ li:last-child {
 
   @at-root .timeline:before {
     height: calc(100% - 180px)
-}
-
   }
+
+}
 
 
 .timeline-panel {
   position: relative;
   margin-left: 65px;
   top: 29px;
-  padding:  15px;
+  padding: 15px;
   padding-top: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
   background-color: white;
   min-height: 110px
 }
-.last-step .timeline-panel  {
+
+.last-step .timeline-panel {
   visibility: hidden;
- 
- 
+
+
 }
 
 .timeline-badge {
-      width: 40px;
-      height: 40px;
-      text-align: center;
-      position: absolute;
-      top: 26px;
-      left: 6px;
-      background-color: #808080;
-      z-index: 100;
-      border-radius: 50%;
-      border: 1px solid #d4d4d4;
-      padding: 9px;
+  width: 40px;
+  height: 40px;
+  text-align: center;
+  position: absolute;
+  top: 26px;
+  left: 6px;
+  background-color: #808080;
+  z-index: 100;
+  border-radius: 50%;
+  border: 1px solid #d4d4d4;
+  padding: 9px;
 }
 
 
@@ -226,30 +283,36 @@ li:last-child {
   background-color: #d9534f !important
 }
 
-.timeline i{
+.timeline i {
   color: white;
   font-size: 20px
 }
 
-.timeline-title{
+.timeline-title {
   margin-bottom: 2px;
 }
-.icon-clock{
+
+.icon-clock {
   color: gray !important;
   font-size: 11px !important;
   padding: 0 4px !important;
 }
-.timeline-body{
-  p{
+
+.timeline-body {
+  p {
     margin: 0;
-    padding-left : 10px;
+    padding-left: 10px;
     font-style: italic
   }
 }
-.badge{
-  float: right;
-  padding: 6px 10px
-}
-.score-body{
-  padding: 8px
+
+.score-card {
+  .badge {
+    float: right;
+    padding: 6px 10px
+  }
+
+  .score-body {
+    padding: 8px
+  }
 }

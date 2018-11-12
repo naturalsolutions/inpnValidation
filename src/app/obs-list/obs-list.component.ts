@@ -2,7 +2,9 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ObservationService } from '../services/observation.service';
 import { FilterService } from '../services/filter.service'
 import { NgxSpinnerService } from 'ngx-spinner';
+import { icons } from "../shared/icons";
 import * as _ from "lodash";
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-obs-list',
@@ -11,26 +13,13 @@ import * as _ from "lodash";
 })
 export class ObsListComponent implements OnInit, OnDestroy {
   filter: any = {};
-  private icons = {
-    506: "icon-reptile_amphibien",
-    501: "icon-champignon_lichen",
-    502: "icon-crabe_crevette_cloporte_millepatte",
-    503: "icon-escargot_mollusque",
-    504: "icon-insecte_araignee",
-    154: "icon-mammifere",
-    148: "icon-oiseau",
-    505: "icon-plante_mousse_fougere",
-    158: "icon-poisson",
-    24222202: "icon-more",
-  };
-
   public obsLoaded: boolean = false;
   noObs: boolean = false;
   private observations;
   invalidPhoto: boolean = false;
   totalItems;
   private cuurentPage: number = 1;
-  private nbItems: number = 12;
+  private nbItems: number = 24;
   private previousPage: number = 1;
   principalPhoto: any;
   nbFilterSelected: any;
@@ -68,7 +57,6 @@ export class ObsListComponent implements OnInit, OnDestroy {
       })
   }
 
-
   loadPage(page: number) {
     let paginStart;
     let paginEnd;
@@ -96,10 +84,7 @@ export class ObsListComponent implements OnInit, OnDestroy {
       if (!filter.idUtilisateur)
         this.filter.filtreStatutValidation = '5';
       filter = _.omitBy(filter, _.isNil);
-      console.log("filter", filter);
-
       this.nbFilterSelected = _.size(filter);
-      console.log("this.nbFilterSelected", this.nbFilterSelected);
       if (!filter.idUtilisateur)
         this.nbFilterSelected--;
       if (filter.idUtilisateur == false)
@@ -144,17 +129,17 @@ export class ObsListComponent implements OnInit, OnDestroy {
         () => {
           if (this.observations) {
             _.map(this.observations.observations, (value) => {
-              value.truePhoto = []
+              value.truePhoto = [];
+              value.dateCrea = moment(value.dateCrea).format('DD-MM-YYYY');
               _.map(value.photos, (photo) => {
                 if (photo.isValidated == "true")
                   value.truePhoto.push(photo)
                 return photo
               });
               value.principalPhoto = _.find(value.photos, { "cdPhoto": value.cdPhotoPrincipal });
-              value.icon = this.icons[value.groupSimple];
+              value.icon = icons[value.groupSimple];
               return value
             });
-            console.log("this.observations", this.observations);
             this.obsLoaded = true;
             this.spinner.hide();
           }
@@ -164,11 +149,13 @@ export class ObsListComponent implements OnInit, OnDestroy {
         }
       )
   }
+
   private reloadObs(filter?) {
     this.cuurentPage = 1;
     this.getObs(this.cuurentPage, this.nbItems, filter);
   }
-  getUser(currentUser) {
+
+  getCurrentUser(currentUser) {
     this.userChecked = true;
     if (currentUser) {
       this.validator.userId = currentUser.attributes.ID_UTILISATEUR;
@@ -199,6 +186,7 @@ export class ObsListComponent implements OnInit, OnDestroy {
     else
       this.reloadObs()
   }
+
   ngOnDestroy() {
     this.filterService.setFilter('init');
     if (this.mySubscription)

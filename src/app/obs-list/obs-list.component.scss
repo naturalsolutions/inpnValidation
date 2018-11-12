@@ -1,10 +1,9 @@
 .container-fluid {
-  padding: 1% 5%;
+  padding: 1% 8%;
   min-height: calc(100% - 459px);
 }
 
 .card {
-  //cursor: pointer;
   margin-top: 30px;
   box-shadow: 0 3px 1px -2px rgba(0, 0, 0, .2), 0 2px 2px 0 rgba(0, 0, 0, .14), 0 1px 5px 0 rgba(0, 0, 0, .12)
 }
@@ -16,8 +15,8 @@
 }
 
 .card-body {
-
   text-align: center;
+
   h5 {
     font-size: 16px
   }
@@ -26,7 +25,7 @@
 .card-img-top-list {
   object-fit: cover;
   width: 100%;
-  height: 250px;
+  height: 220px;
 }
 
 .card-text {
@@ -34,14 +33,13 @@
   margin-bottom: 1px
 }
 
-
 ngb-pagination {
   margin-top: 50px;
 }
 
 .no-obs {
   min-height: calc(100% - 459px);
-  padding:10% 0;
+  padding: 10% 0;
   color: gray;
   display: flex;
   flex-direction: column;
@@ -55,55 +53,31 @@ ngb-pagination {
 .especeName {
   font-size: 14px;
   color: #71cb7f;
-  padding-bottom: 15px
+  padding-bottom: 4px
 }
-.icon-more_on{
-  color:white;
-  font-size: 12px;
-}
-.invalidPhoto {
-  object-fit: cover;
-  width: 100%;
-  height: 250px;
-  opacity: 0.6
-}
-.carouselInvalid {
-  position: absolute;
-  z-index: 10;
-  text-align: center;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
 
-  span {
-    font-size: 50px;
-    color: red;
-    opacity: 0.4
-  }
+.icon-more_on {
+  color: white;
 }
-.principalInvalid {
-  position: absolute;
-  z-index: 10;
-  text-align: center;
-  top: 125px;
-  left: 50%;
-  transform: translate(-50%, -50%);
 
-  span {
-    font-size: 50px;
-    color: red;
-    opacity: 0.4
-  }
-}
- .detail{
+
+.detail {
   cursor: pointer;
   bottom: 6px;
   right: 6px;
- position: absolute;
- background-color: #999999;
- }
- 
-.avatar{
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 200;
+  position: absolute;
+  background-color: #999999;
+
+}
+
+.user {
+  cursor: pointer;
+}
+
+.avatar {
   vertical-align: middle;
   display: inline-block;
   border-radius: 50%;
@@ -114,14 +88,25 @@ ngb-pagination {
   text-align: center;
 
 }
-.pseudo{
-  display: inline-block; 
-  font-size: 14px;
-  padding-left : 4px;
-  margin-bottom: 4px ;
-  color: white;
+
+.meta-data {
+  font-size: 12px;
+  margin-top: 12px;
 }
-.user{
-  padding: 4px 8px;
-  background-color: #999999;
+
+.badge-score {
+  z-index: 999;
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  font-weight: 400;
+  font-size: 12px;
+  text-transform: none;
+
+  .badge-text {
+    display: inline-block;
+    padding-left: 4px;
+    margin: 0;
+    vertical-align: top;
+  }
 }

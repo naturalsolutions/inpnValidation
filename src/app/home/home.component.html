@@ -1,36 +1,99 @@
+<ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <app-header></app-header>
-<div class="inner">
-    <div *ngIf="!userConnected" class="band-text">Pour commencer à valider les observations, connectez-vous !</div>     
-    <login-modal *ngIf="!userConnected" [btnClass]=homeStyle class="btn connect" routerLinkActive="active"></login-modal>
-    <img src="../assets/imgs/slider-hp.jpg" class="img-fluid" alt="">
+<div *ngIf="obsLoaded" class="inner">
+  <div *ngIf="!userConnected" class="band-text">Pour commencer à valider les observations, connectez-vous !</div>
+  <login-modal *ngIf="!userConnected" [btnClass]=homeStyle class="btn connect" routerLinkActive="active"></login-modal>
+  <img src="../assets/imgs/slider-hp.jpg" class="img-fluid" alt="">
 </div>
 
-<div class="container-fluid">
-  <div class="row ">
-    <div class="col-sm ">
-      <img class="picto" src="../assets/imgs/pictos-hp_INPN_promenez.png" alt="">
-      <h1>Promenez vous</h1>
-      <p>Quo cognito Constantius ultra mortalem modum exarsit
-         idem quaedam saluti per itinera conaretur.</p>
+<div *ngIf="obsLoaded" class="container-fluid ">
+  <div class="row justify-content-around">
+    <div class="col-sm-auto picto" routerLink="/observations/list">
+      <img class="picto-icon" src="../assets/imgs/pictos-hp_INPN_observez.png" alt="">
+      <h1>125 456</h1>
+      <p>Observations</p>
     </div>
-    <div class="col-sm">
-      <img  class="picto" src="../assets/imgs/pictos-hp_INPN_observez.png" alt="">
-      <h1>Observez des espèces</h1>
-      <p>Quo cognito Constantius ultra mortalem modum exarsit
-         idem quaedam saluti per itinera conaretur.</p>
+    <div class="col-sm-auto picto" routerLink="/observations/carte">
+      <img class="picto-icon" src="../assets/imgs/pictos-hp_INPN_promenez.png" alt="">
+      <h1>Carte </h1>
+      <p>Interactive</p>
     </div>
-    <div class="col-sm">
-      <img class="picto" src="../assets/imgs/pictos-hp_INPN_uploadez.png" alt="">
-      <h1>Uploadez</h1>
-      <p>Quo cognito Constantius ultra mortalem modum exarsit
-         idem quaedam saluti per itinera conaretur.</p>
+    <div class="col-sm-auto picto" routerLink="/observateursList">
+      <img class="picto-icon" src="../assets/imgs/picto_jumelle.png" alt="">
+      <h1>{{nbObservateurs}}</h1>
+      <p>Observateurs</p>
     </div>
-    <div class="col-sm">
-      <img class="picto" src="../assets/imgs/pictos-hp_INPN_devenez.png" alt="">
-      <h1>Devenez expert naturaliste </h1>
-      <p>Quo cognito Constantius ultra mortalem modum exarsit
-         idem quaedam saluti per itinera conaretur.</p>
+    <div class="col-sm-auto picto">
+      <img class="picto-icon" src="../assets/imgs/pictos-hp_INPN_devenez.png" alt="">
+      <h1>1 273</h1>
+      <p>Experts</p>
     </div>
   </div>
+  <div class="row fold2">
+    <div class="col-md fold2-img">
+      <img src="../assets/imgs/fold2.png" class="img-fluid" alt="">
+    </div>
+    <div class="col-md fold2-description">
+      <h1>Contribuez à l'inventaire du patrimoine</h1>
+      <p>Et quoniam inedia gravi adflictabantur, locum petivere Paleas nomine, vergentem in mare, valido muro firmatum,
+        ubi conduntur nunc usque commeatus distribui militibus omne latus Isauriae defendentibus adsueti. circumstetere
+        igitur hoc munimentum per triduum et trinoctium et cum neque adclivitas ipsa sine discrimine adiri letali.</p>
+    </div>
+  </div>
+  <div *ngIf="obsLoaded && !noObs" class="container-fluid observations">
+    <div class="title">dernières observations ajoutées</div>
+    <div class="row">
+      <div *ngFor="let item of observations.observations" class="d-flex col-xl-3 col-lg-3 col-md-4 col-xs-6 thumb">
+        <div class="card flex-fill">
+          <div>
+            <img class="card-img-top-list" src="{{item.principalPhoto.thumbnailFileUri}}" [routerLink]="['/observations/detail',item.idData]">
+          </div>
+          <div class="card-body">
+            <span class="{{item.icon}} icon-gp"></span>
+            <h5 class="card-title">{{item.lbGroupSimple}}</h5>
+            <p class="card-text">{{item.lbGroupOP}}</p>
+            <div class="especeName" [innerHtml]=item.nomCompletHtml>
+            </div>
+            <div class="badge badge-pill badge-secondary detail" [routerLink]="['/observations/detail',item.idData]">
+              <span class="icon-more_on "></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button class="btn obs-btn" routerLink="/observations/list">Voir plus d'observations</button>
+  </div>
+  <div *ngIf="obsLoaded && !noObs" class="container-fluid observations">
+    <div class="title">Classement des contributeurs</div>
+    <div class="row user-block justify-content-around ">
+      <div *ngFor="let user of users" class="col-auto">
+        <div class="avatar" [routerLink]="['/profil',user.idUtilisateur]"></div>
+        <div class="pseudo" [routerLink]="['/profil',user.idUtilisateur]">{{user.pseudo}}</div>
+        <div class="score">
+          <a>{{user.score}} Points</a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row mobile-fold">
+    <div class="col-md inner-img">
+      <img src="../assets/imgs/mobile.png" class="img-fluid mobile-img" alt="">
+      <div class="mobile-desc">
+        <h1>Téléchargez INPN Espèces gratuitement</h1>
+        <p>Et quoniam inedia gravi adflictabantur, locum petivere Paleas nomine, vergentem in mare, valido muro
+          firmatum,
+          ubi conduntur nunc usque commeatus distribui militibus omne latus Isauriae defendentibus adsueti.
+          circumstetere
+          igitur hoc munimentum per triduum et trinoctium et cum neque adclivitas ipsa sine discrimine adiri letali.</p>
+        <div class="inner-store">
+          <img class="store-icon" src="../assets/imgs/applestore.png" alt="">
+          <img class="store-icon" src="../assets/imgs/googlestore.png" alt="">
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
 </div>
-<app-footer></app-footer>
+
+<app-footer *ngIf="obsLoaded"></app-footer>

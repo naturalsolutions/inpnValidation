@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation, Input, OnDestroy } from '@angular/core';
 import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { LoginService } from '../services/login.service';
+import { UserService } from '../services/user.service';
 import { Router, NavigationEnd } from '@angular/router';
 import { FilterService } from '../services/filter.service';
 
@@ -24,7 +24,7 @@ export class LoginModalComponent {
     private modalService: NgbModal,
     private formBuilder: FormBuilder,
     private router: Router,
-    private loginService: LoginService) {
+    private userService: UserService) {
   }
 
   ngOnInit() {
@@ -42,7 +42,7 @@ export class LoginModalComponent {
 
   public login(loginForm) {
     this.user = loginForm.value;
-    this.loginService.login(this.user.username, this.user.password)
+    this.userService.login(this.user.username, this.user.password)
       .subscribe(
         (res) => {
           let token = this.splitString(res);

@@ -1,29 +1,23 @@
-<app-header (user)="getUser($event)"></app-header>
+<app-header (user)="getCurrentUser($event)"></app-header>
 <observations-nav *ngIf="userChecked" [navItem]="'grid'" [validator]=validator></observations-nav>
 <ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <div *ngIf="obsLoaded && !noObs" class="container-fluid">
   <div class="row">
     <div *ngFor="let item of observations.observations" class="d-flex col-xl-2 col-lg-3 col-md-4 col-xs-6 thumb">
       <div class="card flex-fill">
-        <div *ngIf="invalidPhoto">
-          <img *ngIf="item.photos.length < 2" [ngClass]="{
-            'card-img-top-list':item.principalPhoto.isValidated == 'true',
-            'invalidPhoto':item.principalPhoto.isValidated == 'false'
-          }"
-            src="{{item.principalPhoto.thumbnailFileUri}}">
-          <div *ngIf="item.principalPhoto.isValidated == 'false'" class="principalInvalid">
-            <span class="icon-refuse"></span>
+        <div *ngIf="invalidPhoto" style="position:relative">
+          <div *ngIf="item.isValidated=='true'" class="badge badge-pill badge-success badge-score">
+            <i class="icon-databaseokay"></i>
+            <p class="badge-text"> {{item.scoreTotal}} Point(s)</p>
           </div>
+          <div *ngIf="item.isValidated=='false'" class="badge badge-pill badge-warning badge-score">
+            <i class="icon-enAttenteSynchro"></i>
+            <p class="badge-text"> {{item.scoreTotal}} Point(s)</p>
+          </div>
+          <img *ngIf="item.photos.length < 2" class="card-img-top-list" src="{{item.principalPhoto.thumbnailFileUri}}">
           <ngb-carousel interval=0 *ngIf="item.photos.length > 1">
             <ng-template *ngFor="let photo of item.photos" ngbSlide>
-              <img [ngClass]="{
-              'card-img-top-list':photo.isValidated == 'true',
-              'invalidPhoto':photo.isValidated == 'false'
-            }"
-                src="{{photo.thumbnailFileUri}}">
-              <div *ngIf="photo.isValidated == 'false'" class="carouselInvalid">
-                <span class="icon-refuse"></span>
-              </div>
+              <img class="card-img-top-list" src="{{photo.thumbnailFileUri}}">
             </ng-template>
           </ngb-carousel>
         </div>
@@ -35,27 +29,27 @@
             </ng-template>
           </ngb-carousel>
         </div>
-        <div class="user">
-            <a class="avatar" [style.background-image]="'url(' + item.avatar + ')'"></a>
-            <p class="pseudo">{{item.pseudo}}</p> 
-        </div>
-        <div class="card-body" >
-        
-            
+        <div class="card-body">
           <span class="{{item.icon}} icon-gp"></span>
           <h5 class="card-title">{{item.lbGroupSimple}}</h5>
           <p class="card-text">{{item.lbGroupOP}}</p>
-          <div class="especeName" [innerHtml]=item.nomCompletHtml>
-
+          <div class="especeName" [innerHtml]=item.nomCompletHtml></div>
+          <div class="meta-data">
+            <div class="location">
+              <span class="icon-pin"></span> {{item.commune}} ({{item.numDepartement}})</div>
+            <div class="date">
+              <span class="icon-calendar"></span> {{item.dateCrea}} </div>
+            <div class="user" [routerLink]="['/profil',item.idUtilisateur]">
+              <a class="avatar" [style.background-image]="'url(' + item.avatar + ')'"></a> {{item.pseudo}} </div>
           </div>
-          <div class="badge badge-pill badge-secondary detail" [routerLink]="['/observations/detail',item.idData]"> <span class="icon-more_on "></span></div>
-        
+          <div class="badge badge-pill badge-secondary detail" [routerLink]="['/observations/detail',item.idData]">
+            <span class="icon-more_on "></span></div>
         </div>
       </div>
     </div>
   </div>
-  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="5" [pageSize]="nbItems"
-    [(page)]="cuurentPage" (pageChange)="loadPage($event)"></ngb-pagination>
+  <ngb-pagination class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="7" [pageSize]="nbItems"
+    [(page)]="cuurentPage" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" (pageChange)="loadPage($event)"></ngb-pagination>
 </div>
 <div *ngIf="noObs" class="no-obs">
   <span class="icon-obsPasFaite "></span>

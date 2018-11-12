@@ -8,6 +8,7 @@ export interface User {
         LOGIN?: string,
         NOM?: string,
         PRENOM?: string,
+        PSEUDO?: string
     }
     id?: string,
 
