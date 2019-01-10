@@ -1,16 +1,14 @@
 <ngx-spinner size="large" type="ball-grid-beat"></ngx-spinner>
 <app-header></app-header>
-<div *ngIf="obsLoaded" class="inner">
-  <div *ngIf="!userConnected" class="band-text">Pour commencer à valider les observations, connectez-vous !</div>
-  <login-modal *ngIf="!userConnected" [btnClass]=homeStyle class="btn connect" routerLinkActive="active"></login-modal>
-  <img src="../assets/imgs/slider-hp.jpg" class="img-fluid" alt="">
+<div *ngIf="obsLoaded && textLoaded" class="inner">
+  <div class="band-text">{{title}}</div>
+  <img src="{{fold1Image}}" class="img-fluid" alt="">
 </div>
-
-<div *ngIf="obsLoaded" class="container-fluid ">
+<div *ngIf="obsLoaded && textLoaded" class="container-fluid ">
   <div class="row justify-content-around">
     <div class="col-sm-auto picto" routerLink="/observations/list">
       <img class="picto-icon" src="../assets/imgs/pictos-hp_INPN_observez.png" alt="">
-      <h1>125 456</h1>
+      <h1>{{nbData}}</h1>
       <p>Observations</p>
     </div>
     <div class="col-sm-auto picto" routerLink="/observations/carte">
@@ -20,27 +18,25 @@
     </div>
     <div class="col-sm-auto picto" routerLink="/observateursList">
       <img class="picto-icon" src="../assets/imgs/picto_jumelle.png" alt="">
-      <h1>{{nbObservateurs}}</h1>
-      <p>Observateurs</p>
+      <h1>{{nbUsers}}</h1>
+      <p>Contributeurs</p>
     </div>
     <div class="col-sm-auto picto">
       <img class="picto-icon" src="../assets/imgs/pictos-hp_INPN_devenez.png" alt="">
-      <h1>1 273</h1>
+      <h1>{{nbExperts}}</h1>
       <p>Experts</p>
     </div>
   </div>
   <div class="row fold2">
-    <div class="col-md fold2-img">
-      <img src="../assets/imgs/fold2.png" class="img-fluid" alt="">
+    <div class="col-lg fold2-img">
+      <img src="{{fold2Image}}" class="img-fluid" alt="">
     </div>
-    <div class="col-md fold2-description">
+    <div class="col-lg fold2-description">
       <h1>Contribuez à l'inventaire du patrimoine</h1>
-      <p>Et quoniam inedia gravi adflictabantur, locum petivere Paleas nomine, vergentem in mare, valido muro firmatum,
-        ubi conduntur nunc usque commeatus distribui militibus omne latus Isauriae defendentibus adsueti. circumstetere
-        igitur hoc munimentum per triduum et trinoctium et cum neque adclivitas ipsa sine discrimine adiri letali.</p>
+      <div class="textHomePage" [innerHtml]=textHomePage></div>
     </div>
   </div>
-  <div *ngIf="obsLoaded && !noObs" class="container-fluid observations">
+  <div *ngIf="obsLoaded && textLoaded && !noObs" class="container-fluid observations">
     <div class="title">dernières observations ajoutées</div>
     <div class="row">
       <div *ngFor="let item of observations.observations" class="d-flex col-xl-3 col-lg-3 col-md-4 col-xs-6 thumb">
@@ -62,38 +58,33 @@
     </div>
     <button class="btn obs-btn" routerLink="/observations/list">Voir plus d'observations</button>
   </div>
-  <div *ngIf="obsLoaded && !noObs" class="container-fluid observations">
+  <div *ngIf="obsLoaded  && textLoaded && !noObs" class="container-fluid observations">
     <div class="title">Classement des contributeurs</div>
     <div class="row user-block justify-content-around ">
       <div *ngFor="let user of users" class="col-auto">
-        <div class="avatar" [routerLink]="['/profil',user.idUtilisateur]"></div>
+        <div class="avatar" [style.background-image]="'url(' + user.avatarPath + ')'" [routerLink]="['/profil',user.idUtilisateur]"></div>
         <div class="pseudo" [routerLink]="['/profil',user.idUtilisateur]">{{user.pseudo}}</div>
         <div class="score">
           <a>{{user.score}} Points</a>
         </div>
       </div>
     </div>
+    <button class="btn obs-btn" routerLink="/observateursList">Voir plus de contributeurs</button>
   </div>
   <div class="row mobile-fold">
     <div class="col-md inner-img">
       <img src="../assets/imgs/mobile.png" class="img-fluid mobile-img" alt="">
       <div class="mobile-desc">
         <h1>Téléchargez INPN Espèces gratuitement</h1>
-        <p>Et quoniam inedia gravi adflictabantur, locum petivere Paleas nomine, vergentem in mare, valido muro
-          firmatum,
-          ubi conduntur nunc usque commeatus distribui militibus omne latus Isauriae defendentibus adsueti.
-          circumstetere
-          igitur hoc munimentum per triduum et trinoctium et cum neque adclivitas ipsa sine discrimine adiri letali.</p>
+        <p [innerHtml]=textUplaod></p>
         <div class="inner-store">
-          <img class="store-icon" src="../assets/imgs/applestore.png" alt="">
-          <img class="store-icon" src="../assets/imgs/googlestore.png" alt="">
+          <a href="https://play.google.com/store/apps/details?id=fr.mnhn.inpnespeces"> <img class="store-icon" src="../assets/imgs/googlestore.png"
+              alt=""> </a>
+          <a href="https://itunes.apple.com/fr/app/inpn-especes/id1111609919?l=fr&ls=1&mt=8"><img class="store-icon"
+              src="../assets/imgs/applestore.png" alt=""></a>
         </div>
-
       </div>
     </div>
-
   </div>
-
 </div>
-
-<app-footer *ngIf="obsLoaded"></app-footer>
+<app-footer *ngIf="obsLoaded && textLoaded"></app-footer>

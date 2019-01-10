@@ -8,9 +8,8 @@ export class ObservationService {
   constructor(public http: HttpClient) { }
 
   getObservations(pagination?, filtreObs?) {
-    let token = localStorage.getItem('inpnUser_Access_token');
-    let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
-      .set('Authorization', 'Bearer ' + token);
+
+    let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
     let httpParams = new HttpParams();
     if (pagination) {
       Object.keys(pagination).forEach(function (key) {
@@ -26,11 +25,28 @@ export class ObservationService {
     return this.http.get<obs>(Conf.apiBaseUrl + 'data', { params: httpParams, headers });
   }
 
+
+  getMapObservations(filtreObs?) {
+    let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    let httpParams = new HttpParams();
+    httpParams = httpParams.append('forMap', 'true');
+    if (filtreObs) {
+      Object.keys(filtreObs).forEach(function (key) {
+        if (filtreObs[key])
+          httpParams = httpParams.append(key, filtreObs[key]);
+      });
+    }
+    return this.http.get<obs>(Conf.apiBaseUrl + 'data', { params: httpParams, headers });
+  }
+
+
+
+
   getObsByID(id) {
     let token = localStorage.getItem('inpnUser_Access_token');
     let headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' })
       .set('Authorization', 'Bearer ' + token);
-    return this.http.get<obs>(Conf.apiBaseUrl + 'data/' + id);
+    return this.http.get<any>(Conf.apiBaseUrl + 'data/' + id);
   }
 
   getlistGroupOP(groupSimple?) {
@@ -86,11 +102,11 @@ export class ObservationService {
   }
 
   getValidationHistory(dataId) {
-    return this.http.get<any[]>(Conf.apiBaseUrl + 'validation/data/'+dataId+'/historique');
+    return this.http.get<any[]>(Conf.apiBaseUrl + 'validation/data/' + dataId + '/historique');
   }
 
   getObservationScore(dataId) {
-    return this.http.get<any[]>(Conf.apiBaseUrl + 'score/iddata/'+dataId);
+    return this.http.get<any[]>(Conf.apiBaseUrl + 'score/iddata/' + dataId);
   }
 
   validateObs(idData: string, idValidateur: string, isValidated: string,

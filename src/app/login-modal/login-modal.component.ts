@@ -3,7 +3,6 @@ import { NgbModal, NgbModalRef } from '@ng-bootstrap/ng-bootstrap';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UserService } from '../services/user.service';
 import { Router, NavigationEnd } from '@angular/router';
-import { FilterService } from '../services/filter.service';
 
 @Component({
   selector: 'login-modal',
@@ -13,7 +12,6 @@ import { FilterService } from '../services/filter.service';
 })
 export class LoginModalComponent {
 
-  @Input() btnClass;
   user;
   loginForm: FormGroup;
   private modalRef: NgbModalRef;
@@ -65,7 +63,6 @@ export class LoginModalComponent {
             }
           })
           // ##########
-          
           this.router.navigate(['observations/list'])
         }
       )

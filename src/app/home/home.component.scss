@@ -21,14 +21,12 @@
 
 .picto-icon {
   padding-bottom: 20px;
-  width: 60px;
+  height: 80px;
 }
 
 .picto:last-child {
   cursor: default;
 }
-
-
 
 .band-text {
   position: absolute;
@@ -65,19 +63,19 @@
   color: white;
 
   h1 {
-    padding: 40px 0;
+    padding: 20px 0;
     text-align: center;
     margin: 0;
-    font-size: 30px;
+    font-size: 24px;
     font-weight: 400;
     text-transform: uppercase
   }
 
-  p {
-    padding: 0 40px;
-    font-size: 20px;
-    text-align: center
+  .textHomePage {
+    padding: 0 20px;
+
   }
+
 }
 
 .observations {
@@ -191,7 +189,6 @@
 
   .avatar {
     cursor: pointer;
-    background-image: url("/assets/imgs/user.png");
     display: block;
     position: relative;
     border-radius: 50%;
@@ -221,7 +218,7 @@
   padding-bottom: 120px;
 
   .mobile-img {
-    height: 500px;
+    height: 420px;
     margin-top: -40px;
     margin-left: 15%;
     margin-bottom: -40px

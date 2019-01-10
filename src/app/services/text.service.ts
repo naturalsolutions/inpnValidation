@@ -4,9 +4,16 @@ import { Conf } from '../conf';
 
 @Injectable()
 export class TextService {
- 
+
   constructor(public http: HttpClient) { }
+
   getText(id) {
-    return this.http.get(Conf.apiBaseUrl +'text/web/'+id);
+    return this.http.get<any>(Conf.apiBaseUrl + 'text/web/' + id);
+  }
+
+  getKeynumbers() {
+    return this.http.get<any>(Conf.apiBaseUrl + 'keynumbers/inpnEspeces');
   }
 }
+
+

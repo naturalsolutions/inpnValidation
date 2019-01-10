@@ -39,7 +39,6 @@ export class ObsMapComponent implements OnInit {
     'Imagery © <a href="http://mapbox.com">Mapbox</a>'
 
 
-
   constructor(private spinner: NgxSpinnerService,
     private observationService: ObservationService,
     private filterService: FilterService) { }
@@ -58,7 +57,6 @@ export class ObsMapComponent implements OnInit {
       })
   }
 
-
   getObs(filter?) {
     this.spinner.show();
     this.obsLoaded = false;
@@ -70,8 +68,10 @@ export class ObsMapComponent implements OnInit {
         this.filter.filtreStatutValidation = '5';
       filter = _.omitBy(filter, _.isNil);
       this.nbFilterSelected = _.size(filter);
+      if (!filter.idUtilisateur)
+        this.nbFilterSelected--;
       if (filter.idUtilisateur == false)
-        this.nbFilterSelected = this.nbFilterSelected - 2;
+        this.nbFilterSelected--;
       this.filterService.setFilterNotifications(this.nbFilterSelected)
 
       Object.keys(filter).forEach(function (key) {
@@ -88,8 +88,7 @@ export class ObsMapComponent implements OnInit {
     else {
       this.filterService.setFilterNotifications(0)
     }
-    this.observationService.getObservations({
-    }, obsFilter)
+    this.observationService.getMapObservations(obsFilter)
       .subscribe(
         (obs) => {
           if (!obs) {
@@ -128,22 +127,33 @@ export class ObsMapComponent implements OnInit {
           if (this.observations) {
             var markersList = L.markerClusterGroup();
             _.forEach(this.observations.observations, (element) => {
-              let customPopup = '<div class="img-inner"> <img class="img-popUp" src=' + element.photos[0].thumbnailFileUri + '> </div>'
-                + '<div class="leflet-container"><div class="leflet-pop">'
-                + '<img src="' + element.avatar + '" class="img-pop-leflet"><p class="pseudo-leflet">'
-                + element.pseudo + '</p> </div>'
-                + '<div class="leflet-list">'
-                + '<p  class="leflet-groupSimple">' + element.lbGroupSimple + '</p>'
-                + '<p class="leflet-groupOP"  >' + element.lbGroupOP + '</p>'
-                + '<p class="leflet-espece" >' + element.nomCompletHtml + '</p></div></div></div>'
-              let customOptions =
-              {
-                'className': 'custom'
-              }
-              markersList.addLayer(L.marker([element.Y, element.X])
-                .bindPopup(customPopup, customOptions));
+              markersList.addLayer(L.marker([element.Y, element.X], { id: element.idData }))
             });
 
+
+            markersList.on("click", (event) => {
+              markersList.unbindPopup()
+
+              this.observationService.getObsByID(event.layer.options.id).subscribe(
+                (obs) => {
+                  let customPopup = '<div class="img-inner"> <a href="/#/observations/detail/' + obs.idData + '"> <img class="img-popUp" src="' + obs.photos[0].thumbnailFileUri + '"> </a> </div>'
+                    + '<div class="leflet-container"><div class="leflet-pop">'
+                    + '<a href="/#/profil/' + obs.idUtilisateur + '"><img src="' + obs.avatar + '" class="img-pop-leflet"><p class="pseudo-leflet"> </a> '
+                    + obs.pseudo + '</p> </div>'
+                    + '<div class="leflet-list">'
+                    + '<p  class="leflet-groupSimple">' + obs.lbGroupSimple + '</p>'
+                    + '<p class="leflet-groupOP"  >' + obs.lbGroupOP + '</p>'
+                    + '<p class="leflet-espece" >' + obs.nomCompletHtml + '</p></div></div></div>'
+                    + ' <a class="badge badge-pill badge-secondary leflet-detail" href="/#/observations/detail/' + obs.idData + '"><span class="icon-more_on"></span></a>'
+                  let customOptions =
+                  {
+                    'className': 'custom'
+                  }
+                  markersList.bindPopup(customPopup, customOptions).openPopup(event.latlng)
+                }
+              )
+
+            });
             this.mymap.addLayer(markersList);
             this.obsLoaded = true;
             this.spinner.hide();
@@ -154,6 +164,8 @@ export class ObsMapComponent implements OnInit {
         }
       )
   }
+
+
 
   getCurrentUser(currentUser) {
     this.userChecked = true;

@@ -2,20 +2,7 @@
   margin-top: 100px;
 }
 
-.homeStyle {
-  background-color: #49cf76;
-  border-radius: 400px;
-  color: white;
-  opacity: 0.85;
-  font-size: 18px;
-  text-transform: uppercase;
-  padding: 10px 60px;
-  font-weight: 500;
-  &:hover {
-    opacity: 1;
-  }
+.alert {
+  margin: 0px;
+  text-align: center
 }
- .alert{
-   margin: 0px;
-   text-align: center
- }

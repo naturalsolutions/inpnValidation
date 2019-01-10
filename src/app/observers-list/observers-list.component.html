@@ -3,37 +3,39 @@
 <ul class="nav nav-pills ">
   <li class="nav-item">
     <a class="nav-link ">
-      Classement des observateurs</a>
+      Classement des contributeurs</a>
   </li>
 </ul>
-<div *ngIf="usersLoaded " class="container">
-
-  <div class="row  justify-content-center">
-    <div class=" col-xl-7 col-lg-9 rank-header ">
-      Observateurs
+<div>
+  <div *ngIf="usersLoaded " class="container">
+    <div class="row  justify-content-center">
+      <div class=" col-xl-7 col-9 rank-header ">
+        Classement
+      </div>
+      <div class=" col-xs-1-auto ">
+        Score
+      </div>
     </div>
-    <div class=" col-1-auto ">
-      Score
-    </div>
-  </div>
-  <div class="row justify-content-center " *ngFor="let user of users" [routerLink]="['/profil',user.idUtilisateur]">
-    <div class=" col-1-auto user-card">
-      <div class="rank">{{user.rank}}</div>
-    </div>
-    <div class=" col-xl-7 col-lg-9 user-card">
-      <div class="avatar"></div>
-      <div class="user-body">
-        <div class="pseudo">{{user.pseudo}}</div>
-        <div class="status">
-          <a>Naturaliste Amateur</a>
-        </div>
-        <div class="score">
-          <a>{{user.score}} Points</a>
+    <div class="row justify-content-center " *ngFor="let user of users" [routerLink]="['/profil',user.idUtilisateur]">
+      <div class=" col-1-auto user-card">
+        <div class="rank">{{user.rank}}</div>
+      </div>
+      <div class=" col-xl-7 col-9 user-card">
+        <div class="avatar" [style.background-image]="'url(' + user.avatarPath + ')'"></div>
+        <div class="user-body">
+          <div class="pseudo">{{user.pseudo}}</div>
+          <div class="status">
+            <a>Naturaliste Amateur</a>
+          </div>
+          <div class="score">
+            <a>{{user.score}} Points</a>
+          </div>
         </div>
       </div>
     </div>
+    <ngb-pagination *ngIf="usersLoaded" class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="7"
+      [pageSize]="nbItems" [(page)]="currentPage" [rotate]="true" [ellipses]="false" [boundaryLinks]="true"
+      (pageChange)="loadPage($event)"></ngb-pagination>
   </div>
-  <ngb-pagination *ngIf="usersLoaded" class="d-flex justify-content-center" [collectionSize]="totalItems" [maxSize]="7"
-    [pageSize]="nbItems" [(page)]="currentPage" [rotate]="true" [ellipses]="false" [boundaryLinks]="true" (pageChange)="loadPage($event)"></ngb-pagination>
 </div>
 <app-footer *ngIf="usersLoaded"></app-footer>

@@ -1,0 +1,355 @@
+[class^="icon-"],
+[class*=" icon-"] {
+  /* use !important to prevent issues with browser extensions that change fonts */
+  font-family: 'icomoon' !important;
+  speak: none;
+  font-style: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  line-height: 1;
+
+  /* Better Font Rendering =========== */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-clock:before {
+  content: "\e932";
+}
+
+.icon-bino:before {
+  content: "\e933";
+}
+
+.icon-flottant2:before {
+  content: "\e931";
+}
+
+.icon-flottant .path1:before {
+  content: "\e92f";
+  color: rgb(112, 111, 111);
+}
+
+.icon-flottant .path2:before {
+  content: "\e930";
+  margin-left: -1em;
+  color: rgb(255, 255, 255);
+}
+
+.icon-pen:before {
+  content: "\e92e";
+}
+
+.icon-star:before {
+  content: "\e900";
+}
+
+.icon-help:before {
+  content: "\e905";
+}
+
+.icon-info:before {
+  content: "\e906";
+}
+
+.icon-locate:before {
+  content: "\e907";
+}
+
+.icon-pin:before {
+  content: "\e908";
+}
+
+.icon-pin-on:before {
+  content: "\e909";
+}
+
+.icon-search:before {
+  content: "\e90a";
+}
+
+.icon-databaseokay:before {
+  content: "\e90b";
+}
+
+.icon-enAttenteSynchro:before {
+  content: "\e90c";
+}
+
+.icon-obsPasFaite:before {
+  content: "\e90d";
+}
+
+.icon-filter:before {
+  content: "\e90e";
+}
+
+.icon-new-obs:before {
+  content: "\e90f";
+}
+
+.icon-obs:before {
+  content: "\e910";
+}
+
+.icon-protected:before {
+  content: "\e911";
+}
+
+.icon-red_list:before {
+  content: "\e618";
+}
+
+.icon-regulated:before {
+  content: "\e800";
+}
+
+.icon-picture:before {
+  content: "\e912";
+}
+
+.icon-camera:before {
+  content: "\e913";
+}
+
+.icon-profil:before {
+  content: "\e914";
+}
+
+.icon-plante_mousse_fougere:before {
+  content: "\e915";
+}
+
+.icon-plante_mousse_fougere_active:before {
+  content: "\e916";
+  color: #49cf76;
+}
+
+.icon-reptile_amphibien:before {
+  content: "\e917";
+}
+
+.icon-reptile_amphibien_active:before {
+  content: "\e918";
+  color: #49cf76;
+}
+
+.icon-mammifere:before {
+  content: "\e919";
+}
+
+.icon-mammifere_active:before {
+  content: "\e91a";
+  color: #49cf76;
+}
+
+.icon-oiseau:before {
+  content: "\e91b";
+}
+
+.icon-oiseau_active:before {
+  content: "\e91c";
+  color: #49cf76;
+}
+
+.icon-poisson:before {
+  content: "\e91d";
+}
+
+.icon-poisson_active:before {
+  content: "\e91e";
+  color: #49cf76;
+}
+
+.icon-crabe_crevette_cloporte_millepatte:before {
+  content: "\e91f";
+}
+
+.icon-crabe_crevette_cloporte_millepatte_active:before {
+  content: "\e920";
+  color: #49cf76;
+}
+
+.icon-champignon_lichen:before {
+  content: "\e921";
+}
+
+.icon-champignon_lichen_active:before {
+  content: "\e922";
+  color: #49cf76;
+}
+
+.icon-leaf:before {
+  content: "\e923";
+}
+
+.icon-escargot_mollusque:before {
+  content: "\e924";
+}
+
+.icon-escargot_mollusque_active:before {
+  content: "\e925";
+  color: #49cf76;
+}
+
+.icon-insecte_araignee:before {
+  content: "\e926";
+}
+
+.icon-insecte_araignee_active:before {
+  content: "\e927";
+  color: #49cf76;
+}
+
+.icon-quest:before {
+  content: "\e928";
+}
+
+.icon-locating:before {
+  content: "\e600";
+}
+
+.icon-commune:before {
+  content: "\e601";
+}
+
+.icon-departement:before {
+  content: "\e602";
+}
+
+.icon-grid:before {
+  content: "\e605";
+}
+
+.icon-seen:before {
+  content: "\e606";
+}
+
+.icon-like_seen:before {
+  content: "\e607";
+}
+
+.icon-likebold:before {
+  content: "\e60a";
+}
+
+.icon-chevron:before {
+  content: "\e610";
+}
+
+.icon-close:before {
+  content: "\e612";
+}
+
+.icon-refuse:before {
+  content: "\e92d";
+}
+
+.icon-share:before {
+  content: "\e929";
+}
+
+.icon-fb:before {
+  content: "\e614";
+}
+
+.icon-twitter:before {
+  content: "\e615";
+}
+
+.icon-search2:before {
+  content: "\e608";
+}
+
+.icon-search_taxon:before {
+  content: "\e903";
+}
+
+.icon-cheked:before {
+  content: "\e92a";
+}
+
+.icon-advanced_filter:before {
+  content: "\e603";
+}
+
+.icon-like_seen2:before {
+  content: "\e92b";
+}
+
+.icon-basic_filter:before {
+  content: "\e604";
+}
+
+.icon-explore:before {
+  content: "\e92c";
+}
+
+.icon-user:before {
+  content: "\e609";
+}
+
+.icon-calendar:before {
+  content: "\e904";
+}
+
+.icon-seenbold:before {
+  content: "\e60b";
+}
+
+.icon-share2:before {
+  content: "\e621";
+}
+
+.icon-mail:before {
+  content: "\e616";
+}
+
+.icon-settings:before {
+  content: "\e60c";
+}
+
+.icon-profile:before {
+  content: "\e613";
+}
+
+.icon-more:before {
+  content: "\e60d";
+}
+
+.icon-more_on:before {
+  content: "\e60e";
+}
+
+.icon-arrow:before {
+  content: "\e60f";
+}
+
+.icon-full:before {
+  content: "\e611";
+}
+
+.icon-broken_image:before {
+  content: "\e617";
+}
+
+.icon-full_desc:before {
+  content: "\e619";
+}
+
+.icon-protected2:before {
+  content: "\e801";
+}
+
+.icon-info2:before {
+  content: "\e61a";
+}
+
+.icon-methodology:before {
+  content: "\e901";
+}
+
+.icon-biodiversity:before {
+  content: "\e902";
+}

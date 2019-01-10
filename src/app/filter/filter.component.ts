@@ -175,10 +175,15 @@ export class FilterComponent implements OnInit, OnChanges {
   submit(filterForm) {
     if (this.groupSimpleFilter)
       filterForm.value.groupSimple = this.groupSimpleFilter.cdGroupGrandPublic;
-    if (filterForm.value.dateInf)
-      filterForm.value.dateInf = moment(filterForm.value.dateInf).toISOString();
-    if (filterForm.value.dateSup)
-      filterForm.value.dateSup = moment(filterForm.value.dateSup).toISOString();
+    if (filterForm.value.dateInf) {
+      filterForm.value.dateInf = moment(filterForm.value.dateInf).month(filterForm.value.dateInf.month - 1).hours(1).toISOString();
+
+
+    }
+    if (filterForm.value.dateSup) {
+      filterForm.value.dateSup = moment(filterForm.value.dateSup).month(filterForm.value.dateSup.month - 1).hours(1).toISOString();
+      console.log(filterForm.value.dateSup);
+    }
     if (filterForm.value.idUtilisateur)
       filterForm.value.idUtilisateur = this.userId
     this.filterService.setFilter(filterForm.value)
